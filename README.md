@@ -1,7 +1,7 @@
 # Vite & Gourmand
 
 Application web réalisée dans le cadre de l’ECF **Développeur Web et Web Mobile**.  
-Le projet a pour objectif de permettre à l’entreprise fictive **Vite & Gourmand** de présenter ses menus en ligne, gérer les commandes clients et proposer des espaces dédiés aux utilisateurs, employés et administrateurs. [file:1]
+Le projet a pour objectif de permettre à l’entreprise fictive **Vite & Gourmand** de présenter ses menus en ligne, gérer les commandes clients et proposer des espaces dédiés aux utilisateurs, employés et administrateurs. 
 
 ## Objectifs du projet
 
@@ -13,7 +13,7 @@ L’application doit permettre de :
 - permettre la commande d’un menu en ligne ;
 - proposer un espace utilisateur pour suivre ses commandes ;
 - proposer un espace employé pour gérer les menus, commandes et avis ;
-- proposer un espace administrateur avec gestion des employés et statistiques. [file:1]
+- proposer un espace administrateur avec gestion des employés et statistiques. 
 
 ## Stack technique
 
@@ -23,7 +23,7 @@ Le projet est développé avec la stack suivante :
 - **Back-end** : Symfony
 - **Base de données relationnelle** : MySQL
 - **Base de données NoSQL** : MongoDB
-- **Gestion de projet** : GitHub Projects [file:1]
+- **Gestion de projet** : GitHub Projects
 
 ## État du projet
 
@@ -46,29 +46,28 @@ Le projet est en cours de réalisation et sera enrichi progressivement avec :
 - Détail d’un menu
 - Page contact
 - Mentions légales
-- Conditions générales de vente [file:1]
+- Conditions générales de vente 
 
 ### Authentification
 
 - Inscription utilisateur
 - Connexion
 - Réinitialisation de mot de passe
-- Gestion des rôles [file:1]
+- Gestion des rôles 
 
 ### Partie commande
 
 - Création d’une commande
 - Calcul du prix
 - Gestion de la livraison
-- Confirmation de commande par email [file:1]
+- Confirmation de commande par email 
 
 ### Espaces privés
 
 - Espace utilisateur
 - Espace employé
 - Espace administrateur
-- Statistiques via MongoDB [file:1]
-
+- Statistiques via MongoDB 
 ## Installation en local
 
 ### Prérequis
@@ -135,7 +134,7 @@ Le projet suit une organisation Git simple :
 
 - `main` : branche stable
 - `develop` : branche de développement
-- `feature/...` : une branche par fonctionnalité [file:1]
+- `feature/...` : une branche par fonctionnalité 
 
 ## Livrables prévus
 
@@ -149,7 +148,7 @@ Le projet final comprendra :
 - le manuel utilisateur ;
 - la charte graphique ;
 - la documentation technique ;
-- la documentation de gestion de projet. [file:1]
+- la documentation de gestion de projet. 
 
 ## Sécurité et accessibilité
 
@@ -159,7 +158,7 @@ Le projet prendra en compte :
 - les rôles et permissions ;
 - la validation des formulaires ;
 - les protections CSRF ;
-- l’accessibilité de l’interface conformément aux attentes du sujet. [file:1]
+- l’accessibilité de l’interface conformément aux attentes du sujet.
 
 ## Auteur
 
