@@ -1,0 +1,32 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ menu.titre }} - Vite & Gourmand{% endblock %}
+
+{% block body %}
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <a href="{{ path('app_menu') }}" class="btn btn-outline-secondary mb-4">Retour aux menus</a>
+
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h1 class="mb-3">{{ menu.titre }}</h1>
+                    <p class="lead">{{ menu.description }}</p>
+
+                    <hr>
+
+                    <p><strong>Thème :</strong> {{ menu.theme }}</p>
+                    <p><strong>Prix minimum :</strong> {{ menu.prix }} €</p>
+                    <p><strong>Nombre minimum de personnes :</strong> {{ menu.personnes }}</p>
+                    <p><strong>Régime :</strong> {{ menu.regime }}</p>
+
+                    <div class="alert alert-warning mt-4">
+                        <strong>Conditions du menu :</strong><br>
+                        {{ menu.conditions }}
+                    </div>
+
+                    <a href="#" class="btn btn-success">Commander ce menu</a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
