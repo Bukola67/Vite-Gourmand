@@ -1,21 +1,12 @@
-
 services:
   php:
-    image: php:8.4-apache
+    build: .
     container_name: symfony_php
     ports:
       - "8000:80"
     volumes:
       - ./:/var/www/html
     working_dir: /var/www/html
-    command: >
-      bash -c "
-      apt-get update &&
-      apt-get install -y git unzip libicu-dev libzip-dev zip curl &&
-      docker-php-ext-install pdo pdo_mysql intl zip &&
-      a2enmod rewrite &&
-      apache2-foreground
-      "
 
   database:
     image: mysql:8.0

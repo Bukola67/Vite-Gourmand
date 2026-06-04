@@ -1,0 +1,37 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Accueil - Vite & Gourmand{% endblock %}
+
+{% block body %}
+    <div class="p-5 mb-4 bg-light rounded-3">
+        <div class="container-fluid py-3">
+            <h1 class="display-5 fw-bold">Bienvenue chez Vite & Gourmand</h1>
+            <p class="col-md-8 fs-5">
+                Une entreprise de traiteur bordelaise qui propose des menus pour tous vos événements.
+            </p>
+            <a href="#" class="btn btn-primary btn-lg">Voir les menus</a>
+        </div>
+    </div>
+
+    <section class="mb-5">
+        <h2 class="mb-3">Notre entreprise</h2>
+        <p>
+            Nous proposons des prestations traiteur pour différents événements avec des menus évolutifs,
+            adaptés aux besoins des clients.
+        </p>
+    </section>
+
+    <section class="mb-5">
+        <h2 class="mb-3">Notre équipe</h2>
+        <p>
+            Une équipe professionnelle au service de vos repas et événements.
+        </p>
+    </section>
+
+    <section>
+        <h2 class="mb-3">Avis clients</h2>
+        <div class="alert alert-secondary">
+            Les avis validés apparaîtront ici.
+        </div>
+    </section>
+{% endblock %}
