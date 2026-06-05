@@ -25,8 +25,8 @@ class Dish
     #[ORM\Column(length: 50)]
     private ?string $type = null;
 
-    #[ORM\Column(type: Types::DATE_IMMUTABLE)]
-    private ?\DateTimeImmutable $createAt = null;
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
+    private ?\DateTimeImmutable $createdAt = null;
 
     /**
      * @var Collection<int, Menu>
@@ -34,9 +34,16 @@ class Dish
     #[ORM\ManyToMany(targetEntity: Menu::class, mappedBy: 'dishes')]
     private Collection $menus;
 
+    /**
+     * @var Collection<int, Allergen>
+     */
+    #[ORM\ManyToMany(targetEntity: Allergen::class, inversedBy: 'dishes')]
+    private Collection $allergens;
+
     public function __construct()
     {
         $this->menus = new ArrayCollection();
+        $this->allergens = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -80,14 +87,14 @@ class Dish
         return $this;
     }
 
-    public function getCreateAt(): ?\DateTimeImmutable
+    public function getCreatedAt(): ?\DateTimeImmutable
     {
-        return $this->createAt;
+        return $this->createdAt;
     }
 
-    public function setCreateAt(\DateTimeImmutable $createAt): static
+    public function setCreatedAt(\DateTimeImmutable $createdAt): static
     {
-        $this->createAt = $createAt;
+        $this->createdAt = $createdAt;
 
         return $this;
     }
@@ -118,4 +125,29 @@ class Dish
 
         return $this;
     }
+
+    /**
+    * @return Collection<int, Allergen>
+    */
+    public function getAllergens(): Collection
+{
+    return $this->allergens;
+}
+
+public function addAllergen(Allergen $allergen): static
+{
+    if (!$this->allergens->contains($allergen)) {
+        $this->allergens->add($allergen);
+    }
+
+    return $this;
+}
+
+public function removeAllergen(Allergen $allergen): static
+{
+    $this->allergens->removeElement($allergen);
+
+    return $this;
+}
+
 }
