@@ -165,7 +165,7 @@ class Menu
         return $this;
     }
 
-    public function getcreatedAt(): ?\DateTimeImmutable
+    public function getCreatedAt(): ?\DateTimeImmutable
     {
         return $this->createdAt;
     }
@@ -177,7 +177,7 @@ class Menu
         return $this;
     }
 
-    public function getupdatedAt(): ?\DateTimeImmutable
+    public function getUpdatedAt(): ?\DateTimeImmutable
     {
         return $this->updatedAt;
     }

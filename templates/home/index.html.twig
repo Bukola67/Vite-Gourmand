@@ -29,9 +29,28 @@
     </section>
 
     <section>
-        <h2 class="mb-3">Avis clients</h2>
-        <div class="alert alert-secondary">
-            Les avis validés apparaîtront ici.
-        </div>
-    </section>
+    <h2 class="mb-3">Avis clients</h2>
+
+    <div class="row g-3">
+        {% for review in reviews %}
+            <div class="col-md-6">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body">
+                        <h3 class="h5">Note : {{ review.rating }}/5</h3>
+                        <p>{{ review.comment ?: 'Aucun commentaire.' }}</p>
+                        <p class="text-muted mb-0">
+                            Avis publié le {{ review.createdAt|date('d/m/Y') }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <div class="col-12">
+                <div class="alert alert-secondary">
+                    Aucun avis validé n’est disponible pour le moment.
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</section>
 {% endblock %}

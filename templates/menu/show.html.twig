@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{{ menu.titre }} - Vite & Gourmand{% endblock %}
+{% block title %}{{ menu.title }} - Vite & Gourmand{% endblock %}
 
 {% block body %}
     <div class="row justify-content-center">
@@ -9,20 +9,36 @@
 
             <div class="card shadow-sm">
                 <div class="card-body">
-                    <h1 class="mb-3">{{ menu.titre }}</h1>
+                    <h1 class="mb-3">{{ menu.title }}</h1>
                     <p class="lead">{{ menu.description }}</p>
 
                     <hr>
 
-                    <p><strong>Thème :</strong> {{ menu.theme }}</p>
-                    <p><strong>Prix minimum :</strong> {{ menu.prix }} €</p>
-                    <p><strong>Nombre minimum de personnes :</strong> {{ menu.personnes }}</p>
-                    <p><strong>Régime :</strong> {{ menu.regime }}</p>
+                    <p><strong>Thème :</strong> {{ menu.theme ?: 'Non renseigné' }}</p>
+                    <p><strong>Prix minimum :</strong> {{ menu.basePrice }} €</p>
+                    <p><strong>Nombre minimum de personnes :</strong> {{ menu.minimumPersons }}</p>
+                    <p><strong>Régime :</strong> {{ menu.diet ?: 'Non renseigné' }}</p>
+                    <p><strong>Stock disponible :</strong> {{ menu.stockAvailable ?? 'Non renseigné' }}</p>
 
                     <div class="alert alert-warning mt-4">
                         <strong>Conditions du menu :</strong><br>
-                        {{ menu.conditions }}
+                        {{ menu.conditionText ?: 'Aucune condition particulière renseignée.' }}
                     </div>
+
+                    <h2 class="h4 mt-4">Plats du menu</h2>
+
+                    {% if menu.dishes|length > 0 %}
+                        <ul class="list-group mb-4">
+                            {% for dish in menu.dishes %}
+                                <li class="list-group-item">
+                                    <strong>{{ dish.name }}</strong><br>
+                                    <span>{{ dish.description ?: 'Description non renseignée.' }}</span>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <div class="alert alert-info">Aucun plat n’est encore associé à ce menu.</div>
+                    {% endif %}
 
                     <a href="#" class="btn btn-success">Commander ce menu</a>
                 </div>

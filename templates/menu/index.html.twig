@@ -15,11 +15,11 @@
             <div class="col-md-6 col-lg-4">
                 <div class="card h-100 shadow-sm">
                     <div class="card-body">
-                        <h2 class="h5 card-title">{{ menu.titre }}</h2>
+                        <h2 class="h5 card-title">{{ menu.title }}</h2>
                         <p class="card-text">{{ menu.description }}</p>
-                        <p class="mb-1"><strong>Thème :</strong> {{ menu.theme }}</p>
-                        <p class="mb-1"><strong>Prix minimum :</strong> {{ menu.prix }} €</p>
-                        <p class="mb-3"><strong>Nombre minimum de personnes :</strong> {{ menu.personnes }}</p>
+                        <p class="mb-1"><strong>Thème :</strong> {{ menu.theme ?: 'Non renseigné' }}</p>
+                        <p class="mb-1"><strong>Prix minimum :</strong> {{ menu.basePrice }} €</p>
+                        <p class="mb-3"><strong>Nombre minimum de personnes :</strong> {{ menu.minimumPersons }}</p>
                         <a href="{{ path('app_menu_show', {id: menu.id}) }}" class="btn btn-primary">Voir le détail</a>
                     </div>
                 </div>
