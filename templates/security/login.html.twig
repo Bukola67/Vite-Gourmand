@@ -7,18 +7,44 @@
         <div class="col-md-6 col-lg-5">
             <h1 class="mb-4 text-center">Connexion</h1>
 
+            {% if error %}
+                <div class="alert alert-danger">
+                    {{ error.messageKey|trans(error.messageData, 'security') }}
+                </div>
+            {% endif %}
+
             <div class="card shadow-sm">
                 <div class="card-body">
-                    <form>
+                    <form method="post" action="{{ path('app_login') }}">
                         <div class="mb-3">
                             <label for="username" class="form-label">Adresse email</label>
-                            <input type="email" class="form-control" id="username" placeholder="Votre email">
+                                <input
+                                    type="email"
+                                    class="form-control"
+                                    id="username"
+                                    name="_username"
+                                    value="{{ last_username }}"
+                                    placeholder="Votre email"
+                                    autocomplete="email"
+                                    required
+                                    autofocus
+                                >
                         </div>
 
                         <div class="mb-3">
                             <label for="password" class="form-label">Mot de passe</label>
-                            <input type="password" class="form-control" id="password" placeholder="Votre mot de passe">
+                            <input
+                                type="password"
+                                class="form-control"
+                                id="password"
+                                name="_password"
+                                placeholder="Votre mot de passe"
+                                autocomplete="current-password"
+                                required
+                            >
                         </div>
+
+                        <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
 
                         <div class="d-grid">
                             <button type="submit" class="btn btn-primary">Se connecter</button>
