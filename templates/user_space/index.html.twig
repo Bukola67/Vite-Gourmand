@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon compte - Vite & Gourmand{% endblock %}
+
+{% block body %}
+    <div class="container py-5">
+        <h1 class="mb-4">Mon compte</h1>
+
+        <div class="row g-4">
+            <div class="col-md-6">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h2 class="h4 mb-3">Mes informations</h2>
+
+                        <p><strong>Prénom :</strong> {{ app.user.firstName }}</p>
+                        <p><strong>Nom :</strong> {{ app.user.lastName }}</p>
+                        <p><strong>Email :</strong> {{ app.user.email }}</p>
+                        <p><strong>Téléphone :</strong> {{ app.user.phone ?? 'Non renseigné' }}</p>
+                        <p><strong>Adresse :</strong> {{ app.user.address ?? 'Non renseignée' }}</p>
+                        <p><strong>Code postal :</strong> {{ app.user.postalCode ?? 'Non renseigné' }}</p>
+                        <p><strong>Ville :</strong> {{ app.user.city ?? 'Non renseignée' }}</p>
+
+                        <a href="{{ path('app_logout') }}" class="btn btn-outline-danger mt-3">Se déconnecter</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h2 class="h4 mb-3">Mes commandes</h2>
+                        <p>Vous n'avez pas encore de commande.</p>
+                        <p class="text-muted mb-0">Cette zone affichera bientôt l’historique de vos commandes.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
