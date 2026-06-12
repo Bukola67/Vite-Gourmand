@@ -29,8 +29,18 @@
                 <div class="card shadow-sm">
                     <div class="card-body">
                         <h2 class="h4 mb-3">Mes commandes</h2>
-                        <p>Vous n'avez pas encore de commande.</p>
-                        <p class="text-muted mb-0">Cette zone affichera bientôt l’historique de vos commandes.</p>
+
+                        {% for order in orders %}
+                            <div class="border rounded p-3 mb-3">
+                                <p class="mb-1"><strong>Commande :</strong> #{{ order.id }}</p>
+                                <p class="mb-1"><strong>Date :</strong> {{ order.createdAt ? order.createdAt|date('d/m/Y H:i') : 'Non renseignée' }}</p>
+                                <p class="mb-1"><strong>Statut :</strong> {{ order.status ?? 'En attente' }}</p>
+                                <p class="mb-0"><strong>Total :</strong> {{ order.totalPrice ? order.totalPrice|number_format(2, ',', ' ') : '0,00' }} €</p>
+                            </div>
+                        {% else %}
+                            <p>Vous n'avez pas encore de commande.</p>
+                            <p class="text-muted mb-0">Cette zone affichera bientôt l’historique de vos commandes.</p>
+                        {% endfor %}
                     </div>
                 </div>
             </div>

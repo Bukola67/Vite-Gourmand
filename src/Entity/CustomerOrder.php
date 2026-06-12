@@ -30,7 +30,7 @@ class CustomerOrder
     private ?string $deliveryAddress = null;
 
     #[ORM\Column(length: 20, nullable: true)]
-    private ?string $delivery�PostalCode = null;
+    private ?string $deliveryPostalCode = null;
 
     #[ORM\Column(length: 100, nullable: true)]
     private ?string $deliveryCity = null;
@@ -48,7 +48,7 @@ class CustomerOrder
     private ?int $personCount = null;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2, nullable: true)]
-    private ?string $MenuPrice = null;
+    private ?string $menuPrice = null;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2, nullable: true)]
     private ?string $deliveryPrice = null;
@@ -69,10 +69,10 @@ class CustomerOrder
     private ?string $contactMode = null;
 
     #[ORM\Column]
-    private ?\DateTimeImmutable $createAt = null;
+    private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\Column(nullable: true)]
-    private ?\DateTimeImmutable $updateAt = null;
+    private ?\DateTimeImmutable $updatedAt = null;
 
     #[ORM\ManyToOne(inversedBy: 'customerOrders')]
     private ?User $user = null;
@@ -135,26 +135,26 @@ class CustomerOrder
         return $this;
     }
 
-    public function getdeliveryAddress(): ?string
+   public function getDeliveryAddress(): ?string
     {
         return $this->deliveryAddress;
     }
 
-    public function setdeliveryAddress(?string $deliveryAddress): static
+    public function setDeliveryAddress(?string $deliveryAddress): static
     {
         $this->deliveryAddress = $deliveryAddress;
 
         return $this;
     }
 
-    public function getDelivery�PostalCode(): ?string
+    public function getDeliveryPostalCode(): ?string
     {
-        return $this->delivery�PostalCode;
+        return $this->deliveryPostalCode;
     }
 
-    public function setDelivery�PostalCode(?string $delivery�PostalCode): static
+    public function setDeliveryPostalCode(?string $deliveryPostalCode): static
     {
-        $this->delivery�PostalCode = $delivery�PostalCode;
+        $this->deliveryPostalCode = $deliveryPostalCode;
 
         return $this;
     }
@@ -221,12 +221,12 @@ class CustomerOrder
 
     public function getMenuPrice(): ?string
     {
-        return $this->MenuPrice;
+        return $this->menuPrice;
     }
 
-    public function setMenuPrice(?string $MenuPrice): static
+    public function setMenuPrice(?string $menuPrice): static
     {
-        $this->MenuPrice = $MenuPrice;
+        $this->menuPrice = $menuPrice;
 
         return $this;
     }
@@ -303,26 +303,26 @@ class CustomerOrder
         return $this;
     }
 
-    public function getCreateAt(): ?\DateTimeImmutable
+    public function getCreatedAt(): ?\DateTimeImmutable
     {
-        return $this->createAt;
+        return $this->createdAt;
     }
 
-    public function setCreateAt(\DateTimeImmutable $createAt): static
+    public function setCreatedAt(\DateTimeImmutable $createdAt): static
     {
-        $this->createAt = $createAt;
+        $this->createdAt = $createdAt;
 
         return $this;
     }
 
-    public function getUpdateAt(): ?\DateTimeImmutable
+    public function getUpdatedAt(): ?\DateTimeImmutable
     {
-        return $this->updateAt;
+        return $this->updatedAt;
     }
 
-    public function setUpdateAt(?\DateTimeImmutable $updateAt): static
+    public function setUpdatedAt(?\DateTimeImmutable $updatedAt): static
     {
-        $this->updateAt = $updateAt;
+        $this->updatedAt = $updatedAt;
 
         return $this;
     }
