@@ -1,19 +1,39 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Register{% endblock %}
+{% block title %}Créer un compte - Vite & Gourmand{% endblock %}
 
 {% block body %}
-    <h1>Register</h1>
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <h1 class="mb-4 text-center">Créer un compte</h1>
 
-    {{ form_errors(registrationForm) }}
+        <div class="card shadow-sm">
+            <div class="card-body">
+                {{ form_start(registrationForm) }}
+                {{ form_errors(registrationForm) }}
 
-    {{ form_start(registrationForm) }}
-        {{ form_row(registrationForm.email) }}
-        {{ form_row(registrationForm.plainPassword, {
-            label: 'Password'
-        }) }}
-        {{ form_row(registrationForm.agreeTerms) }}
+                {{ form_row(registrationForm.firstName) }}
+                {{ form_row(registrationForm.lastName) }}
+                {{ form_row(registrationForm.email) }}
+                {{ form_row(registrationForm.phone) }}
+                {{ form_row(registrationForm.address) }}
+                {{ form_row(registrationForm.postalCode) }}
+                {{ form_row(registrationForm.city) }}
+                {{ form_row(registrationForm.plainPassword.first) }}
+                {{ form_row(registrationForm.plainPassword.second) }}
 
-        <button type="submit" class="btn">Register</button>
-    {{ form_end(registrationForm) }}
+                <div class="mt-3">
+                    {{ form_row(registrationForm.agreeTerms) }}
+                </div>
+
+                <div class="d-grid mt-4">
+                    <button type="submit" class="btn btn-primary">Créer mon compte</button>
+                </div>
+
+                {{ form_rest(registrationForm) }}
+                {{ form_end(registrationForm, {'render_rest': false}) }}
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

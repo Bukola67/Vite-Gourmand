@@ -19,21 +19,78 @@ class RegistrationFormType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('firstName')
-            ->add('lastName')
-            ->add('email')
-            ->add('phone')
-            ->add('address')
-            ->add('postalCode')
-            ->add('city')
+            ->add('firstName', null, [
+                    'label' => 'Prénom',
+                    'required' => true,
+                    'constraints' => [
+                        new NotBlank(
+                            message: 'Le prénom est obligatoire.',
+                        ),
+                    ],
+                ])
+            ->add('lastName', null, [
+                    'label' => 'Nom',
+                    'required' => true,
+                    'constraints' => [
+                        new NotBlank(
+                            message: 'Le nom est obligatoire.',
+                        ),
+                    ],
+                ])
+            ->add('email', null, [
+                    'label' => 'Adresse email',
+                    'required' => true,
+                    'constraints' => [
+                        new NotBlank(
+                            message: 'L’adresse email est obligatoire.',
+                        ),
+                    ],
+                ])
+            ->add('phone', null, [
+                    'label' => 'Téléphone',
+                    'required' => true,
+                    'constraints' => [
+                        new NotBlank(
+                            message: 'Le téléphone est obligatoire.',
+                        ),
+                    ],
+                ])
+            ->add('address', null, [
+                    'label' => 'Adresse postale',
+                    'required' => true,
+                    'constraints' => [
+                        new NotBlank(
+                            message: 'L’adresse postale est obligatoire.',
+                        ),
+                    ],
+                ])
+            ->add('postalCode', null, [
+                    'label' => 'Code postal',
+                    'required' => true,
+                    'constraints' => [
+                        new NotBlank(
+                            message: 'Le code postal est obligatoire.',
+                        ),
+                    ],
+                ])
+            ->add('city', null, [
+                    'label' => 'Ville',
+                    'required' => true,
+                    'constraints' => [
+                        new NotBlank(
+                            message: 'La ville est obligatoire.',
+                        ),
+                    ],
+                ])
             ->add('agreeTerms', CheckboxType::class, [
-                'mapped' => false,
-                'constraints' => [
-                    new IsTrue(
-                        message: 'Vous devez accepter les conditions.',
-                    ),
-                ],
-            ])
+            'label' => 'J’accepte les conditions générales',
+            'mapped' => false,
+            'constraints' => [
+                new IsTrue(
+                    message: 'Vous devez accepter les conditions.',
+                ),
+            ],
+        ])
             ->add('plainPassword', RepeatedType::class, [
                 'type' => PasswordType::class,
                 'mapped' => false,
