@@ -22,28 +22,28 @@ class CustomerOrderType extends AbstractType
                 'label' => 'Adresse de livraison',
                 'required' => true,
                 'constraints' => [
-                    new NotBlank(['message' => 'L’adresse de livraison est obligatoire.']),
+                    new NotBlank(message: 'L’adresse de livraison est obligatoire.'),
                 ],
             ])
             ->add('deliveryPostalCode', TextType::class, [
                 'label' => 'Code postal',
                 'required' => true,
                 'constraints' => [
-                    new NotBlank(['message' => 'Le code postal est obligatoire.']),
+                    new NotBlank(message: 'Le code postal est obligatoire.'),
                 ],
             ])
             ->add('deliveryCity', TextType::class, [
                 'label' => 'Ville',
                 'required' => true,
                 'constraints' => [
-                    new NotBlank(['message' => 'La ville est obligatoire.']),
+                    new NotBlank(message: 'La ville est obligatoire.'),
                 ],
             ])
             ->add('deliveryPlace', TextType::class, [
                 'label' => 'Lieu de livraison',
                 'required' => true,
                 'constraints' => [
-                    new NotBlank(['message' => 'Le lieu de livraison est obligatoire.']),
+                    new NotBlank(message: 'Le lieu de livraison est obligatoire.'),
                 ],
             ])
             ->add('deliveryDate', DateType::class, [
@@ -51,7 +51,7 @@ class CustomerOrderType extends AbstractType
                 'widget' => 'single_text',
                 'required' => true,
                 'constraints' => [
-                    new NotBlank(['message' => 'La date de prestation est obligatoire.']),
+                    new NotBlank(message: 'La date de prestation est obligatoire.'),
                 ],
             ])
             ->add('deliveryTime', TimeType::class, [
@@ -59,14 +59,14 @@ class CustomerOrderType extends AbstractType
                 'widget' => 'single_text',
                 'required' => true,
                 'constraints' => [
-                    new NotBlank(['message' => 'L’heure de livraison est obligatoire.']),
+                    new NotBlank(message: 'L’heure de livraison est obligatoire.'),
                 ],
             ])
             ->add('personCount', IntegerType::class, [
                 'label' => 'Nombre de personnes',
                 'required' => true,
                 'constraints' => [
-                    new NotBlank(['message' => 'Le nombre de personnes est obligatoire.']),
+                    new NotBlank(message: 'Le nombre de personnes est obligatoire.'),
                     new GreaterThanOrEqual([
                         'value' => 1,
                         'message' => 'Le nombre de personnes doit être supérieur ou égal à 1.',
