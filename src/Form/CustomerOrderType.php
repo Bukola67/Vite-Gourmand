@@ -52,6 +52,10 @@ class CustomerOrderType extends AbstractType
                 'required' => true,
                 'constraints' => [
                     new NotBlank(message: 'La date de prestation est obligatoire.'),
+                    new GreaterThanOrEqual(
+                                value: 'today',
+                                message: 'La date de prestation doit être aujourd’hui ou ultérieure.',
+                            ),
                 ],
             ])
             ->add('deliveryTime', TimeType::class, [
@@ -67,10 +71,10 @@ class CustomerOrderType extends AbstractType
                 'required' => true,
                 'constraints' => [
                     new NotBlank(message: 'Le nombre de personnes est obligatoire.'),
-                    new GreaterThanOrEqual([
-                        'value' => 1,
-                        'message' => 'Le nombre de personnes doit être supérieur ou égal à 1.',
-                    ]),
+                    new GreaterThanOrEqual(
+                        value: 1,
+                        message: 'Le nombre de personnes doit être supérieur ou égal à 1.',
+                    ),
                 ],
             ])
         ;

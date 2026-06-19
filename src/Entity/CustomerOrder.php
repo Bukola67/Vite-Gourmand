@@ -5,8 +5,11 @@ namespace App\Entity;
 use App\Repository\CustomerOrderRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 #[ORM\Entity(repositoryClass: CustomerOrderRepository::class)]
+#[Assert\Callback('validateDeliveryDateTime')]
 class CustomerOrder
 {
     #[ORM\Id]
@@ -351,4 +354,26 @@ class CustomerOrder
 
         return $this;
     }
+
+    public function validateDeliveryDateTime(ExecutionContextInterface $context): void
+    {
+        if (!$this->deliveryDate || !$this->deliveryTime) {
+            return;
+        }
+
+        $timezone = new \DateTimeZone('Europe/Paris');
+        $now = new \DateTimeImmutable('now', $timezone);
+
+        $deliveryDateTime = new \DateTimeImmutable(
+            $this->deliveryDate->format('Y-m-d') . ' ' . $this->deliveryTime->format('H:i:s'),
+            $timezone
+        );
+
+        if ($deliveryDateTime <= $now) {
+            $context->buildViolation('La date et l’heure de livraison doivent être postérieures à maintenant.')
+                ->atPath('deliveryTime')
+                ->addViolation();
+        }
+    }
 }
+    

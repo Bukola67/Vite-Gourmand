@@ -19,11 +19,6 @@
                     <p><strong>Nombre minimum de personnes :</strong> {{ menu.personnes }}</p>
                     <p><strong>Régime :</strong> {{ menu.regime }}</p>
 
-                    <div class="alert alert-warning mt-4">
-                        <strong>Conditions du menu :</strong><br>
-                        {{ menu.conditions }}
-                    </div>
-
                     <a href="{{ path('app_order_new', {'id': menu.id}) }}" class="btn btn-primary">
                         Commander
                     </a>

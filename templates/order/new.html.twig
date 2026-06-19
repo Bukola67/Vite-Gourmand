@@ -27,7 +27,7 @@
             </div>
         </div>
 
-        {{ form_start(orderForm) }}
+        {{ form_start(orderForm, { attr: { novalidate: 'novalidate' } }) }}
             {{ form_row(orderForm.deliveryAddress) }}
             {{ form_row(orderForm.deliveryPostalCode) }}
             {{ form_row(orderForm.deliveryCity) }}
