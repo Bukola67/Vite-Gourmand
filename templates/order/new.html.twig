@@ -1,0 +1,44 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Commander un menu{% endblock %}
+
+{% block body %}
+    <div class="container mt-4">
+        <h1>Commander le menu</h1>
+
+        {% for label, messages in app.flashes(['success', 'warning', 'danger']) %}
+            {% for message in messages %}
+                <div class="alert alert-{{ label }} mb-3">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endfor %}
+
+        <div class="card mb-4">
+            <div class="card-body">
+                <h2>{{ menu.title }}</h2>
+                <p>{{ menu.description }}</p>
+                <p><strong>Nombre minimum de personnes :</strong> {{ menu.minimumPersons }}</p>
+                <p><strong>Prix de base :</strong> {{ menu.basePrice }} €</p>
+
+                {% if menu.conditionText %}
+                    <p><strong>Conditions :</strong> {{ menu.conditionText }}</p>
+                {% endif %}
+            </div>
+        </div>
+Ò
+        {{ form_start(orderForm) }}
+            {{ form_row(orderForm.deliveryAddress) }}
+            {{ form_row(orderForm.deliveryPostalCode) }}
+            {{ form_row(orderForm.deliveryCity) }}
+            {{ form_row(orderForm.deliveryPlace) }}
+            {{ form_row(orderForm.deliveryDate) }}
+            {{ form_row(orderForm.deliveryTime) }}
+            {{ form_row(orderForm.personCount) }}
+
+            <button type="submit" class="btn btn-primary mt-3">
+                Valider la commande
+            </button>
+        {{ form_end(orderForm) }}
+    </div>
+{% endblock %}

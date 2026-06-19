@@ -165,7 +165,7 @@ class Menu
         return $this;
     }
 
-    public function getcreatedAt(): ?\DateTimeImmutable
+    public function getCreatedAt(): ?\DateTimeImmutable
     {
         return $this->createdAt;
     }
@@ -177,7 +177,7 @@ class Menu
         return $this;
     }
 
-    public function getupdatedAt(): ?\DateTimeImmutable
+    public function getUpdatedAt(): ?\DateTimeImmutable
     {
         return $this->updatedAt;
     }
@@ -233,12 +233,7 @@ class Menu
 
     public function removeCustomerOrder(CustomerOrder $customerOrder): static
     {
-        if ($this->customerOrders->removeElement($customerOrder)) {
-            // set the owning side to null (unless already changed)
-            if ($customerOrder->getMenu() === $this) {
-                $customerOrder->setMenu(null);
-            }
-        }
+        $this->customerOrders->removeElement($customerOrder);
 
         return $this;
     }

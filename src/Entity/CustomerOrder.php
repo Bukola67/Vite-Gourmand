@@ -18,21 +18,21 @@ class CustomerOrder
     private ?string $customerFirstName = null;
 
     #[ORM\Column(length: 100)]
-    private ?string $customerLastname = null;
+    private ?string $customerLastName = null;
 
     #[ORM\Column(length: 180)]
     private ?string $customerEmail = null;
 
-    #[ORM\Column(length: 20, nullable: true)]
+    #[ORM\Column(length: 20)]
     private ?string $customerPhone = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
+    #[ORM\Column(length: 255)]
     private ?string $deliveryAddress = null;
 
-    #[ORM\Column(length: 20, nullable: true)]
+    #[ORM\Column(length: 20)]
     private ?string $deliveryPostalCode = null;
 
-    #[ORM\Column(length: 100, nullable: true)]
+    #[ORM\Column(length: 100)]
     private ?string $deliveryCity = null;
 
     #[ORM\Column(type: Types::TIME_IMMUTABLE)]
@@ -41,7 +41,7 @@ class CustomerOrder
     #[ORM\Column(type: Types::DATE_IMMUTABLE)]
     private ?\DateTimeImmutable $deliveryDate = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
+    #[ORM\Column(length: 255)]
     private ?string $deliveryPlace = null;
 
     #[ORM\Column]
@@ -78,6 +78,7 @@ class CustomerOrder
     private ?User $user = null;
 
     #[ORM\ManyToOne(inversedBy: 'customerOrders')]
+    #[ORM\JoinColumn(nullable: false)]
     private ?Menu $menu = null;
 
 
@@ -99,14 +100,14 @@ class CustomerOrder
         return $this;
     }
 
-    public function getCustomerLastname(): ?string
+    public function getCustomerLastName(): ?string
     {
-        return $this->customerLastname;
+        return $this->customerLastName;
     }
 
-    public function setCustomerLastname(string $customerLastname): static
+    public function setCustomerLastName(string $customerLastName): static
     {
-        $this->customerLastname = $customerLastname;
+        $this->customerLastName = $customerLastName;
 
         return $this;
     }
@@ -128,7 +129,7 @@ class CustomerOrder
         return $this->customerPhone;
     }
 
-    public function setCustomerPhone(?string $customerPhone): static
+    public function setCustomerPhone(string $customerPhone): static
     {
         $this->customerPhone = $customerPhone;
 
@@ -140,7 +141,7 @@ class CustomerOrder
         return $this->deliveryAddress;
     }
 
-    public function setDeliveryAddress(?string $deliveryAddress): static
+    public function setDeliveryAddress(string $deliveryAddress): static
     {
         $this->deliveryAddress = $deliveryAddress;
 
@@ -152,7 +153,7 @@ class CustomerOrder
         return $this->deliveryPostalCode;
     }
 
-    public function setDeliveryPostalCode(?string $deliveryPostalCode): static
+    public function setDeliveryPostalCode(string $deliveryPostalCode): static
     {
         $this->deliveryPostalCode = $deliveryPostalCode;
 
@@ -164,7 +165,7 @@ class CustomerOrder
         return $this->deliveryCity;
     }
 
-    public function setDeliveryCity(?string $deliveryCity): static
+    public function setDeliveryCity(string $deliveryCity): static
     {
         $this->deliveryCity = $deliveryCity;
 
@@ -200,7 +201,7 @@ class CustomerOrder
         return $this->deliveryPlace;
     }
 
-    public function setDeliveryPlace(?string $deliveryPlace): static
+    public function setDeliveryPlace(string $deliveryPlace): static
     {
         $this->deliveryPlace = $deliveryPlace;
 
