@@ -1,49 +1,48 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Mon compte - Vite & Gourmand{% endblock %}
+{% block title %}Mon compte{% endblock %}
 
 {% block body %}
-    <div class="container py-5">
-        <h1 class="mb-4">Mon compte</h1>
+<div class="container mt-4">
+    <h1>Mes commandes</h1>
 
-        <div class="row g-4">
-            <div class="col-md-6">
-                <div class="card shadow-sm">
-                    <div class="card-body">
-                        <h2 class="h4 mb-3">Mes informations</h2>
-
-                        <p><strong>Prénom :</strong> {{ app.user.firstName }}</p>
-                        <p><strong>Nom :</strong> {{ app.user.lastName }}</p>
-                        <p><strong>Email :</strong> {{ app.user.email }}</p>
-                        <p><strong>Téléphone :</strong> {{ app.user.phone ?? 'Non renseigné' }}</p>
-                        <p><strong>Adresse :</strong> {{ app.user.address ?? 'Non renseignée' }}</p>
-                        <p><strong>Code postal :</strong> {{ app.user.postalCode ?? 'Non renseigné' }}</p>
-                        <p><strong>Ville :</strong> {{ app.user.city ?? 'Non renseignée' }}</p>
-
-                        <a href="{{ path('app_logout') }}" class="btn btn-outline-danger mt-3">Se déconnecter</a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-6">
-                <div class="card shadow-sm">
-                    <div class="card-body">
-                        <h2 class="h4 mb-3">Mes commandes</h2>
-
-                        {% for order in orders %}
-                            <div class="border rounded p-3 mb-3">
-                                <p class="mb-1"><strong>Commande :</strong> #{{ order.id }}</p>
-                                <p class="mb-1"><strong>Date :</strong> {{ order.createdAt ? order.createdAt|date('d/m/Y H:i') : 'Non renseignée' }}</p>
-                                <p class="mb-1"><strong>Statut :</strong> {{ order.status ?? 'En attente' }}</p>
-                                <p class="mb-0"><strong>Total :</strong> {{ order.totalPrice ? order.totalPrice|number_format(2, ',', ' ') : '0,00' }} €</p>
-                            </div>
-                        {% else %}
-                            <p>Vous n'avez pas encore de commande.</p>
-                            <p class="text-muted mb-0">Cette zone affichera bientôt l’historique de vos commandes.</p>
-                        {% endfor %}
-                    </div>
-                </div>
-            </div>
+    {% if orders|length > 0 %}
+        <table class="table table-striped mt-4">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Menu</th>
+                    <th>Date prestation</th>
+                    <th>Heure</th>
+                    <th>Personnes</th>
+                    <th>Statut</th>
+                    <th>Total</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in orders %}
+                    <tr>
+                        <td>#{{ order.id }}</td>
+                        <td>{{ order.menu.title }}</td>
+                        <td>{{ order.deliveryDate ? order.deliveryDate|date('d/m/Y') : '' }}</td>
+                        <td>{{ order.deliveryTime ? order.deliveryTime|date('H:i') : '' }}</td>
+                        <td>{{ order.personCount }}</td>
+                        <td>{{ order.status }}</td>
+                        <td>{{ order.totalPrice }} €</td>
+                        <td>
+                            <a href="{{ path('app_user_order_show', {id: order.id}) }}" class="btn btn-sm btn-outline-primary">
+                                Voir le détail
+                            </a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <div class="alert alert-info mt-4">
+            Vous n’avez encore passé aucune commande.
         </div>
-    </div>
+    {% endif %}
+</div>
 {% endblock %}

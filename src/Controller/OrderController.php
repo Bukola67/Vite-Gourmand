@@ -4,12 +4,14 @@ namespace App\Controller;
 
 use App\Entity\CustomerOrder;
 use App\Entity\Menu;
+use App\Entity\OrderStatusHistory;
 use App\Form\CustomerOrderType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+
 
 #[Route('/commande', name: 'app_order_')]
 final class OrderController extends AbstractController
@@ -81,6 +83,13 @@ final class OrderController extends AbstractController
             $order->setTotalPrice(number_format($totalPrice, 2, '.', ''));
 
             $entityManager->persist($order);
+
+            $history = new OrderStatusHistory();
+            $history->setStatus($order->getStatus());
+            $history->setChangedAt(new \DateTimeImmutable());
+            $history->setCustomerOrder($order);
+
+            $entityManager->persist($history);
             $entityManager->flush();
 
             $this->addFlash('success', 'Votre commande a bien été enregistrée.');

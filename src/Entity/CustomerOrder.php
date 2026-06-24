@@ -7,6 +7,8 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 
 #[ORM\Entity(repositoryClass: CustomerOrderRepository::class)]
 #[Assert\Callback('validateDeliveryDateTime')]
@@ -83,7 +85,12 @@ class CustomerOrder
     #[ORM\ManyToOne(inversedBy: 'customerOrders')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Menu $menu = null;
-
+    /**
+     * @var Collection<int, OrderStatusHistory>
+     */
+    #[ORM\OneToMany(mappedBy: 'customerOrder', targetEntity: OrderStatusHistory::class, orphanRemoval: true)]
+    #[ORM\OrderBy(['changedAt' => 'DESC'])]
+    private Collection $orderStatusHistories;
 
 
     public function getId(): ?int
@@ -375,5 +382,39 @@ class CustomerOrder
                 ->addViolation();
         }
     }
+
+        public function __construct()
+        {
+            $this->orderStatusHistories = new ArrayCollection();
+        }
+        /**
+         * @return Collection<int, OrderStatusHistory>
+         */
+        public function getOrderStatusHistories(): Collection
+        {
+            return $this->orderStatusHistories;
+        }
+
+        public function addOrderStatusHistory(OrderStatusHistory $orderStatusHistory): static
+        {
+            if (!$this->orderStatusHistories->contains($orderStatusHistory)) {
+                $this->orderStatusHistories->add($orderStatusHistory);
+                $orderStatusHistory->setCustomerOrder($this);
+            }
+
+            return $this;
+        }
+
+        public function removeOrderStatusHistory(OrderStatusHistory $orderStatusHistory): static
+        {
+            if ($this->orderStatusHistories->removeElement($orderStatusHistory)) {
+                if ($orderStatusHistory->getCustomerOrder() === $this) {
+                    $orderStatusHistory->setCustomerOrder(null);
+                }
+            }
+
+            return $this;
+        }
+
 }
     
