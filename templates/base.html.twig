@@ -35,32 +35,42 @@
                 </li>
                 <li class="nav-item">
                     <a class="nav-link {{ app.request.attributes.get('_route') == 'app_contact' ? 'active' : '' }}"
-                        href="{{ path('app_contact') }}">
+                       href="{{ path('app_contact') }}">
                         Contact
                     </a>
                 </li>
+
                 {% if app.user %}
                     <li class="nav-item">
                         <a class="nav-link {{ app.request.attributes.get('_route') == 'app_user_space' ? 'active' : '' }}"
-                        href="{{ path('app_user_space') }}">
+                           href="{{ path('app_user_space') }}">
                             Mon compte
                         </a>
                     </li>
+
+                    {% if is_granted('ROLE_EMPLOYEE') or is_granted('ROLE_ADMIN') %}
+                        <li class="nav-item">
+                            <a class="nav-link {{ app.request.attributes.get('_route') == 'app_employee_orders' ? 'active' : '' }}"
+                               href="{{ path('app_employee_orders') }}">
+                                Espace employé
+                            </a>
+                        </li>
+                    {% endif %}
+
                     <li class="nav-item">
                         <a class="nav-link"
-                        href="{{ path('app_logout') }}">
+                           href="{{ path('app_logout') }}">
                             Déconnexion
                         </a>
                     </li>
                 {% else %}
                     <li class="nav-item">
                         <a class="nav-link {{ app.request.attributes.get('_route') == 'app_login' ? 'active' : '' }}"
-                        href="{{ path('app_login') }}">
+                           href="{{ path('app_login') }}">
                             Connexion
                         </a>
                     </li>
                 {% endif %}
-
             </ul>
         </div>
     </div>

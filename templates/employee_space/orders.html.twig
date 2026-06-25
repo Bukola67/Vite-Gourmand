@@ -1,0 +1,66 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Espace employé - Commandes{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+    <h1>Gestion des commandes</h1>
+
+    <form method="get" class="row g-3 mb-4">
+        <div class="col-md-4">
+            <label for="status" class="form-label">Filtrer par statut</label>
+            <select name="status" id="status" class="form-select">
+                <option value="">Tous les statuts</option>
+                <option value="en_attente" {{ selectedStatus == 'en_attente' ? 'selected' : '' }}>En attente</option>
+                <option value="acceptee" {{ selectedStatus == 'acceptee' ? 'selected' : '' }}>Acceptée</option>
+                <option value="en_preparation" {{ selectedStatus == 'en_preparation' ? 'selected' : '' }}>En préparation</option>
+                <option value="en_livraison" {{ selectedStatus == 'en_livraison' ? 'selected' : '' }}>En livraison</option>
+                <option value="livree" {{ selectedStatus == 'livree' ? 'selected' : '' }}>Livrée</option>
+                <option value="terminee" {{ selectedStatus == 'terminee' ? 'selected' : '' }}>Terminée</option>
+                <option value="annulee" {{ selectedStatus == 'annulee' ? 'selected' : '' }}>Annulée</option>
+            </select>
+        </div>
+
+        <div class="col-md-2 d-flex align-items-end">
+            <button type="submit" class="btn btn-primary">Filtrer</button>
+        </div>
+    </form>
+
+    {% if orders|length > 0 %}
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Client</th>
+                    <th>Menu</th>
+                    <th>Date</th>
+                    <th>Statut</th>
+                    <th>Total</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in orders %}
+                    <tr>
+                        <td>#{{ order.id }}</td>
+                        <td>{{ order.customerFirstName }} {{ order.customerLastName }}</td>
+                        <td>{{ order.menu.title }}</td>
+                        <td>{{ order.createdAt ? order.createdAt|date('d/m/Y H:i') : '' }}</td>
+                        <td>{{ order.status }}</td>
+                        <td>{{ order.totalPrice }} €</td>
+                        <td>
+                            <a href="{{ path('app_employee_order_show', {id: order.id}) }}" class="btn btn-sm btn-outline-primary">
+                                Voir
+                            </a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <div class="alert alert-info">
+            Aucune commande trouvée.
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

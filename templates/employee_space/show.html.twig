@@ -1,0 +1,82 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Commande employé{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+    <h1>Commande #{{ order.id }}</h1>
+
+    <a href="{{ path('app_employee_orders') }}" class="btn btn-secondary mb-4">
+        Retour à la liste
+    </a>
+
+    {% for label, messages in app.flashes(['success', 'danger']) %}
+        {% for message in messages %}
+            <div class="alert alert-{{ label }} mb-3">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endfor %}
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <h2 class="h4 mb-3">Informations</h2>
+
+            <p><strong>Client :</strong> {{ order.customerFirstName }} {{ order.customerLastName }}</p>
+            <p><strong>Email :</strong> {{ order.customerEmail }}</p>
+            <p><strong>Téléphone :</strong> {{ order.customerPhone }}</p>
+            <p><strong>Menu :</strong> {{ order.menu.title }}</p>
+            <p><strong>Statut actuel :</strong> {{ order.status }}</p>
+            <p><strong>Date de prestation :</strong> {{ order.deliveryDate ? order.deliveryDate|date('d/m/Y') : '' }}</p>
+            <p><strong>Heure :</strong> {{ order.deliveryTime ? order.deliveryTime|date('H:i') : '' }}</p>
+            <p><strong>Total :</strong> {{ order.totalPrice }} €</p>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <h2 class="h4 mb-3">Changer le statut</h2>
+
+            <form method="post" action="{{ path('app_employee_order_status_update', {id: order.id}) }}">
+                <input type="hidden" name="_token" value="{{ csrf_token('update_status_' ~ order.id) }}">
+
+                <div class="mb-3">
+                    <label for="status" class="form-label">Nouveau statut</label>
+                    <select name="status" id="status" class="form-select">
+                        <option value="en_attente" {{ order.status == 'en_attente' ? 'selected' : '' }}>En attente</option>
+                        <option value="acceptee" {{ order.status == 'acceptee' ? 'selected' : '' }}>Acceptée</option>
+                        <option value="en_preparation" {{ order.status == 'en_preparation' ? 'selected' : '' }}>En préparation</option>
+                        <option value="en_livraison" {{ order.status == 'en_livraison' ? 'selected' : '' }}>En livraison</option>
+                        <option value="livree" {{ order.status == 'livree' ? 'selected' : '' }}>Livrée</option>
+                        <option value="terminee" {{ order.status == 'terminee' ? 'selected' : '' }}>Terminée</option>
+                        <option value="annulee" {{ order.status == 'annulee' ? 'selected' : '' }}>Annulée</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn btn-primary">
+                    Mettre à jour le statut
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <h2 class="h4 mb-3">Historique des statuts</h2>
+
+            {% if order.orderStatusHistories|length > 0 %}
+                <ul class="list-group">
+                    {% for history in order.orderStatusHistories %}
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>{{ history.status }}</span>
+                            <span>{{ history.changedAt ? history.changedAt|date('d/m/Y H:i') : '' }}</span>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>Aucun historique disponible.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
