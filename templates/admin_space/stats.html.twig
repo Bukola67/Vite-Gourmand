@@ -1,0 +1,118 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Statistiques administrateur{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+    <h1>Statistiques des commandes</h1>
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <h2 class="h4 mb-3">Comparaison du nombre de commandes par menu</h2>
+
+            <canvas id="ordersChart" height="120"></canvas>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <h2 class="h4 mb-3">Filtrer le chiffre d'affaires</h2>
+
+            <form method="get" class="row g-3">
+                <div class="col-md-4">
+                    <label for="menuId" class="form-label">Menu</label>
+                    <select name="menuId" id="menuId" class="form-select">
+                        <option value="">Tous les menus</option>
+                        {% for menu in menus %}
+                            <option value="{{ menu.id }}" {{ selectedMenuId == menu.id ? 'selected' : '' }}>
+                                {{ menu.title }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="col-md-3">
+                    <label for="startMonth" class="form-label">Début</label>
+                    <input type="month" name="startMonth" id="startMonth" class="form-control" value="{{ startMonth }}">
+                </div>
+
+                <div class="col-md-3">
+                    <label for="endMonth" class="form-label">Fin</label>
+                    <input type="month" name="endMonth" id="endMonth" class="form-control" value="{{ endMonth }}">
+                </div>
+
+                <div class="col-md-2 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary">Filtrer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <h2 class="h4 mb-3">Chiffre d'affaires par menu</h2>
+
+            {% if revenueStats|length > 0 %}
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Menu</th>
+                            <th>Commandes</th>
+                            <th>Chiffre d'affaires</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for stat in revenueStats %}
+                            <tr>
+                                <td>{{ stat.menuTitle }}</td>
+                                <td>{{ stat.totalOrders }}</td>
+                                <td>{{ stat.revenue|number_format(2, ',', ' ') }} €</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p>Aucune donnée disponible.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const labels = [
+            {% for stat in chartStats %}
+                "{{ stat.menuTitle|e('js') }}",
+            {% endfor %}
+        ];
+
+        const data = [
+            {% for stat in chartStats %}
+                {{ stat.totalOrders ?? 0 }},
+            {% endfor %}
+        ];
+
+        new Chart(document.getElementById('ordersChart'), {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Nombre de commandes',
+                    data: data,
+                    backgroundColor: '#0d6efd'
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
+            }
+        });
+    </script>
+{% endblock %}

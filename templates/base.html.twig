@@ -47,12 +47,20 @@
                             Mon compte
                         </a>
                     </li>
-
+                {% endif %}
                     {% if is_granted('ROLE_EMPLOYEE') or is_granted('ROLE_ADMIN') %}
                         <li class="nav-item">
                             <a class="nav-link {{ app.request.attributes.get('_route') == 'app_employee_orders' ? 'active' : '' }}"
                                href="{{ path('app_employee_orders') }}">
                                 Espace employé
+                            </a>
+                        </li>
+
+                    {% if is_granted('ROLE_ADMIN') %}
+                        <li class="nav-item">
+                            <a class="nav-link {{ app.request.attributes.get('_route') starts with 'app_admin_' ? 'active' : '' }}"
+                            href="{{ path('app_admin_index') }}">
+                                Espace admin
                             </a>
                         </li>
                     {% endif %}

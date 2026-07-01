@@ -1,0 +1,54 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Espace administrateur{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+    <h1>Espace administrateur</h1>
+
+    {% for label, messages in app.flashes(['success', 'danger']) %}
+        {% for message in messages %}
+            <div class="alert alert-{{ label }}">{{ message }}</div>
+        {% endfor %}
+    {% endfor %}
+
+    <a href="{{ path('app_admin_employee_new') }}" class="btn btn-primary mb-4">
+        Créer un employé
+    </a>
+
+    <a href="{{ path('app_admin_stats') }}" class="btn btn-outline-primary mb-4">
+    Voir les statistiques
+    </a>
+
+    
+
+    <h2 class="h4 mb-3">Liste des utilisateurs</h2>
+
+    {% if employees|length > 0 %}
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nom</th>
+                    <th>Email</th>
+                    <th>Rôles</th>
+                    <th>Actif</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for employee in employees %}
+                    <tr>
+                        <td>{{ employee.id }}</td>
+                        <td>{{ employee.firstName }} {{ employee.lastName }}</td>
+                        <td>{{ employee.email }}</td>
+                        <td>{{ employee.roles|join(', ') }}</td>
+                        <td>{{ employee.isActive ? 'Oui' : 'Non' }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>Aucun utilisateur trouvé.</p>
+    {% endif %}
+</div>
+{% endblock %}

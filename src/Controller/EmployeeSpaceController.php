@@ -13,7 +13,9 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/employe', name: 'app_employee_')]
-#[IsGranted('ROLE_EMPLOYEE')]
+#[IsGranted(new \Symfony\Component\ExpressionLanguage\Expression(
+    "is_granted('ROLE_EMPLOYEE') or is_granted('ROLE_ADMIN')"
+))]
 class EmployeeSpaceController extends AbstractController
 {
     #[Route('/commandes', name: 'orders')]

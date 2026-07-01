@@ -11,7 +11,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-
+use App\Service\MongoStatsService;
 
 #[Route('/commande', name: 'app_order_')]
 final class OrderController extends AbstractController
@@ -20,7 +20,8 @@ final class OrderController extends AbstractController
     public function new(
         Menu $menu,
         Request $request,
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
+        MongoStatsService $mongoStatsService
     ): Response {        
         $this->denyAccessUnlessGranted('ROLE_USER');
 
@@ -91,7 +92,9 @@ final class OrderController extends AbstractController
 
             $entityManager->persist($history);
             $entityManager->flush();
-
+            
+            $mongoStatsService->incrementOrderStats($order);
+            
             $this->addFlash('success', 'Votre commande a bien été enregistrée.');
 
             return $this->redirectToRoute('app_user_space');
