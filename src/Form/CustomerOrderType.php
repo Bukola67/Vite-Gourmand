@@ -21,6 +21,7 @@ class CustomerOrderType extends AbstractType
             ->add('deliveryAddress', TextType::class, [
                 'label' => 'Adresse de livraison',
                 'required' => true,
+                'empty_data' => '',
                 'constraints' => [
                     new NotBlank(message: 'L’adresse de livraison est obligatoire.'),
                 ],
@@ -28,6 +29,7 @@ class CustomerOrderType extends AbstractType
             ->add('deliveryPostalCode', TextType::class, [
                 'label' => 'Code postal',
                 'required' => true,
+                'empty_data' => '',
                 'constraints' => [
                     new NotBlank(message: 'Le code postal est obligatoire.'),
                 ],
@@ -35,6 +37,7 @@ class CustomerOrderType extends AbstractType
             ->add('deliveryCity', TextType::class, [
                 'label' => 'Ville',
                 'required' => true,
+                'empty_data' => '',
                 'constraints' => [
                     new NotBlank(message: 'La ville est obligatoire.'),
                 ],
@@ -42,6 +45,7 @@ class CustomerOrderType extends AbstractType
             ->add('deliveryPlace', TextType::class, [
                 'label' => 'Lieu de livraison',
                 'required' => true,
+                'empty_data' => '',
                 'constraints' => [
                     new NotBlank(message: 'Le lieu de livraison est obligatoire.'),
                 ],
@@ -49,18 +53,20 @@ class CustomerOrderType extends AbstractType
             ->add('deliveryDate', DateType::class, [
                 'label' => 'Date de prestation',
                 'widget' => 'single_text',
+                'input' => 'datetime_immutable',
                 'required' => true,
                 'constraints' => [
                     new NotBlank(message: 'La date de prestation est obligatoire.'),
                     new GreaterThanOrEqual(
-                                value: 'today',
-                                message: 'La date de prestation doit être aujourd’hui ou ultérieure.',
-                            ),
+                        value: 'today',
+                        message: 'La date de prestation doit être aujourd’hui ou ultérieure.',
+                    ),
                 ],
             ])
             ->add('deliveryTime', TimeType::class, [
                 'label' => 'Heure de livraison',
                 'widget' => 'single_text',
+                'input' => 'datetime_immutable',
                 'required' => true,
                 'constraints' => [
                     new NotBlank(message: 'L’heure de livraison est obligatoire.'),
@@ -69,6 +75,7 @@ class CustomerOrderType extends AbstractType
             ->add('personCount', IntegerType::class, [
                 'label' => 'Nombre de personnes',
                 'required' => true,
+                'empty_data' => '',
                 'constraints' => [
                     new NotBlank(message: 'Le nombre de personnes est obligatoire.'),
                     new GreaterThanOrEqual(

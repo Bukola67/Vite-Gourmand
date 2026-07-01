@@ -151,7 +151,7 @@ class CustomerOrder
         return $this->deliveryAddress;
     }
 
-    public function setDeliveryAddress(string $deliveryAddress): static
+    public function setDeliveryAddress(?string $deliveryAddress): static
     {
         $this->deliveryAddress = $deliveryAddress;
 
@@ -163,72 +163,72 @@ class CustomerOrder
         return $this->deliveryPostalCode;
     }
 
-    public function setDeliveryPostalCode(string $deliveryPostalCode): static
-    {
-        $this->deliveryPostalCode = $deliveryPostalCode;
+    public function setDeliveryPostalCode(?string $deliveryPostalCode): static
+{
+    $this->deliveryPostalCode = $deliveryPostalCode;
 
-        return $this;
-    }
+    return $this;
+}
 
     public function getDeliveryCity(): ?string
     {
         return $this->deliveryCity;
     }
 
-    public function setDeliveryCity(string $deliveryCity): static
-    {
-        $this->deliveryCity = $deliveryCity;
+    public function setDeliveryCity(?string $deliveryCity): static
+{
+    $this->deliveryCity = $deliveryCity;
 
-        return $this;
-    }
+    return $this;
+}
 
     public function getDeliveryTime(): ?\DateTimeImmutable
     {
         return $this->deliveryTime;
     }
 
-    public function setDeliveryTime(\DateTimeImmutable $deliveryTime): static
-    {
+    public function setDeliveryTime(?\DateTimeImmutable $deliveryTime): static
+{
         $this->deliveryTime = $deliveryTime;
 
-        return $this;
-    }
+    return $this;
+}
 
     public function getDeliveryDate(): ?\DateTimeImmutable
     {
         return $this->deliveryDate;
     }
 
-    public function setDeliveryDate(\DateTimeImmutable $deliveryDate): static
-    {
-        $this->deliveryDate = $deliveryDate;
+    public function setDeliveryDate(?\DateTimeImmutable $deliveryDate): static
+{
+    $this->deliveryDate = $deliveryDate;
 
-        return $this;
-    }
+    return $this;
+}
 
     public function getDeliveryPlace(): ?string
     {
         return $this->deliveryPlace;
     }
 
-    public function setDeliveryPlace(string $deliveryPlace): static
-    {
+    public function setDeliveryPlace(?string $deliveryPlace): static
+{
         $this->deliveryPlace = $deliveryPlace;
 
-        return $this;
-    }
+    return $this;
+}
 
     public function getPersonCount(): ?int
     {
         return $this->personCount;
     }
 
-    public function setPersonCount(int $personCount): static
-    {
-        $this->personCount = $personCount;
+    public function setPersonCount(?int $personCount): static
+{
+    $this->personCount = $personCount;
 
-        return $this;
-    }
+    return $this;
+}
 
     public function getMenuPrice(): ?string
     {
