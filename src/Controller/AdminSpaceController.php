@@ -10,6 +10,7 @@ use App\Service\MongoStatsService ;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
@@ -23,7 +24,11 @@ class AdminSpaceController extends AbstractController
     #[Route('', name: 'index')]
     public function index(UserRepository $userRepository): Response
     {
-        $employees = $userRepository->findBy([], ['createdAt' => 'DESC']);
+        $users = $userRepository->findBy([], ['createdAt' => 'DESC']);
+
+        $employees = array_filter($users, function (User $user) {
+            return in_array('ROLE_EMPLOYEE', $user->getRoles(), true);
+        });
 
         return $this->render('admin_space/index.html.twig', [
             'employees' => $employees,
@@ -63,6 +68,39 @@ class AdminSpaceController extends AbstractController
         ]);
     }
 
+    #[Route('/employes/{id}/toggle-active', name: 'employee_toggle_active', methods: ['POST'])]
+    public function toggleEmployeeActive(
+        User $employee,
+        Request $request,
+        EntityManagerInterface $entityManager
+    ): RedirectResponse {
+        if (!$this->isCsrfTokenValid('toggle_employee_' . $employee->getId(), $request->request->get('_token'))) {
+            $this->addFlash('danger', 'Jeton CSRF invalide.');
+            return $this->redirectToRoute('app_admin_index');
+        }
+
+        if (!in_array('ROLE_EMPLOYEE', $employee->getRoles(), true)) {
+            $this->addFlash('danger', 'Cet utilisateur n’est pas un employé.');
+            return $this->redirectToRoute('app_admin_index');
+        }
+
+        if ($this->getUser() === $employee) {
+            $this->addFlash('danger', 'Vous ne pouvez pas désactiver votre propre compte.');
+            return $this->redirectToRoute('app_admin_index');
+        }
+
+        $employee->setIsActive(!$employee->isActive());
+        $entityManager->flush();
+
+        $message = $employee->isActive()
+            ? 'Le compte employé a été activé.'
+            : 'Le compte employé a été désactivé.';
+
+        $this->addFlash('success', $message);
+
+        return $this->redirectToRoute('app_admin_index');
+    }
+
     #[Route('/stats', name: 'stats')]
     public function stats(
         Request $request,
@@ -89,5 +127,5 @@ class AdminSpaceController extends AbstractController
             'endMonth' => $endMonth,
         ]);
      }
-     
+
     }

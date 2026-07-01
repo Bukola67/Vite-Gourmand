@@ -22,33 +22,53 @@
 
     
 
-    <h2 class="h4 mb-3">Liste des utilisateurs</h2>
+    <h2 class="h4 mb-3">Liste des employés</h2>
 
-    {% if employees|length > 0 %}
-        <table class="table table-striped">
-            <thead>
+{% if employees|length > 0 %}
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nom</th>
+                <th>Email</th>
+                <th>Rôles</th>
+                <th>Actif</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for employee in employees %}
                 <tr>
-                    <th>ID</th>
-                    <th>Nom</th>
-                    <th>Email</th>
-                    <th>Rôles</th>
-                    <th>Actif</th>
+                    <td>{{ employee.id }}</td>
+                    <td>{{ employee.firstName }} {{ employee.lastName }}</td>
+                    <td>{{ employee.email }}</td>
+                    <td>{{ employee.roles|join(', ') }}</td>
+                    <td>{{ employee.isActive ? 'Oui' : 'Non' }}</td>
+                    <td>
+                        {% if app.user != employee %}
+                            <form method="post" action="{{ path('app_admin_employee_toggle_active', {id: employee.id}) }}">
+                                <input type="hidden" name="_token" value="{{ csrf_token('toggle_employee_' ~ employee.id) }}">
+
+                                {% if employee.isActive %}
+                                    <button type="submit" class="btn btn-sm btn-danger">
+                                        Désactiver
+                                    </button>
+                                {% else %}
+                                    <button type="submit" class="btn btn-sm btn-success">
+                                        Activer
+                                    </button>
+                                {% endif %}
+                            </form>
+                        {% else %}
+                            <span class="text-muted">Compte connecté</span>
+                        {% endif %}
+                    </td>
                 </tr>
-            </thead>
-            <tbody>
-                {% for employee in employees %}
-                    <tr>
-                        <td>{{ employee.id }}</td>
-                        <td>{{ employee.firstName }} {{ employee.lastName }}</td>
-                        <td>{{ employee.email }}</td>
-                        <td>{{ employee.roles|join(', ') }}</td>
-                        <td>{{ employee.isActive ? 'Oui' : 'Non' }}</td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    {% else %}
-        <p>Aucun utilisateur trouvé.</p>
-    {% endif %}
+            {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <p>Aucun employé trouvé.</p>
+{% endif %}
 </div>
 {% endblock %}
