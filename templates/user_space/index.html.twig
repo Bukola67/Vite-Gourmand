@@ -7,38 +7,40 @@
     <h1>Mes commandes</h1>
 
     {% if orders|length > 0 %}
-        <table class="table table-striped mt-4">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Menu</th>
-                    <th>Date prestation</th>
-                    <th>Heure</th>
-                    <th>Personnes</th>
-                    <th>Statut</th>
-                    <th>Total</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for order in orders %}
+        <div class="table-responsive mt-4">
+            <table class="table table-striped align-middle">
+                <thead>
                     <tr>
-                        <td>#{{ order.id }}</td>
-                        <td>{{ order.menu.title }}</td>
-                        <td>{{ order.deliveryDate ? order.deliveryDate|date('d/m/Y') : '' }}</td>
-                        <td>{{ order.deliveryTime ? order.deliveryTime|date('H:i') : '' }}</td>
-                        <td>{{ order.personCount }}</td>
-                        <td>{{ order.status }}</td>
-                        <td>{{ order.totalPrice }} €</td>
-                        <td>
-                            <a href="{{ path('app_user_order_show', {id: order.id}) }}" class="btn btn-sm btn-outline-primary">
-                                Voir le détail
-                            </a>
-                        </td>
+                        <th>ID</th>
+                        <th>Menu</th>
+                        <th>Date prestation</th>
+                        <th>Heure</th>
+                        <th>Personnes</th>
+                        <th>Statut</th>
+                        <th>Total</th>
+                        <th>Action</th>
                     </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    {% for order in orders %}
+                        <tr>
+                            <td>#{{ order.id }}</td>
+                            <td>{{ order.menu.title }}</td>
+                            <td>{{ order.deliveryDate ? order.deliveryDate|date('d/m/Y') : '' }}</td>
+                            <td>{{ order.deliveryTime ? order.deliveryTime|date('H:i') : '' }}</td>
+                            <td>{{ order.personCount }}</td>
+                            <td>{{ order.status }}</td>
+                            <td>{{ order.totalPrice }} €</td>
+                            <td>
+                                <a href="{{ path('app_user_order_show', {id: order.id}) }}" class="btn btn-sm btn-outline-primary">
+                                    Détail
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+             </table>
+        </div>
     {% else %}
         <div class="alert alert-info mt-4">
             Vous n’avez encore passé aucune commande.
