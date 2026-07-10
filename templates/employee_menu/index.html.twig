@@ -1,0 +1,40 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Gestion des menus{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Gestion des menus</h1>
+        <a href="{{ path('app_employee_menu_new') }}" class="btn btn-primary">Créer un menu</a>
+    </div>
+
+    {% if menus|length > 0 %}
+        <div class="row g-4">
+            {% for menu in menus %}
+                <div class="col-md-4">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body">
+                            <h2 class="h5 card-title">{{ menu.title }}</h2>
+                            <p class="card-text">{{ menu.description }}</p>
+                            <p class="mb-1"><strong>Thème :</strong> {{ menu.theme ?: 'Non renseigné' }}</p>
+                            <p class="mb-1"><strong>Régime :</strong> {{ menu.diet ?: 'Non renseigné' }}</p>
+                            <p class="mb-1"><strong>Prix :</strong> {{ menu.basePrice }} €</p>
+                            <p class="mb-3"><strong>Minimum :</strong> {{ menu.minimumPersons }}</p>
+
+                            <a href="{{ path('app_employee_menu_edit', {id: menu.id}) }}" class="btn btn-outline-primary btn-sm">Modifier</a>
+
+                            <form method="post" action="{{ path('app_employee_menu_delete', {id: menu.id}) }}" class="d-inline" onsubmit="return confirm('Supprimer ce menu ?');">
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete_menu_' ~ menu.id) }}">
+                                <button class="btn btn-outline-danger btn-sm">Supprimer</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-info">Aucun menu enregistré.</div>
+    {% endif %}
+</div>
+{% endblock %}

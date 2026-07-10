@@ -1,0 +1,22 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier un menu{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+    <h1>Modifier le menu</h1>
+
+    {{ form_start(form) }}
+        {{ form_row(form.title) }}
+        {{ form_row(form.description) }}
+        {{ form_row(form.theme) }}
+        {{ form_row(form.diet) }}
+        {{ form_row(form.minimumPersons) }}
+        {{ form_row(form.basePrice) }}
+        {{ form_row(form.conditionText) }}
+        {{ form_row(form.stockAvailable) }}
+
+        <button class="btn btn-primary mt-3">Mettre à jour</button>
+    {{ form_end(form) }}
+</div>
+{% endblock %}

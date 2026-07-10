@@ -10,16 +10,67 @@
         </p>
     </div>
 
-    <div class="row g-4">
+    <div class="row g-3 mb-4" id="menu-filters">
+        <div class="col-md-6 col-lg-2">
+            <label for="filter-max-price" class="form-label">Prix max</label>
+            <input type="number" id="filter-max-price" class="form-control" min="0" placeholder="Ex : 25">
+        </div>
+
+        <div class="col-md-6 col-lg-2">
+            <label for="filter-min-price" class="form-label">Prix min</label>
+            <input type="number" id="filter-min-price" class="form-control" min="0" placeholder="Ex : 15">
+        </div>
+
+        <div class="col-md-6 col-lg-2">
+            <label for="filter-theme" class="form-label">Thème</label>
+            <select id="filter-theme" class="form-select">
+                <option value="">Tous</option>
+                <option value="Noël">Noël</option>
+                <option value="Pâques">Pâques</option>
+                <option value="Classique">Classique</option>
+                <option value="Événement">Événement</option>
+            </select>
+        </div>
+
+        <div class="col-md-6 col-lg-2">
+            <label for="filter-diet" class="form-label">Régime</label>
+            <select id="filter-diet" class="form-select">
+                <option value="">Tous</option>
+                <option value="Classique">Classique</option>
+                <option value="Végétarien">Végétarien</option>
+                <option value="Vegan">Vegan</option>
+            </select>
+        </div>
+
+        <div class="col-md-6 col-lg-2">
+            <label for="filter-persons" class="form-label">Personnes min</label>
+            <input type="number" id="filter-persons" class="form-control" min="1" placeholder="Ex : 4">
+        </div>
+
+        <div class="col-md-6 col-lg-2 d-flex align-items-end">
+            <button type="button" id="reset-filters" class="btn btn-outline-secondary w-100">
+                Réinitialiser
+            </button>
+        </div>
+    </div>
+
+    <div class="row g-4" id="menus-list">
         {% for menu in menus %}
-            <div class="col-md-6 col-lg-4">
+            <div
+                class="col-md-6 col-lg-4 menu-item"
+                data-price="{{ menu.basePrice }}"
+                data-theme="{{ menu.theme ?? '' }}"
+                data-diet="{{ menu.diet ?? '' }}"
+                data-persons="{{ menu.minimumPersons }}"
+            >
                 <div class="card h-100 shadow-sm">
                     <div class="card-body">
-                        <h2 class="h5 card-title">{{ menu.titre }}</h2>
+                        <h2 class="h5 card-title">{{ menu.title }}</h2>
                         <p class="card-text">{{ menu.description }}</p>
-                        <p class="mb-1"><strong>Thème :</strong> {{ menu.theme }}</p>
-                        <p class="mb-1"><strong>Prix minimum :</strong> {{ menu.prix }} €</p>
-                        <p class="mb-3"><strong>Nombre minimum de personnes :</strong> {{ menu.personnes }}</p>
+                        <p class="mb-1"><strong>Thème :</strong> {{ menu.theme ?: 'Non renseigné' }}</p>
+                        <p class="mb-1"><strong>Régime :</strong> {{ menu.diet ?: 'Non renseigné' }}</p>
+                        <p class="mb-1"><strong>Prix minimum :</strong> {{ menu.basePrice }} €</p>
+                        <p class="mb-3"><strong>Nombre minimum de personnes :</strong> {{ menu.minimumPersons }}</p>
                         <a href="{{ path('app_menu_show', {id: menu.id}) }}" class="btn btn-primary">Voir le détail</a>
                     </div>
                 </div>
@@ -32,4 +83,82 @@
             </div>
         {% endfor %}
     </div>
+
+    <div id="no-results" class="alert alert-warning mt-4 d-none">
+        Aucun menu ne correspond aux filtres sélectionnés.
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const maxPriceInput = document.getElementById('filter-max-price');
+            const minPriceInput = document.getElementById('filter-min-price');
+            const themeInput = document.getElementById('filter-theme');
+            const dietInput = document.getElementById('filter-diet');
+            const personsInput = document.getElementById('filter-persons');
+            const resetButton = document.getElementById('reset-filters');
+            const menuItems = document.querySelectorAll('.menu-item');
+            const noResults = document.getElementById('no-results');
+
+            function filterMenus() {
+                let visibleCount = 0;
+
+                menuItems.forEach(menu => {
+                    const price = parseFloat(menu.dataset.price);
+                    const theme = menu.dataset.theme.toLowerCase();
+                    const diet = menu.dataset.diet.toLowerCase();
+                    const persons = parseInt(menu.dataset.persons);
+
+                    const maxPrice = maxPriceInput.value ? parseFloat(maxPriceInput.value) : null;
+                    const minPrice = minPriceInput.value ? parseFloat(minPriceInput.value) : null;
+                    const selectedTheme = themeInput.value.toLowerCase();
+                    const selectedDiet = dietInput.value.toLowerCase();
+                    const minPersons = personsInput.value ? parseInt(personsInput.value) : null;
+
+                    let visible = true;
+
+                    if (maxPrice !== null && price > maxPrice) {
+                        visible = false;
+                    }
+
+                    if (minPrice !== null && price < minPrice) {
+                        visible = false;
+                    }
+
+                    if (selectedTheme && theme !== selectedTheme) {
+                        visible = false;
+                    }
+
+                    if (selectedDiet && diet !== selectedDiet) {
+                        visible = false;
+                    }
+
+                    if (minPersons !== null && persons < minPersons) {
+                        visible = false;
+                    }
+
+                    menu.style.display = visible ? '' : 'none';
+
+                    if (visible) {
+                        visibleCount++;
+                    }
+                });
+
+                noResults.classList.toggle('d-none', visibleCount > 0);
+            }
+
+            [maxPriceInput, minPriceInput, themeInput, dietInput, personsInput].forEach(element => {
+                element.addEventListener('input', filterMenus);
+                element.addEventListener('change', filterMenus);
+            });
+
+            resetButton.addEventListener('click', function () {
+                maxPriceInput.value = '';
+                minPriceInput.value = '';
+                themeInput.value = '';
+                dietInput.value = '';
+                personsInput.value = '';
+                filterMenus();
+            });
+        });
+    </script>
 {% endblock %}
