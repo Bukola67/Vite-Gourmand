@@ -48,6 +48,7 @@
                         <option value="en_preparation" {{ order.status == 'en_preparation' ? 'selected' : '' }}>En préparation</option>
                         <option value="en_livraison" {{ order.status == 'en_livraison' ? 'selected' : '' }}>En livraison</option>
                         <option value="livree" {{ order.status == 'livree' ? 'selected' : '' }}>Livrée</option>
+                        <option value="en_attente_retour_materiel" {{ order.status  == 'en_attente_retour_materiel' ? 'selected' : '' }}>En attente du retour de matériel</option>
                         <option value="terminee" {{ order.status == 'terminee' ? 'selected' : '' }}>Terminée</option>
                         <option value="annulee" {{ order.status == 'annulee' ? 'selected' : '' }}>Annulée</option>
                     </select>

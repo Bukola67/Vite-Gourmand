@@ -1,0 +1,67 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Gestion des avis{% endblock %}
+
+{% block body %}
+<div class="container py-4">
+    <h1 class="mb-4">Gestion des avis</h1>
+
+    <h2 class="h4 mb-3">Avis en attente</h2>
+
+    {% if pendingReviews is not empty %}
+        <div class="row g-3 mb-5">
+            {% for review in pendingReviews %}
+                <div class="col-md-6">
+                    <div class="card shadow-sm h-100">
+                        <div class="card-body">
+                            <h3 class="h5">{{ review.user.firstName }} {{ review.user.lastName }}</h3>
+                            <p class="mb-2"><strong>Note :</strong> {{ review.rating }}/5</p>
+                            <p>{{ review.comment }}</p>
+                            <p class="text-muted small mb-3">
+                                {{ review.createdAt|date('d/m/Y H:i') }}
+                            </p>
+
+                            <div class="d-flex gap-2">
+                                <form method="post" action="{{ path('app_employee_review_validate', {id: review.id}) }}">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('validate_review_' ~ review.id) }}">
+                                    <button class="btn btn-success btn-sm">Valider</button>
+                                </form>
+
+                                <form method="post" action="{{ path('app_employee_review_refuse', {id: review.id}) }}">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('refuse_review_' ~ review.id) }}">
+                                    <button class="btn btn-danger btn-sm">Refuser</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-secondary mb-5">Aucun avis en attente.</div>
+    {% endif %}
+
+    <h2 class="h4 mb-3">Avis validés</h2>
+
+    {% if validatedReviews is not empty %}
+        <div class="row g-3">
+            {% for review in validatedReviews %}
+                <div class="col-md-6">
+                    <div class="card border-success h-100">
+                        <div class="card-body">
+                            <h3 class="h5">{{ review.user.firstName }} {{ review.user.lastName }}</h3>
+                            <p class="mb-2"><strong>Note :</strong> {{ review.rating }}/5</p>
+                            <p>{{ review.comment }}</p>
+                            <p class="text-muted small mb-0">
+                                {{ review.createdAt|date('d/m/Y H:i') }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-secondary">Aucun avis validé.</div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -16,6 +16,26 @@ class ReviewRepository extends ServiceEntityRepository
         parent::__construct($registry, Review::class);
     }
 
+    public function findValidatedReviews(): array
+    {
+        return $this->createQueryBuilder('r')
+            ->andWhere('r.isValidated = :validated')
+            ->setParameter('validated', true)
+            ->orderBy('r.createdAt', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function findPendingReviews(): array
+    {
+        return $this->createQueryBuilder('r')
+            ->andWhere('r.isValidated = :validated')
+            ->setParameter('validated', false)
+            ->orderBy('r.createdAt', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
+
     //    /**
     //     * @return Review[] Returns an array of Review objects
     //     */

@@ -2,11 +2,15 @@
 
 namespace App\Controller;
 
+use App\Service\MailService;
+use App\Entity\Review;
 use App\Entity\CustomerOrder;
 use App\Entity\OrderStatusHistory;
 use App\Repository\CustomerOrderRepository;
+use App\Repository\ReviewRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -50,7 +54,8 @@ class EmployeeSpaceController extends AbstractController
     public function updateStatus(
         Request $request,
         CustomerOrder $order,
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
+        MailService $mailService
     ): Response {
         if (!$this->isCsrfTokenValid('update_status_' . $order->getId(), $request->request->get('_token'))) {
             throw $this->createAccessDeniedException('Token CSRF invalide.');
@@ -64,6 +69,7 @@ class EmployeeSpaceController extends AbstractController
             'en_preparation',
             'en_livraison',
             'livree',
+            'en_attente_retour_materiel',
             'terminee',
             'annulee',
         ];
@@ -72,6 +78,8 @@ class EmployeeSpaceController extends AbstractController
             $this->addFlash('danger', 'Statut invalide.');
             return $this->redirectToRoute('app_employee_order_show', ['id' => $order->getId()]);
         }
+
+        $oldStatus = $order->getStatus();
 
         $order->setStatus($newStatus);
         $order->setUpdatedAt(new \DateTimeImmutable());
@@ -82,10 +90,63 @@ class EmployeeSpaceController extends AbstractController
         $history->setCustomerOrder($order);
 
         $entityManager->persist($history);
+
+        if ($newStatus === 'en_attente_retour_materiel') {
+        $mailService->sendEquipmentReturnReminder($order);
+        }
+
         $entityManager->flush();
 
         $this->addFlash('success', 'Le statut de la commande a bien été mis à jour.');
 
         return $this->redirectToRoute('app_employee_order_show', ['id' => $order->getId()]);
     }
+    #[Route('/avis', name: 'reviews')]
+    public function reviews(ReviewRepository $reviewRepository): Response
+    {
+        return $this->render('employee_space/reviews.html.twig', [
+            'pendingReviews' => $reviewRepository->findPendingReviews(),
+            'validatedReviews' => $reviewRepository->findValidatedReviews(),
+        ]);
+    }
+
+    #[Route('/avis/{id}/valider', name: 'review_validate', methods: ['POST'])]
+    public function validateReview(
+        Review $review,
+        Request $request,
+        EntityManagerInterface $entityManager
+    ): RedirectResponse {
+        if (!$this->isCsrfTokenValid('validate_review_' . $review->getId(), $request->request->get('_token'))) {
+            $this->addFlash('danger', 'Jeton CSRF invalide.');
+            return $this->redirectToRoute('app_employee_reviews');
+        }
+
+        $review->setIsValidated(true);
+        $entityManager->flush();
+
+        $this->addFlash('success', 'L’avis a été validé.');
+
+        return $this->redirectToRoute('app_employee_reviews');
+    }
+
+    #[Route('/avis/{id}/refuser', name: 'review_refuse', methods: ['POST'])]
+    public function refuseReview(
+        Review $review,
+        Request $request,
+        EntityManagerInterface $entityManager
+    ): RedirectResponse {
+        if (!$this->isCsrfTokenValid('refuse_review_' . $review->getId(), $request->request->get('_token'))) {
+            $this->addFlash('danger', 'Jeton CSRF invalide.');
+            return $this->redirectToRoute('app_employee_reviews');
+        }
+
+        $entityManager->remove($review);
+        $entityManager->flush();
+
+        $this->addFlash('success', 'L’avis a été refusé.');
+
+        return $this->redirectToRoute('app_employee_reviews');
+    }
+
+    
 }

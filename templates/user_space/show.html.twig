@@ -63,6 +63,12 @@
                 </form>
             {% endif %}
 
+            {% if order.status == 'terminee' %}
+                <a href="{{ path('app_user_order_review', {id: order.id}) }}" class="btn btn-primary">
+                    Laisser un avis
+                </a>
+            {% endif %}
+
             <hr>
 
             <h2 class="h4 mb-3">Historique des statuts</h2>

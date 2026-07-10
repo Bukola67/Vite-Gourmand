@@ -6,6 +6,9 @@
 <div class="container mt-4">
     <h1>Gestion des commandes</h1>
 
+    <a href="{{ path('app_employee_reviews') }}" class="btn btn-outline-primary mb-4">
+    Gérer les avis </a>
+
     <form method="get" class="row g-3 mb-4">
         <div class="col-md-4">
             <label for="status" class="form-label">Filtrer par statut</label>
@@ -16,6 +19,7 @@
                 <option value="en_preparation" {{ selectedStatus == 'en_preparation' ? 'selected' : '' }}>En préparation</option>
                 <option value="en_livraison" {{ selectedStatus == 'en_livraison' ? 'selected' : '' }}>En livraison</option>
                 <option value="livree" {{ selectedStatus == 'livree' ? 'selected' : '' }}>Livrée</option>
+                <option value="en_attente_retour_materiel" {{ selectedStatus == 'en_attente_retour_materiel' ? 'selected' : '' }}>En attente du retour de matériel</option>
                 <option value="terminee" {{ selectedStatus == 'terminee' ? 'selected' : '' }}>Terminée</option>
                 <option value="annulee" {{ selectedStatus == 'annulee' ? 'selected' : '' }}>Annulée</option>
             </select>
@@ -63,4 +67,4 @@
         </div>
     {% endif %}
 </div>
-{% endblock %}
+{% endblock %} 
