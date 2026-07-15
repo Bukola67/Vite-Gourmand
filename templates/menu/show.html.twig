@@ -3,11 +3,23 @@
 {% block title %}{{ menu.title }} - Vite & Gourmand{% endblock %}
 
 {% block body %}
+    {% set menuImage = 'images/menus/menu-evenement.jpg' %}
+
+    {% if menu.theme == 'Noël' %}
+        {% set menuImage = 'images/menus/menu-noel.jpg' %}
+    {% elseif menu.theme == 'Pâques' %}
+        {% set menuImage = 'images/menus/menu-paques.jpg' %}
+    {% elseif menu.theme == 'Événement' %}
+        {% set menuImage = 'images/menus/menu-evenement.jpg' %}
+    {% endif %}
+
     <div class="row justify-content-center">
         <div class="col-lg-8">
             <a href="{{ path('app_menu') }}" class="btn btn-outline-secondary mb-4">Retour aux menus</a>
 
             <div class="card shadow-sm">
+                <img src="{{ asset(menuImage) }}" class="card-img-top" alt="{{ menu.title }}">
+
                 <div class="card-body">
                     <h1 class="mb-3">{{ menu.title }}</h1>
                     <p class="lead">{{ menu.description }}</p>

@@ -56,6 +56,16 @@
 
     <div class="row g-4" id="menus-list">
         {% for menu in menus %}
+            {% set menuImage = 'images/menus/menu-evenement.jpg' %}
+
+            {% if menu.theme == 'Noël' %}
+                {% set menuImage = 'images/menus/menu-noel.jpg' %}
+            {% elseif menu.theme == 'Pâques' %}
+                {% set menuImage = 'images/menus/menu-paques.jpg' %}
+            {% elseif menu.theme == 'Événement' %}
+                {% set menuImage = 'images/menus/menu-evenement.jpg' %}
+            {% endif %}
+
             <div
                 class="col-md-6 col-lg-4 menu-item"
                 data-price="{{ menu.basePrice }}"
@@ -64,6 +74,8 @@
                 data-persons="{{ menu.minimumPersons }}"
             >
                 <div class="card h-100 shadow-sm">
+                    <img src="{{ asset(menuImage) }}" class="card-img-top" alt="{{ menu.title }}">
+
                     <div class="card-body">
                         <h2 class="h5 card-title">{{ menu.title }}</h2>
                         <p class="card-text">{{ menu.description }}</p>
