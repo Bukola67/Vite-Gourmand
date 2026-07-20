@@ -100,6 +100,47 @@ docker compose exec -T database mysql -uroot -proot vite_gourmand < data.sql
 Ouvrir le navigateur à l’adresse suivante :
 `http://localhost:8000`
 
+## Configuration de l’environnement local
+
+Après avoir copié le fichier `.env` vers `.env.local`, vérifier que les variables suivantes sont bien définies :
+
+### Exemple de configuration
+
+```env
+APP_ENV=dev
+APP_DEBUG=1
+APP_SECRET=**  # à personnaliser
+
+DEFAULT_URI=http://localhost
+
+# Base MySQL utilisée par Doctrine
+DATABASE_URL="mysql://root:root@database:3306/vite_gourmand?serverVersion=8.0&charset=utf8mb4"
+
+# Base MongoDB utilisée pour les statistiques
+MONGODB_URI=mongodb://mongo:27017
+MONGODB_DB=vite_gourmand
+```
+
+Ces valeurs doivent correspondre aux services définis dans `docker-compose.yml` :
+- `database` pour MySQL
+- `mongo` pour MongoDB
+
+## Lancement du serveur web
+
+Une fois les conteneurs démarrés avec :
+
+```bash
+docker compose up -d
+```
+
+le serveur Apache du conteneur `php` sert l’application Symfony depuis le dossier `public/`.
+
+Selon la configuration du fichier `docker-compose.yml`, l’application est accessible en local via le port 8000 :
+
+```text
+http://localhost:8000
+```
+
 ## Comptes de démonstration
 - Admin : admin@test.com
 - Employé : employe@test.com
