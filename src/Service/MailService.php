@@ -13,7 +13,7 @@ class MailService
     ) {
     }
 
-    private string $fromEmail = 'noreply@vitegourmand.local';
+    private string $fromEmail = 'stephie.saurel@saurelgroup.com';
 
     public function sendEquipmentReturnReminder(CustomerOrder $order): void
     {
