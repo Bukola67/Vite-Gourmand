@@ -2,7 +2,9 @@
 
 namespace App\Form;
 
+use App\Entity\Dish;
 use App\Entity\Menu;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -43,6 +45,14 @@ class MenuType extends AbstractType
             ])
             ->add('stockAvailable', NumberType::class, [
                 'label' => 'Stock disponible',
+                'required' => false,
+            ])
+            ->add('dishes', EntityType::class, [
+                'class' => Dish::class,
+                'choice_label' => 'name',
+                'multiple' => true,
+                'expanded' => true,
+                'label' => 'Plats du menu',
                 'required' => false,
             ])
         ;
