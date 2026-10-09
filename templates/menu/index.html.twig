@@ -3,174 +3,358 @@
 {% block title %}Menus - Vite & Gourmand{% endblock %}
 
 {% block body %}
-    <div class="mb-5">
-        <h1 class="mb-3">Nos menus</h1>
+
+<div class="container">
+
+    <header class="page-heading mb-5">
+        <h1>Nos menus</h1>
         <p class="text-muted">
             Découvrez une sélection de menus proposés par Vite & Gourmand.
         </p>
-    </div>
+    </header>
 
-    <div class="row g-3 mb-4" id="menu-filters">
-        <div class="col-md-6 col-lg-2">
-            <label for="filter-max-price" class="form-label">Prix max</label>
-            <input type="number" id="filter-max-price" class="form-control" min="0" placeholder="Ex : 25">
-        </div>
+    <div class="row g-4 align-items-start">
 
-        <div class="col-md-6 col-lg-2">
-            <label for="filter-min-price" class="form-label">Prix min</label>
-            <input type="number" id="filter-min-price" class="form-control" min="0" placeholder="Ex : 15">
-        </div>
+        {# Filtres à gauche #}
+        <aside class="col-12 col-lg-3">
+            <div class="filters-sidebar">
 
-        <div class="col-md-6 col-lg-2">
-            <label for="filter-theme" class="form-label">Thème</label>
-            <select id="filter-theme" class="form-select">
-                <option value="">Tous</option>
-                <option value="Noël">Noël</option>
-                <option value="Pâques">Pâques</option>
-                <option value="Classique">Classique</option>
-                <option value="Événement">Événement</option>
-            </select>
-        </div>
+                <div class="filters-header">
+                    <h2>Filtres</h2>
 
-        <div class="col-md-6 col-lg-2">
-            <label for="filter-diet" class="form-label">Régime</label>
-            <select id="filter-diet" class="form-select">
-                <option value="">Tous</option>
-                <option value="Classique">Classique</option>
-                <option value="Végétarien">Végétarien</option>
-                <option value="Vegan">Vegan</option>
-            </select>
-        </div>
+                    <button
+                        type="button"
+                        id="reset-filters"
+                        class="reset-filters"
+                    >
+                        Réinitialiser
+                    </button>
+                </div>
 
-        <div class="col-md-6 col-lg-2">
-            <label for="filter-persons" class="form-label">Personnes min</label>
-            <input type="number" id="filter-persons" class="form-control" min="1" placeholder="Ex : 4">
-        </div>
+                <div class="filter-group">
+                    <label for="filter-max-price" class="form-label">
+                        Prix maximum
+                    </label>
 
-        <div class="col-md-6 col-lg-2 d-flex align-items-end">
-            <button type="button" id="reset-filters" class="btn btn-outline-secondary w-100">
-                Réinitialiser
-            </button>
-        </div>
-    </div>
+                    <input
+                        type="number"
+                        id="filter-max-price"
+                        class="form-control"
+                        min="0"
+                        placeholder="Ex : 25"
+                    >
+                </div>
 
-    <div class="row g-4" id="menus-list">
-        {% for menu in menus %}
-            {% set menuImage = 'images/menus/menu-evenement.jpg' %}
+                <div class="filter-group">
+                    <label for="filter-min-price" class="form-label">
+                        Prix minimum
+                    </label>
 
-            {% if menu.theme == 'Noël' %}
-                {% set menuImage = 'images/menus/menu-noel.jpg' %}
-            {% elseif menu.theme == 'Pâques' %}
-                {% set menuImage = 'images/menus/menu-paques.jpg' %}
-            {% elseif menu.theme == 'Événement' %}
-                {% set menuImage = 'images/menus/menu-evenement.jpg' %}
-            {% endif %}
+                    <input
+                        type="number"
+                        id="filter-min-price"
+                        class="form-control"
+                        min="0"
+                        placeholder="Ex : 15"
+                    >
+                </div>
+
+                <div class="filter-group">
+                    <label for="filter-theme" class="form-label">
+                        Thème
+                    </label>
+
+                    <select id="filter-theme" class="form-select">
+                        <option value="">Tous</option>
+                        <option value="Noël">Noël</option>
+                        <option value="Pâques">Pâques</option>
+                        <option value="Classique">Classique</option>
+                        <option value="Événement">Événement</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label for="filter-diet" class="form-label">
+                        Régime alimentaire
+                    </label>
+
+                    <select id="filter-diet" class="form-select">
+                        <option value="">Tous</option>
+                        <option value="Classique">Classique</option>
+                        <option value="Végétarien">Végétarien</option>
+                        <option value="Vegan">Vegan</option>
+                        <option value="Sans gluten">Sans gluten</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label for="filter-persons" class="form-label">
+                        Nombre minimum de personnes
+                    </label>
+
+                    <input
+                        type="number"
+                        id="filter-persons"
+                        class="form-control"
+                        min="1"
+                        placeholder="Ex : 4"
+                    >
+                </div>
+            </div>
+        </aside>
+
+        {# Résultats à droite #}
+        <section class="col-12 col-lg-9" aria-labelledby="menus-title">
+
+            <div class="menus-results-header">
+                <h2 id="menus-title">
+                    <span id="menus-count">{{ menus|length }}</span>
+                    menu(s) trouvé(s)
+                </h2>
+            </div>
+
+            <div class="row g-4" id="menus-list">
+
+                {% for menu in menus %}
+                    {% set menuImage = 'images/menus/menu-evenement.jpg' %}
+
+                    {% if menu.theme == 'Noël' %}
+                        {% set menuImage = 'images/menus/menu-noel.jpg' %}
+                    {% elseif menu.theme == 'Pâques' %}
+                        {% set menuImage = 'images/menus/menu-paques.jpg' %}
+                    {% endif %}
+
+                    <div
+                        class="col-12 col-md-6 menu-item"
+                        data-price="{{ menu.basePrice }}"
+                        data-theme="{{ menu.theme ?? '' }}"
+                        data-diet="{{ menu.diet ?? '' }}"
+                        data-persons="{{ menu.minimumPersons }}"
+                    >
+                        <article class="card menu-card h-100">
+
+                            <img
+                                src="{{ asset(menuImage) }}"
+                                class="card-img-top"
+                                alt="{{ menu.title }}"
+                                loading="lazy"
+                            >
+
+                            <div class="card-body">
+                                <h3 class="card-title">
+                                    {{ menu.title }}
+                                </h3>
+
+                                <p class="card-text">
+                                    {{ menu.description }}
+                                </p>
+
+                                <p class="mb-1">
+                                    <strong>Thème :</strong>
+                                    {{ menu.theme ?: 'Non renseigné' }}
+                                </p>
+
+                                <p class="mb-1">
+                                    <strong>Régime :</strong>
+                                    {{ menu.diet ?: 'Non renseigné' }}
+                                </p>
+
+                                <p class="mb-1">
+                                    <strong>Prix minimum :</strong>
+                                    {{ menu.basePrice|number_format(2, ',', ' ') }} €
+                                </p>
+
+                                <p class="mb-3">
+                                    <strong>Nombre minimum :</strong>
+                                    {{ menu.minimumPersons }} personnes
+                                </p>
+
+                                <a
+                                    href="{{ path('app_menu_show', { id: menu.id }) }}"
+                                    class="btn btn-primary mt-auto"
+                                >
+                                    Voir le détail
+                                </a>
+                            </div>
+                        </article>
+                    </div>
+
+                {% else %}
+                    <div class="col-12">
+                        <div class="alert alert-info">
+                            Aucun menu n’est disponible pour le moment.
+                        </div>
+                    </div>
+                {% endfor %}
+
+            </div>
 
             <div
-                class="col-md-6 col-lg-4 menu-item"
-                data-price="{{ menu.basePrice }}"
-                data-theme="{{ menu.theme ?? '' }}"
-                data-diet="{{ menu.diet ?? '' }}"
-                data-persons="{{ menu.minimumPersons }}"
+                id="no-results"
+                class="alert alert-warning mt-4 d-none"
+                role="status"
             >
-                <div class="card h-100 shadow-sm">
-                    <img src="{{ asset(menuImage) }}" class="card-img-top" alt="{{ menu.title }}">
-
-                    <div class="card-body">
-                        <h2 class="h5 card-title">{{ menu.title }}</h2>
-                        <p class="card-text">{{ menu.description }}</p>
-                        <p class="mb-1"><strong>Thème :</strong> {{ menu.theme ?: 'Non renseigné' }}</p>
-                        <p class="mb-1"><strong>Régime :</strong> {{ menu.diet ?: 'Non renseigné' }}</p>
-                        <p class="mb-1"><strong>Prix minimum :</strong> {{ menu.basePrice }} €</p>
-                        <p class="mb-3"><strong>Nombre minimum de personnes :</strong> {{ menu.minimumPersons }}</p>
-                        <a href="{{ path('app_menu_show', {id: menu.id}) }}" class="btn btn-primary">Voir le détail</a>
-                    </div>
-                </div>
+                Aucun menu ne correspond aux filtres sélectionnés.
             </div>
-        {% else %}
-            <div class="col-12">
-                <div class="alert alert-info">
-                    Aucun menu n’est disponible pour le moment.
-                </div>
-            </div>
-        {% endfor %}
+        </section>
     </div>
+</div>
 
-    <div id="no-results" class="alert alert-warning mt-4 d-none">
-        Aucun menu ne correspond aux filtres sélectionnés.
-    </div>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const maxPriceInput = document.getElementById('filter-max-price');
+    const minPriceInput = document.getElementById('filter-min-price');
+    const themeInput = document.getElementById('filter-theme');
+    const dietInput = document.getElementById('filter-diet');
+    const personsInput = document.getElementById('filter-persons');
+    const resetButton = document.getElementById('reset-filters');
+    const menusList = document.getElementById('menus-list');
+    const noResults = document.getElementById('no-results');
+    const menusCount = document.getElementById('menus-count');
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const maxPriceInput = document.getElementById('filter-max-price');
-            const minPriceInput = document.getElementById('filter-min-price');
-            const themeInput = document.getElementById('filter-theme');
-            const dietInput = document.getElementById('filter-diet');
-            const personsInput = document.getElementById('filter-persons');
-            const resetButton = document.getElementById('reset-filters');
-            const menuItems = document.querySelectorAll('.menu-item');
-            const noResults = document.getElementById('no-results');
+    const imageByTheme = {
+        'Noël': 'menu-noel.jpg',
+        'Pâques': 'menu-paques.jpg',
+        'Événement': 'menu-evenement.jpg',
+        'Classique': 'menu-evenement.jpg'
+    };
 
-            function filterMenus() {
-                let visibleCount = 0;
+    function createMenuCard(menu) {
+        const image = imageByTheme[menu.theme] || 'menu-evenement.jpg';
 
-                menuItems.forEach(menu => {
-                    const price = parseFloat(menu.dataset.price);
-                    const theme = menu.dataset.theme.toLowerCase();
-                    const diet = menu.dataset.diet.toLowerCase();
-                    const persons = parseInt(menu.dataset.persons);
+        const column = document.createElement('div');
+        column.className = 'col-12 col-md-6 menu-item';
 
-                    const maxPrice = maxPriceInput.value ? parseFloat(maxPriceInput.value) : null;
-                    const minPrice = minPriceInput.value ? parseFloat(minPriceInput.value) : null;
-                    const selectedTheme = themeInput.value.toLowerCase();
-                    const selectedDiet = dietInput.value.toLowerCase();
-                    const minPersons = personsInput.value ? parseInt(personsInput.value) : null;
+        const article = document.createElement('article');
+        article.className = 'card menu-card h-100';
 
-                    let visible = true;
+        const imageElement = document.createElement('img');
+        imageElement.src = `/images/menus/${image}`;
+        imageElement.alt = menu.title;
+        imageElement.className = 'card-img-top';
+        imageElement.loading = 'lazy';
 
-                    if (maxPrice !== null && price > maxPrice) {
-                        visible = false;
-                    }
+        const body = document.createElement('div');
+        body.className = 'card-body';
 
-                    if (minPrice !== null && price < minPrice) {
-                        visible = false;
-                    }
+        const title = document.createElement('h3');
+        title.className = 'card-title';
+        title.textContent = menu.title;
 
-                    if (selectedTheme && theme !== selectedTheme) {
-                        visible = false;
-                    }
+        const description = document.createElement('p');
+        description.className = 'card-text';
+        description.textContent = menu.description || '';
 
-                    if (selectedDiet && diet !== selectedDiet) {
-                        visible = false;
-                    }
+        const theme = document.createElement('p');
+        theme.className = 'mb-1';
+        theme.innerHTML = '<strong>Thème :</strong> ';
+        theme.append(document.createTextNode(menu.theme || 'Non renseigné'));
 
-                    if (minPersons !== null && persons < minPersons) {
-                        visible = false;
-                    }
+        const diet = document.createElement('p');
+        diet.className = 'mb-1';
+        diet.innerHTML = '<strong>Régime :</strong> ';
+        diet.append(document.createTextNode(menu.diet || 'Non renseigné'));
 
-                    menu.style.display = visible ? '' : 'none';
+        const price = document.createElement('p');
+        price.className = 'mb-1';
+        price.innerHTML = '<strong>Prix minimum :</strong> ';
+        price.append(document.createTextNode(`${menu.basePrice} €`));
 
-                    if (visible) {
-                        visibleCount++;
-                    }
-                });
+        const persons = document.createElement('p');
+        persons.className = 'mb-3';
+        persons.innerHTML = '<strong>Nombre minimum :</strong> ';
+        persons.append(document.createTextNode(`${menu.minimumPersons} personnes`));
 
-                noResults.classList.toggle('d-none', visibleCount > 0);
+        const link = document.createElement('a');
+        link.href = menu.detailUrl;
+        link.className = 'btn btn-primary mt-auto';
+        link.textContent = 'Voir le détail';
+
+        body.append(title, description, theme, diet, price, persons, link);
+        article.append(imageElement, body);
+        column.appendChild(article);
+
+        return column;
+    }
+
+    function renderMenus(menus) {
+        menusList.innerHTML = '';
+        menusCount.textContent = menus.length;
+
+        if (menus.length === 0) {
+            noResults.classList.remove('d-none');
+            return;
+        }
+
+        noResults.classList.add('d-none');
+
+        menus.forEach(menu => {
+            menusList.appendChild(createMenuCard(menu));
+        });
+    }
+
+    async function filterMenus() {
+        const params = new URLSearchParams();
+
+        if (maxPriceInput.value) {
+            params.append('maxPrice', maxPriceInput.value);
+        }
+
+        if (minPriceInput.value) {
+            params.append('minPrice', minPriceInput.value);
+        }
+
+        if (themeInput.value) {
+            params.append('theme', themeInput.value);
+        }
+
+        if (dietInput.value) {
+            params.append('diet', dietInput.value);
+        }
+
+        if (personsInput.value) {
+            params.append('minPersons', personsInput.value);
+        }
+
+        try {
+            const response = await fetch(`/api/menus?${params.toString()}`);
+
+            if (!response.ok) {
+                throw new Error(`Erreur serveur : ${response.status}`);
             }
 
-            [maxPriceInput, minPriceInput, themeInput, dietInput, personsInput].forEach(element => {
-                element.addEventListener('input', filterMenus);
-                element.addEventListener('change', filterMenus);
-            });
+            const menus = await response.json();
+            renderMenus(menus);
+        } catch (error) {
+            noResults.textContent =
+                'Une erreur est survenue lors du chargement des menus.';
+            noResults.classList.remove('d-none');
 
-            resetButton.addEventListener('click', function () {
-                maxPriceInput.value = '';
-                minPriceInput.value = '';
-                themeInput.value = '';
-                dietInput.value = '';
-                personsInput.value = '';
-                filterMenus();
-            });
-        });
-    </script>
+            console.error(error);
+        }
+    }
+
+    [
+        maxPriceInput,
+        minPriceInput,
+        themeInput,
+        dietInput,
+        personsInput
+    ].forEach(input => {
+        input.addEventListener('input', filterMenus);
+        input.addEventListener('change', filterMenus);
+    });
+
+    resetButton.addEventListener('click', () => {
+        maxPriceInput.value = '';
+        minPriceInput.value = '';
+        themeInput.value = '';
+        dietInput.value = '';
+        personsInput.value = '';
+
+        filterMenus();
+    });
+});
+</script>
+
 {% endblock %}
