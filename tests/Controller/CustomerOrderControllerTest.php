@@ -147,7 +147,7 @@ final class CustomerOrderControllerTest extends WebTestCase
         $menuRepository = $container->get(MenuRepository::class);
         $orderRepository = $container->get(CustomerOrderRepository::class);
 
-        $user = $userRepository->findOneBy(['email' => 'user@test.com']);
+        $user = $userRepository->findOneBy(['email' => 'client@test.local']);
         $menu = $menuRepository->findOneBy([]);
 
         self::assertInstanceOf(User::class, $user);
@@ -187,7 +187,7 @@ final class CustomerOrderControllerTest extends WebTestCase
         $menuRepository = $container->get(MenuRepository::class);
         $orderRepository = $container->get(CustomerOrderRepository::class);
 
-        $user = $userRepository->findOneBy(['email' => 'user@test.com']);
+        $user = $userRepository->findOneBy(['email' => 'client@test.local']);
         $menu = $menuRepository->findOneBy([]);
 
         self::assertInstanceOf(User::class, $user);
