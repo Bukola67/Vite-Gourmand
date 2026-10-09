@@ -1,4 +1,5 @@
 <?php
+// src/Repository/MenuRepository.php
 
 namespace App\Repository;
 
@@ -6,9 +7,6 @@ use App\Entity\Menu;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
-/**
- * @extends ServiceEntityRepository<Menu>
- */
 class MenuRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
@@ -16,28 +14,34 @@ class MenuRepository extends ServiceEntityRepository
         parent::__construct($registry, Menu::class);
     }
 
-    //    /**
-    //     * @return Menu[] Returns an array of Menu objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('m')
-    //            ->andWhere('m.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('m.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
+    /**
+     * @return Menu[]
+     */
+    public function findByFilters(
+        ?float $minPrice,
+        ?float $maxPrice,
+        ?string $theme,
+        ?string $diet,
+        ?int $minPersons
+    ): array {
+        $qb = $this->createQueryBuilder('m');
 
-    //    public function findOneBySomeField($value): ?Menu
-    //    {
-    //        return $this->createQueryBuilder('m')
-    //            ->andWhere('m.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+        if ($minPrice !== null) {
+            $qb->andWhere('m.basePrice >= :minPrice')->setParameter('minPrice', $minPrice);
+        }
+        if ($maxPrice !== null) {
+            $qb->andWhere('m.basePrice <= :maxPrice')->setParameter('maxPrice', $maxPrice);
+        }
+        if ($theme) {
+            $qb->andWhere('m.theme = :theme')->setParameter('theme', $theme);
+        }
+        if ($diet) {
+            $qb->andWhere('m.diet = :diet')->setParameter('diet', $diet);
+        }
+        if ($minPersons !== null) {
+            $qb->andWhere('m.minimumPersons >= :minPersons')->setParameter('minPersons', $minPersons);
+        }
+
+        return $qb->orderBy('m.id', 'ASC')->getQuery()->getResult();
+    }
 }

@@ -21,7 +21,7 @@ class AppFixtures extends Fixture
         $user->setPostalCode('33000');
         $user->setCity('Bordeaux');
         $user->setIsActive(true);
-        $user->setCreateAt(new \DateTimeImmutable());
+        $user->setCreatedAt(new \DateTimeImmutable());;
 
         $manager->persist($user);
         $manager->flush();

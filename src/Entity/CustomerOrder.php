@@ -18,7 +18,7 @@ class CustomerOrder
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
-
+//Informations client dupliquées au moment de la commande pour garder l'historique même si le client change ses informations
     #[ORM\Column(length: 100)]
     private ?string $customerFirstName = null;
 
@@ -52,6 +52,7 @@ class CustomerOrder
     #[ORM\Column]
     private ?int $personCount = null;
 
+    // Tarification
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2, nullable: true)]
     private ?string $menuPrice = null;
 
