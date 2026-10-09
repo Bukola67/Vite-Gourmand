@@ -9,7 +9,6 @@ services:
     working_dir: /var/www/html
     environment:
       MONGODB_URI: mongodb://mongo:27017
-      MONGODB_DB: vite_gourmand
     depends_on:
       - database
       - mongo
@@ -31,7 +30,7 @@ services:
     container_name: symfony_mongo
     restart: always
     ports:
-      - "27017:27017"
+      - "27018:27017"
     volumes:
       - mongo_data:/data/db
 
