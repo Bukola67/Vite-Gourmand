@@ -19,7 +19,20 @@ jobs:
       KERNEL_CLASS: 'App\Kernel'
       DEFAULT_URI: 'http://localhost'
       DATABASE_URL: 'mysql://root:root@127.0.0.1:3306/vite_gourmand_test?serverVersion=8.0&charset=utf8mb4'
+      MONGODB_URI: 'mongodb://127.0.0.1:27017'
+      MONGODB_DB: 'vite_gourmand'
       MAILER_DSN: 'null://null'
+
+    services:
+      mongo:
+        image: mongo:7
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd="mongosh --eval \"db.adminCommand('ping')\" --quiet"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
 
     steps:
       - name: Checkout code
