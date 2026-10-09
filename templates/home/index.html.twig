@@ -3,59 +3,174 @@
 {% block title %}Accueil - Vite & Gourmand{% endblock %}
 
 {% block body %}
-    <div class="hero-home p-5 mb-4 rounded-3">
-        <div class="container-fluid py-3">
-            <h1 class="display-5 fw-bold text-white">Bienvenue chez Vite & Gourmand</h1>
-        <p class="col-md-8 fs-5 text-white">
-    Une entreprise de traiteur bordelaise qui propose des menus pour tous vos événements.
-        </p>
-            <a href="{{ path('app_menu') }}" class="btn btn-primary btn-lg">Voir les menus</a>
+
+    <section class="hero-home">
+        <div class="container">
+            <div class="hero-content">
+                <h1>Bienvenue chez Vite & Gourmand</h1>
+
+                <p>
+                    Une entreprise de traiteur bordelaise qui propose des menus
+                    pour tous vos événements.
+                </p>
+
+                <a href="{{ path('app_menu') }}" class="btn btn-primary">
+                    Voir les menus
+                </a>
+            </div>
         </div>
-    </div>
-
-    <section class="mb-5">
-        <h2 class="mb-3">Notre entreprise</h2>
-        <p>
-            Nous proposons des prestations traiteur pour différents événements avec des menus évolutifs,
-            adaptés aux besoins des clients.
-        </p>
     </section>
 
-    <section class="mb-5">
-        <h2 class="mb-3">Notre équipe</h2>
-        <p>
-            Une équipe professionnelle au service de vos repas et événements.
-        </p>
-    </section>
+    {# Carrousel des menus #}
+    {% if menus is not empty %}
+    <section class="menu-carousel-section">
+        <div class="container">
+            <h2>Découvrez nos menus</h2>
 
-    <section>
-        <h2 class="mb-3">Avis clients</h2>
+            <div id="menusCarousel" class="carousel slide" data-bs-ride="carousel">
+                <div class="carousel-inner">
 
-        {% if reviews is not empty %}
-            <div class="row g-3">
-                {% for review in reviews %}
-                    <div class="col-md-6 col-lg-4">
-                        <div class="card h-100 shadow-sm">
-                            <div class="card-body">
-                                <h3 class="h5 card-title">{{ review.user.firstName }} {{ review.user.lastName|slice(0, 1) }}.</h3>
-                                <p class="mb-2">
-                                    Note : {{ review.rating }}/5
-                                </p>
-                                <p class="card-text">
-                                    {{ review.comment }}
-                                </p>
-                                <small class="text-muted">
-                                    Publié le {{ review.createdAt|date('d/m/Y') }}
-                                </small>
+                    {% for menu in menus %}
+                        {% set menuImage = 'images/menus/menu-evenement.jpg' %}
+
+                        {% if menu.theme == 'Noël' %}
+                            {% set menuImage = 'images/menus/menu-noel.jpg' %}
+                        {% elseif menu.theme == 'Pâques' %}
+                            {% set menuImage = 'images/menus/menu-paques.jpg' %}
+                        {% elseif menu.theme == 'Événement' %}
+                            {% set menuImage = 'images/menus/menu-evenement.jpg' %}
+                        {% endif %}
+
+                        <div class="carousel-item {{ loop.first ? 'active' : '' }}">
+                            <div class="menu-slide">
+                                <img
+                                    src="{{ asset(menuImage) }}"
+                                    alt="{{ menu.title }}"
+                                    class="menu-slide-image"
+                                >
+
+                                <div class="menu-slide-content">
+                                    <p class="menu-slide-label">
+                                        {{ menu.theme ?: 'Menu traiteur' }}
+                                    </p>
+
+                                    <h3>{{ menu.title }}</h3>
+
+                                    <p>
+                                        {{ menu.description ?: 'Un menu préparé avec soin pour vos événements.' }}
+                                    </p>
+
+                                    <div class="menu-slide-details">
+                                        <span>
+                                            À partir de
+                                            <strong>
+                                                {{ menu.basePrice|number_format(2, ',', ' ') }} €
+                                            </strong>
+                                        </span>
+
+                                        <span>
+                                            Minimum :
+                                            {{ menu.minimumPersons }} personnes
+                                        </span>
+                                    </div>
+
+                                    <a
+                                        href="{{ path('app_menu_show', {id: menu.id}) }}"
+                                        class="btn btn-primary"
+                                    >
+                                        Voir le détail
+                                    </a>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                {% endfor %}
+                    {% endfor %}
+
+                </div>
+
+                {% if menus|length > 1 %}
+                    <button
+                        class="carousel-control-prev"
+                        type="button"
+                        data-bs-target="#menusCarousel"
+                        data-bs-slide="prev"
+                        aria-label="Menu précédent"
+                    >
+                        <span class="carousel-control-prev-icon"></span>
+                    </button>
+
+                    <button
+                        class="carousel-control-next"
+                        type="button"
+                        data-bs-target="#menusCarousel"
+                        data-bs-slide="next"
+                        aria-label="Menu suivant"
+                    >
+                        <span class="carousel-control-next-icon"></span>
+                    </button>
+                {% endif %}
             </div>
-        {% else %}
-            <div class="alert alert-secondary">
-                Aucun avis validé pour le moment.
-            </div>
-        {% endif %}
+        </div>
     </section>
+{% endif %}
+
+    <section class="home-section">
+        <div class="container">
+            <h2>Notre entreprise</h2>
+
+            <p>
+                Nous proposons des prestations traiteur pour différents événements
+                avec des menus évolutifs, adaptés aux besoins de nos clients.
+            </p>
+        </div>
+    </section>
+
+    <section class="home-section">
+        <div class="container">
+            <h2>Notre équipe</h2>
+
+            <p>
+                Une équipe professionnelle au service de vos repas et événements.
+            </p>
+        </div>
+    </section>
+
+    <section class="home-section" aria-labelledby="reviews-title">
+        <div class="container">
+            <h2 id="reviews-title">Avis clients</h2>
+
+            {% if reviews is not empty %}
+                <div class="row g-4">
+                    {% for review in reviews %}
+                        <div class="col-12 col-md-6 col-lg-4">
+                            <article class="card review-card h-100">
+                                <div class="card-body">
+                                    <h3 class="h5 card-title">
+                                        {{ review.user.firstName }}
+                                        {{ review.user.lastName|slice(0, 1) }}.
+                                    </h3>
+
+                                    <p class="review-rating">
+                                        {{ review.rating }}/5
+                                    </p>
+
+                                    <p class="review-comment">
+                                        « {{ review.comment }} »
+                                    </p>
+
+                                    <small>
+                                        Publié le {{ review.createdAt|date('d/m/Y') }}
+                                    </small>
+                                </div>
+                            </article>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="alert alert-secondary">
+                    Aucun avis validé pour le moment.
+                </div>
+            {% endif %}
+        </div>
+    </section>
+
 {% endblock %}
