@@ -23,6 +23,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 180)]
     private ?string $email = null;
 
+    #[ORM\Column]
+    private ?bool $isActive = null;
+
     /**
      * @var list<string> The user roles
      */
@@ -53,8 +56,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 100, nullable: true)]
     private ?string $city = null;
 
-    #[ORM\Column]
-    private ?bool $isActive = null;
+ 
 
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
