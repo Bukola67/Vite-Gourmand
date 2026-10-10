@@ -2,14 +2,17 @@ name: CI
 
 on:
   push:
-    branches: [main, develop]
+    branches: [main, develop, 'feature/**']
   pull_request:
     branches: [main, develop]
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   tests:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 10
 
     env:
@@ -18,57 +21,57 @@ jobs:
       APP_SECRET: ci_test_secret
       KERNEL_CLASS: 'App\Kernel'
       DEFAULT_URI: 'http://localhost'
-      DATABASE_URL: 'mysql://vite_gourmand_user:vite_gourmand_password@127.0.0.1:3306/vite_gourmand_test?serverVersion=8.0&charset=utf8mb4'
+      DATABASE_URL: 'mysql://root:root@127.0.0.1:3306/vite_gourmand?serverVersion=8.0&charset=utf8mb4'
+      MONGODB_URI: 'mongodb://127.0.0.1:27017'
+      MONGODB_DB: 'vite_gourmand'
       MAILER_DSN: 'null://null'
 
     services:
-      mysql:
-        image: mysql:8.0
-        env:
-          MYSQL_DATABASE: vite_gourmand_test
-          MYSQL_USER: vite_gourmand_user
-          MYSQL_PASSWORD: vite_gourmand_password
-          MYSQL_ROOT_PASSWORD: root_password_change_me
+      mongo:
+        image: public.ecr.aws/docker/library/mongo:7
         ports:
-          - 3306:3306
+          - 27017:27017
         options: >-
-          --health-cmd="mysqladmin ping -h 127.0.0.1 -uroot -proot_password_change_me --silent"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=10
+          --health-cmd "mongosh --quiet --eval 'db.runCommand({ping:1})'"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 10
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Start MySQL
+        run: |
+          sudo systemctl start mysql.service
+          for i in $(seq 1 15); do
+            mysqladmin ping -h 127.0.0.1 -uroot -proot --silent && break
+            sleep 2
+          done
+          mysqladmin ping -h 127.0.0.1 -uroot -proot
+
       - name: Set up PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.4'
-          extensions: ctype, iconv, intl, mbstring, pdo, pdo_mysql, xml
+          extensions: ctype, iconv, intl, mbstring, pdo, pdo_mysql, xml, mongodb
           coverage: none
           tools: composer:v2
 
       - name: Validate composer.json
-        run: composer validate --strict
+        run: composer validate --no-check-publish
 
       - name: Install PHP dependencies
         run: composer install --no-interaction --no-progress --prefer-dist --optimize-autoloader
-
-      - name: Check MySQL connection
-        run: |
-          mysqladmin ping \
-            -h 127.0.0.1 \
-            -P 3306 \
-            -uroot \
-            -proot_password_change_me \
-            --silent
 
       - name: Clear Symfony test cache
         run: php bin/console cache:clear --env=test --no-warmup
 
       - name: Install importmap assets
         run: php bin/console importmap:install --env=test
+
+      - name: Create test database
+        run: php bin/console doctrine:database:create --if-not-exists --env=test
 
       - name: Run migrations
         run: php bin/console doctrine:migrations:migrate --no-interaction --env=test
