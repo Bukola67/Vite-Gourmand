@@ -71,7 +71,14 @@ RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' \
     && sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' \
         /etc/apache2/apache2.conf \
         /etc/apache2/conf-available/*.conf \
-    && a2enmod rewrite headers
+    && a2enmod rewrite headers \
+    && rm -f /etc/apache2/mods-enabled/mpm_event.* \
+             /etc/apache2/mods-enabled/mpm_worker.* \
+             /etc/apache2/mods-enabled/mpm_prefork.* \
+    && ln -sf /etc/apache2/mods-available/mpm_prefork.load \
+              /etc/apache2/mods-enabled/mpm_prefork.load \
+    && ln -sf /etc/apache2/mods-available/mpm_prefork.conf \
+              /etc/apache2/mods-enabled/mpm_prefork.conf
 
 # Railway fournit la variable PORT au démarrage.
 # Le script de démarrage configure Apache avec cette valeur.

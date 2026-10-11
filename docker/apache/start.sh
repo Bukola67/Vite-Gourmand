@@ -1,14 +1,12 @@
-#!/bin/bash
+#!/bin/sh
 set -e
 
+: "${PORT:=8080}"
+
+sed -i "s/^Listen .*/Listen ${PORT}/" /etc/apache2/ports.conf
+
 echo ">> Application des migrations Doctrine..."
+php bin/console doctrine:migrations:migrate --no-interaction --allow-no-migration
 
-php bin/console doctrine:database:create --if-not-exists --no-interaction || true
-php bin/console doctrine:migrations:migrate --no-interaction
-
-echo ">> Nettoyage du cache Symfony..."
-php bin/console cache:clear --no-warmup
-
-echo ">> Démarrage d'Apache sur le port ${PORT}..."
-
+echo ">> Démarrage Apache sur le port ${PORT}..."
 exec apache2-foreground
