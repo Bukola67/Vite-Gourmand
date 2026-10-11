@@ -3,6 +3,11 @@ set -eu
 
 : "${PORT:=8080}"
 
+sed -i "s/^Listen .*/Listen ${PORT}/" /etc/apache2/ports.conf
+
+sed -i "s/<VirtualHost \*:80>/<VirtualHost *:${PORT}>/" \
+    /etc/apache2/sites-available/000-default.conf
+
 echo "=== Railway entrypoint : nettoyage des MPM Apache ==="
 echo "=== MPM actifs avant correction ==="
 ls -la /etc/apache2/mods-enabled/ | grep mpm || echo "(aucun MPM listé)"
