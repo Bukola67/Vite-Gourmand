@@ -23,7 +23,7 @@ jobs:
       DEFAULT_URI: 'http://localhost'
       DATABASE_URL: 'mysql://root:root@127.0.0.1:3306/vite_gourmand?serverVersion=8.0&charset=utf8mb4'
       MONGODB_URI: 'mongodb://127.0.0.1:27017'
-      MONGODB_DB: 'vite_gourmand'
+      MONGODB_DB: 'vite_gourmand_test'
       MAILER_DSN: 'null://null'
 
     services:
@@ -81,3 +81,6 @@ jobs:
 
       - name: Run PHPUnit
         run: php bin/phpunit --configuration phpunit.dist.xml
+
+      - name: Build production Docker image
+        run: docker build -t vite-gourmand:ci .

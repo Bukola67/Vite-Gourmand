@@ -1,7 +1,6 @@
 FROM php:8.4-apache
 
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
-
+# Outils et dépendances système
 RUN apt-get update && apt-get install -y \
     git \
     unzip \
@@ -19,9 +18,43 @@ RUN apt-get update && apt-get install -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
+# Composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+WORKDIR /var/www/html
+
+# Dépendances PHP : couche cache efficace
+COPY composer.json composer.lock ./
+RUN composer install --no-dev --no-scripts --no-autoloader --prefer-dist --no-interaction
+
+# Code applicatif
+COPY . .
+
+# Autoloader optimisé et assets Symfony
+ENV APP_ENV=prod \
+    APP_DEBUG=0
+
+RUN composer dump-autoload --optimize \
+    && php bin/console importmap:install \
+    && php bin/console asset-map:compile \
+    && php bin/console cache:clear --no-warmup
+
+# Configuration Apache
 ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
 
-RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
-RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
+RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' \
+        /etc/apache2/sites-available/*.conf \
+    && sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' \
+        /etc/apache2/apache2.conf \
+        /etc/apache2/conf-available/*.conf \
+    && a2enmod rewrite headers
 
-RUN a2enmod rewrite
+# Railway fournit PORT dynamiquement
+RUN sed -ri 's/^Listen 80$/Listen ${PORT}/' /etc/apache2/ports.conf
+
+COPY docker/apache/start.sh /usr/local/bin/start.sh
+RUN chmod +x /usr/local/bin/start.sh
+
+EXPOSE 8080
+
+CMD ["/usr/local/bin/start.sh"]
