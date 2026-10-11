@@ -32,7 +32,8 @@ COPY . .
 
 # Autoloader optimisé et assets Symfony
 ENV APP_ENV=prod \
-    APP_DEBUG=0
+    APP_DEBUG=0 \
+    COMPOSER_ALLOW_SUPERUSER=1
 
 RUN composer dump-autoload --optimize \
     && php bin/console importmap:install \
