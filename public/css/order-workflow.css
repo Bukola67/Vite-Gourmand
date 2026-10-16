@@ -1,0 +1,33 @@
+.vg-back { display:inline-block; margin-bottom:1.5rem; color:#45604d; }
+.vg-menu-layout { display:grid; grid-template-columns:minmax(0,1.3fr) minmax(0,0.9fr); gap:2rem; }
+.vg-menu-image { display:block; width:100%; aspect-ratio:4/3; object-fit:cover; border-radius:1rem; }
+.vg-dishes { display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:1rem; }
+.vg-dish,.vg-preorder,.vg-order-page { padding:1.25rem; background:#fff; border:1px solid #e6e1d7; border-radius:1rem; }
+.vg-dish p { font-size:.9rem; }
+.vg-preorder { margin-top:1.5rem; box-shadow:0 5px 20px #302a250a; }
+.vg-unit-price { font-size:1.5rem; color:#45604d; margin-bottom:.3rem; }
+.vg-order-button { background:#476550; color:#fff; padding:.75rem 1.25rem; width:100%; }
+.vg-order-button:hover,.vg-order-button:focus { background:#354e3c; color:#fff; }
+.vg-order-button:disabled { background:#66746a; color:#fff; opacity:1; }
+.vg-modal-content { border:0; border-radius:1rem; }
+.vg-modal-content .modal-header,.vg-modal-content .modal-body { padding:1.5rem; }
+.vg-order-grid { display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; }
+.vg-order fieldset { min-width:0; }
+.vg-order legend { font-size:1.2rem; margin-bottom:1rem; }
+.vg-order .form-text { color:#515851; font-size:.85rem; }
+.vg-order .form-label { font-weight:500; }
+.vg-order-menu { border-top:1px solid #ddd; margin-top:1rem; padding-top:1rem; }
+.vg-price { background:#f6f5ef; padding:1.25rem; border-radius:.75rem; margin-bottom:1rem; }
+.vg-price dl { margin-bottom:1rem; }
+.vg-price dl>div { display:flex; justify-content:space-between; gap:1rem; padding:.35rem 0; }
+.vg-price dt { font-weight:400; }
+.vg-price dd { margin:0; text-align:right; white-space:nowrap; }
+.vg-price-total { border-top:1px solid #c8cfc7; margin-top:.5rem; padding-top:.75rem!important; font-size:1.15rem; }
+.vg-price-total dt,.vg-price-total dd { font-weight:600; }
+.vg-quote-error { color:#a12530; font-size:.875rem; }
+.vg-order :focus-visible,.vg-back:focus-visible,.vg-order-button:focus-visible { outline:3px solid #285e8e; outline-offset:3px; }
+@media (max-width:767px) {
+ .vg-menu-layout,.vg-order-grid { grid-template-columns:1fr; }
+ .vg-modal-content .modal-header,.vg-modal-content .modal-body { padding:1rem; }
+ .vg-price { padding:1rem; }
+}

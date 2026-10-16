@@ -1,0 +1,19 @@
+Bonjour {{ order.customerFirstName }} {{ order.customerLastName }},
+
+Votre commande n°{{ order.id }} est enregistrée au statut « en attente ».
+Ce message ne confirme ni un paiement ni une acceptation définitive.
+
+Menu : {{ order.menu.title }}
+Nombre de personnes : {{ order.personCount }}
+Prestation : {{ order.deliveryDate|date('d/m/Y') }} à {{ order.deliveryTime|date('H:i') }}
+Adresse : {{ order.deliveryAddress }}, {{ order.deliveryPostalCode }} {{ order.deliveryCity }}
+Lieu / précisions : {{ order.deliveryPlace }}
+Téléphone : {{ order.customerPhone }}
+
+Sous-total menus : {{ order.menuPrice|number_format(2, ',', ' ') }} €
+Remise : - {{ order.discountAmount|number_format(2, ',', ' ') }} €
+Livraison : {{ order.deliveryPrice|number_format(2, ',', ' ') }} €
+Total : {{ order.totalPrice|number_format(2, ',', ' ') }} €
+
+Retrouvez votre commande dans votre espace client.
+L’équipe Vite & Gourmand

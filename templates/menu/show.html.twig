@@ -1,7 +1,9 @@
 {% extends 'base.html.twig' %}
-
-{% block title %}{{ menu.title }} - Vite & Gourmand{% endblock %}
-
+{% block title %}{{ menu.title }} — Vite & Gourmand{% endblock %}
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('css/order-workflow.css') }}">
+{% endblock %}
 {% block body %}
     {% set menuImage = 'images/menus/menu-evenement.jpg' %}
 
@@ -11,65 +13,65 @@
         {% set menuImage = 'images/menus/menu-paques.jpg' %}
     {% elseif menu.theme == 'Événement' %}
         {% set menuImage = 'images/menus/menu-evenement.jpg' %}
+
     {% endif %}
-
-    <div class="row justify-content-center">
-        <div class="col-lg-8">
-            <a href="{{ path('app_menu') }}" class="btn btn-outline-secondary mb-4">Retour aux menus</a>
-
-            <div class="card shadow-sm">
-                <img src="{{ asset(menuImage) }}" class="card-img-top" alt="{{ menu.title }}">
-
-                <div class="card-body">
-                    <h1 class="mb-3">{{ menu.title }}</h1>
-                    <p class="lead">{{ menu.description }}</p>
-
-                    <hr>
-
-                    <p><strong>Thème :</strong> {{ menu.theme ?: 'Non renseigné' }}</p>
-                    <p><strong>Prix minimum :</strong> {{ menu.basePrice }} €</p>
-                    <p><strong>Nombre minimum de personnes :</strong> {{ menu.minimumPersons }}</p>
-                    <p><strong>Régime :</strong> {{ menu.diet ?: 'Non renseigné' }}</p>
-                    <p><strong>Conditions :</strong> {{ menu.conditionText ?: 'Non renseignées' }}</p>
-                    <p><strong>Stock disponible :</strong> {{ menu.stockAvailable ?? 'Non renseigné' }}</p>
-
-                    <h2 class="mt-4">Plats inclus</h2>
-
-                    {% if menu.dishes|length > 0 %}
-                        <div class="list-group mb-4">
-                            {% for dish in menu.dishes %}
-                                <div class="list-group-item">
-                                    <h3 class="h6 mb-1">{{ dish.name }}</h3>
-                                    <p class="mb-1">
-                                        <strong>Type :</strong> {{ dish.type }}
-                                    </p>
-
-                                    {% if dish.description %}
-                                        <p class="mb-1">{{ dish.description }}</p>
-                                    {% endif %}
-
-                                    <p class="mb-0">
-                                        <strong>Allergènes :</strong>
-                                        {% if dish.allergens|length > 0 %}
-                                            {% for allergen in dish.allergens %}
-                                                {{ allergen.name }}{% if not loop.last %}, {% endif %}
-                                            {% endfor %}
-                                        {% else %}
-                                            Aucun allergène renseigné
-                                        {% endif %}
-                                    </p>
-                                </div>
+    <a href="{{ path('app_menu') }}" class="vg-back">← Retour aux menus</a>
+    <article class="vg-menu-layout">
+        <div>
+            <img src="{{ asset(menuImage) }}" alt="Présentation du menu {{ menu.title }}" class="vg-menu-image">
+            <h2 class="mt-4">Composition du menu</h2>
+            <div class="vg-dishes">
+                {% for dish in menu.dishes %}
+                    <section class="vg-dish">
+                        <h3 class="h5">{{ dish.name }}</h3>
+                        <p>Type : {{ dish.type }}</p>
+                        {% if dish.description %}<p>{{ dish.description }}</p>{% endif %}
+                        <p>Allergènes :
+                            {% for allergen in dish.allergens %}
+                                {{ allergen.name }}{{ not loop.last ? ', ' : '' }}
+                            {% else %}
+                                aucun allergène renseigné
                             {% endfor %}
-                        </div>
-                    {% else %}
-                        <div class="alert alert-info">Aucun plat n’est associé à ce menu.</div>
-                    {% endif %}
-
-                    <a href="{{ path('app_order_new', {'id': menu.id}) }}" class="btn btn-primary">
-                        Commander
-                    </a>
+                        </p>
+                    </section>
+                {% else %}
+                    <p>Aucun plat n’est associé à ce menu.</p>
+                {% endfor %}
+            </div>
+        </div>
+        <div>
+            <h1>{{ menu.title }}</h1>
+            <p>{{ menu.description }}</p>
+            <p>Thème : {{ menu.theme ?: 'Non renseigné' }}</p>
+            <p>Régime : {{ menu.diet ?: 'Non renseigné' }}</p>
+            <p class="vg-unit-price">{{ menu.basePrice|number_format(2, ',', ' ') }} € / personne</p>
+            <p>Minimum : {{ menu.minimumPersons }} personnes</p>
+            {% if menu.conditionText %}<p>Conditions : {{ menu.conditionText }}</p>{% endif %}
+            <p>Stock disponible : {{ menu.stockAvailable ?? 'Non renseigné' }}</p>
+            <section class="vg-preorder">
+                <h2 class="h4">Avant de commander</h2>
+                <p>À partir de {{ (menu.basePrice * menu.minimumPersons)|number_format(2, ',', ' ') }} € pour {{ menu.minimumPersons }} personnes, hors livraison.</p>
+                <p>10 % de remise sur les menus dès {{ menu.minimumPersons + 5 }} personnes.</p>
+                <p>Livraison gratuite à Bordeaux. Ailleurs : 5 € + 0,59 €/km selon le calcul de distance actuel.</p>
+                <a href="{{ path('app_order_new', {id: menu.id}) }}" class="btn vg-order-button" {% if is_granted('ROLE_USER') %}data-order-open aria-haspopup="dialog" aria-controls="order-modal"{% endif %}>Commander ce menu</a>
+            </section>
+        </div>
+    </article>
+    {% if is_granted('ROLE_USER') %}
+        <div class="modal fade" id="order-modal" tabindex="-1" aria-labelledby="order-modal-title" aria-hidden="true">
+            <div class="modal-dialog modal-xl modal-dialog-scrollable">
+                <div class="modal-content vg-modal-content">
+                    <div class="modal-header">
+                        <h2 class="modal-title h4" id="order-modal-title">Commander {{ menu.title }}</h2>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer la commande"></button>
+                    </div>
+                    <div class="modal-body" data-order-modal-body></div>
                 </div>
             </div>
         </div>
-    </div>
+    {% endif %}
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('js/order-workflow.js') }}" defer></script>
 {% endblock %}
