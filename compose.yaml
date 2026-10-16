@@ -44,6 +44,14 @@ services:
       PMA_HOST: database
       MYSQL_ROOT_PASSWORD: root
 
+  mailer:
+    image: axllent/mailpit
+    ports:
+      - "8025:8025"     # interface web : http://localhost:8025
+    environment:
+      MP_SMTP_AUTH_ACCEPT_ANY: 1
+      MP_SMTP_AUTH_ALLOW_INSECURE: 1
+
 volumes:
   db_data:
   mongo_data:

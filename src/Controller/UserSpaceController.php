@@ -54,7 +54,7 @@ class UserSpaceController extends AbstractController
             throw $this->createAccessDeniedException('Accès refusé à cette commande.');
         }
 
-        if ($order->getStatus() === 'acceptee') {
+        if ($order->getStatus() !== 'en_attente') {
             $this->addFlash('danger', 'Cette commande ne peut plus être annulée.');
             return $this->redirectToRoute('app_user_order_show', ['id' => $order->getId()]);
         }
