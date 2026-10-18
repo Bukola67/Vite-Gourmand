@@ -1,20 +1,23 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}Accueil - Vite & Gourmand{% endblock %}
-
+{% block main_class %}home-main{% endblock %}
 {% block body %}
 
-    <section class="hero-home">
+    <section class="hero-home" aria-labelledby="hero-title">
         <div class="container">
             <div class="hero-content">
-                <h1>Bienvenue chez Vite & Gourmand</h1>
+                <h1 id="hero-title">
+                    Bienvenue chez Vite &amp; Gourmand
+                </h1>
 
                 <p>
-                    Une entreprise de traiteur bordelaise qui propose des menus
-                    pour tous vos événements.
+                    Une entreprise de traiteur bordelaise qui propose
+                    des menus pour tous vos événements.
                 </p>
 
-                <a href="{{ path('app_menu') }}" class="btn btn-primary">
+                <a href="{{ path('app_menu') }}"
+                class="btn btn-primary hero-cta">
                     Voir les menus
                 </a>
             </div>

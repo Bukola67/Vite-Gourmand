@@ -9,6 +9,8 @@ use App\Entity\OrderStatusHistory;
 use App\Repository\CustomerOrderRepository;
 use App\Repository\ReviewRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Service\MongoStatsService;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -55,7 +57,9 @@ class EmployeeSpaceController extends AbstractController
         Request $request,
         CustomerOrder $order,
         EntityManagerInterface $entityManager,
-        MailService $mailService
+        MailService $mailService,
+        MongoStatsService $mongoStatsService,
+        LoggerInterface $logger
     ): Response {
         if (!$this->isCsrfTokenValid('update_status_' . $order->getId(), $request->request->get('_token'))) {
             throw $this->createAccessDeniedException('Token CSRF invalide.');
@@ -79,8 +83,6 @@ class EmployeeSpaceController extends AbstractController
             return $this->redirectToRoute('app_employee_order_show', ['id' => $order->getId()]);
         }
 
-        $oldStatus = $order->getStatus();
-
         $order->setStatus($newStatus);
         $order->setUpdatedAt(new \DateTimeImmutable());
 
@@ -92,10 +94,22 @@ class EmployeeSpaceController extends AbstractController
         $entityManager->persist($history);
 
         if ($newStatus === 'en_attente_retour_materiel') {
-        $mailService->sendEquipmentReturnReminder($order);
+            $mailService->sendEquipmentReturnReminder($order);
         }
 
         $entityManager->flush();
+
+        // Le chiffre d'affaires encaissé n'est comptabilisé que lorsque la prestation est terminée.
+        if ($newStatus === 'terminee') {
+            try {
+                $mongoStatsService->markOrderCompleted($order);
+            } catch (\Exception $exception) {
+                $logger->error('Statistiques de commande terminée non mises à jour.', [
+                    'exception' => $exception,
+                    'order_id' => $order->getId(),
+                ]);
+            }
+        }
 
         $this->addFlash('success', 'Le statut de la commande a bien été mis à jour.');
 

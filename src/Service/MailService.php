@@ -9,7 +9,7 @@ use Twig\Environment;
 
 class MailService
 {
-    private string $fromEmail = 'stephie.saurel@saurelgroup.com';
+    private string $fromEmail = 'vite.et.gourmand.studi@gmail.com';
 
     public function __construct(private MailerInterface $mailer, private Environment $twig)
     {

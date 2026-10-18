@@ -2,19 +2,20 @@ FROM php:8.4-apache
 
 # Outils et dépendances système
 RUN apt-get update && apt-get install -y \
-    git \
-    unzip \
-    libicu-dev \
-    libzip-dev \
-    zip \
-    curl \
-    libonig-dev \
-    libxml2-dev \
-    pkg-config \
-    libssl-dev \
+        git \
+        unzip \
+        libicu-dev \
+        libzip-dev \
+        zip \
+        curl \
+        libonig-dev \
+        libxml2-dev \
+        pkg-config \
+        libssl-dev \
     && docker-php-ext-install pdo pdo_mysql intl zip \
     && pecl install mongodb \
     && docker-php-ext-enable mongodb \
+    && php -m | grep -q '^mongodb$' \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
@@ -49,8 +50,8 @@ RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' \
         /etc/apache2/conf-available/*.conf \
     && a2enmod rewrite headers
 
-# Railway fournit PORT dynamiquement
-RUN sed -ri 's/^Listen 80$/Listen ${PORT}/' /etc/apache2/ports.conf
+# Railway fournit un port dynamique
+RUN sed -ri 's/^Listen 80$/Listen 80/' /etc/apache2/ports.conf
 
 COPY docker/apache/start.sh /usr/local/bin/start.sh
 RUN chmod +x /usr/local/bin/start.sh
