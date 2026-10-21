@@ -6,84 +6,49 @@ use App\Entity\CustomerOrder;
 use MongoDB\Client;
 use MongoDB\Driver\Exception\BulkWriteException;
 
+
 class MongoStatsService
 {
     private \MongoDB\Collection $menuStats;
     private \MongoDB\Collection $monthlyStats;
-    private \MongoDB\Collection $processedOrders;
     private \MongoDB\Collection $completedOrders;
+
+    private bool $indexesInitialized = false;
 
     public function __construct(Client $client, string $mongoDbName)
     {
         $database = $client->selectDatabase($mongoDbName);
 
-        $this->menuStats = $database->selectCollection('menu_stats');
-        $this->monthlyStats = $database->selectCollection('menu_monthly_stats');
-        $this->processedOrders = $database->selectCollection('processed_order_stats');
-        $this->completedOrders = $database->selectCollection('completed_order_stats');
+        $this->menuStats = $database->selectCollection(
+            'menu_stats'
+        );
 
-        $this->createIndexes();
+        $this->monthlyStats = $database->selectCollection(
+            'menu_monthly_stats'
+        );
+
+        $this->completedOrders = $database->selectCollection(
+            'completed_order_stats'
+        );
     }
 
-    private function createIndexes(): void
+    private function ensureIndexes(): void
     {
-        $this->processedOrders->createIndex(['orderId' => 1], ['unique' => true]);
-        $this->completedOrders->createIndex(['orderId' => 1], ['unique' => true]);
-        $this->monthlyStats->createIndex(['menuId' => 1, 'month' => 1], ['unique' => true]);
-    }
-
-    /**
-     * Comptabilise une commande enregistrée.
-     * Cette méthode est idempotente : une commande déjà traitée n'est jamais recomptée.
-     */
-    public function incrementOrderStats(CustomerOrder $order): void
-    {
-        $orderId = (int) $order->getId();
-
-        try {
-            $this->processedOrders->insertOne([
-                'orderId' => $orderId,
-                'processedAt' => new \DateTimeImmutable(),
-            ]);
-        } catch (BulkWriteException $exception) {
-            // Index unique violé : la commande a déjà été comptabilisée.
+        if ($this->indexesInitialized) {
             return;
         }
 
-        $menu = $order->getMenu();
-        $month = $order->getCreatedAt()->format('Y-m');
-        $totalPrice = (float) $order->getTotalPrice();
-
-        $this->menuStats->updateOne(
-            ['menuId' => $menu->getId()],
-            [
-                '$setOnInsert' => [
-                    'menuId' => $menu->getId(),
-                    'menuTitle' => $menu->getTitle(),
-                ],
-                '$inc' => [
-                    'totalOrders' => 1,
-                ],
-            ],
-            ['upsert' => true]
+        $this->completedOrders->createIndex(
+            ['orderId' => 1],
+            ['unique' => true]
         );
 
-        $this->monthlyStats->updateOne(
-            [
-                'menuId' => $menu->getId(),
-                'month' => $month,
-            ],
-            [
-                '$setOnInsert' => [
-                    'menuId' => $menu->getId(),
-                    'month' => $month,
-                ],
-                '$inc' => [
-                    'orders' => 1,
-                ],
-            ],
-            ['upsert' => true]
+        $this->monthlyStats->createIndex(
+            ['menuId' => 1, 'month' => 1],
+            ['unique' => true]
         );
+
+        $this->indexesInitialized = true;
     }
 
     /**
@@ -92,6 +57,8 @@ class MongoStatsService
      */
     public function markOrderCompleted(CustomerOrder $order): void
     {
+        $this->ensureIndexes();
+
         $orderId = (int) $order->getId();
 
         try {
@@ -145,7 +112,7 @@ class MongoStatsService
     public function getMenuStats(): array
     {
         return $this->menuStats
-            ->find([], ['sort' => ['totalOrders' => -1]])
+            ->find([], ['sort' => ['completedOrders' => -1]])
             ->toArray();
     }
 
@@ -208,17 +175,15 @@ class MongoStatsService
      */
     public function rebuildStats(iterable $orders): void
     {
+        $this->ensureIndexes();
         $this->menuStats->deleteMany([]);
         $this->monthlyStats->deleteMany([]);
-        $this->processedOrders->deleteMany([]);
         $this->completedOrders->deleteMany([]);
 
         foreach ($orders as $order) {
             if (!$order instanceof CustomerOrder) {
                 continue;
             }
-
-            $this->incrementOrderStats($order);
 
             if ($order->getStatus() === 'terminee') {
                 $this->markOrderCompleted($order);

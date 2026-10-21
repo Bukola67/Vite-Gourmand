@@ -118,11 +118,16 @@
             const current = invalidate();
             timer = setTimeout(() => quote(current), 500);
         }
+
         inputNames.forEach(name => {
             const input = form.elements.namedItem(`customer_order[${name}]`);
             input.addEventListener('input', schedule);
             input.addEventListener('change', schedule);
         });
+
+        // --- NOUVELLE LIGNE AJOUTÉE ICI ---
+        form.querySelector('[data-price-retry]')?.addEventListener('click', schedule);
+
         form.addEventListener('submit', event => {
             // Empêcher une deuxième soumission.
             if (submitting) {

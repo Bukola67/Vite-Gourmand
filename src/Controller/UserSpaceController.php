@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\CustomerOrder;
 use App\Entity\User;
+use App\Entity\OrderStatusHistory;
 use App\Entity\Review;
 use App\Form\ReviewType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -43,28 +44,68 @@ class UserSpaceController extends AbstractController
         ]);
     }
 
-    #[Route('/compte/commande/{id}/annuler', name: 'app_user_order_cancel', methods: ['POST'])]
+    #[Route(
+        '/compte/commande/{id}/annuler',
+        name: 'app_user_order_cancel',
+        methods: ['POST']
+    )]
     #[IsGranted('ROLE_USER')]
-    public function cancel(Request $request, CustomerOrder $order, EntityManagerInterface $entityManager): Response
-    {
-        /** @var User $user */
+    public function cancel(
+        Request $request,
+        CustomerOrder $order,
+        EntityManagerInterface $entityManager
+    ): Response {
         $user = $this->getUser();
 
+        if (!$user instanceof User) {
+            throw $this->createAccessDeniedException();
+        }
+
         if ($order->getUser() !== $user) {
-            throw $this->createAccessDeniedException('Accès refusé à cette commande.');
+            throw $this->createAccessDeniedException(
+                'Accès refusé à cette commande.'
+            );
+        }
+
+        if (!$this->isCsrfTokenValid(
+            'cancel_order_' . $order->getId(),
+            $request->request->get('_token')
+        )) {
+            throw $this->createAccessDeniedException(
+                'Jeton CSRF invalide.'
+            );
         }
 
         if ($order->getStatus() !== 'en_attente') {
-            $this->addFlash('danger', 'Cette commande ne peut plus être annulée.');
-            return $this->redirectToRoute('app_user_order_show', ['id' => $order->getId()]);
+            $this->addFlash(
+                'danger',
+                'Cette commande ne peut plus être annulée.'
+            );
+
+            return $this->redirectToRoute(
+                'app_user_order_show',
+                ['id' => $order->getId()]
+            );
         }
 
-        if ($this->isCsrfTokenValid('cancel_order_'.$order->getId(), $request->request->get('_token'))) {
-            $order->setStatus('annulee');
-            $entityManager->flush();
+        $now = new \DateTimeImmutable();
 
-            $this->addFlash('success', 'La commande a bien été annulée.');
-        }
+        $order->setStatus('annulee');
+        $order->setUpdatedAt($now);
+
+        $history = new OrderStatusHistory();
+        $history->setStatus('annulee');
+        $history->setChangedAt($now);
+
+        $order->addOrderStatusHistory($history);
+
+        $entityManager->persist($history);
+        $entityManager->flush();
+
+        $this->addFlash(
+            'success',
+            'La commande a bien été annulée.'
+        );
 
         return $this->redirectToRoute('app_user_space');
     }

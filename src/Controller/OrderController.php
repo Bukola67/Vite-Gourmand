@@ -4,7 +4,7 @@ namespace App\Controller;
 
 use App\Entity\{CustomerOrder, Menu, OrderStatusHistory, User};
 use App\Form\CustomerOrderType;
-use App\Service\{MailService, MongoStatsService, OrderQuoteCalculator};
+use App\Service\{MailService, OrderQuoteCalculator};
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -23,7 +23,6 @@ final class OrderController extends AbstractController
         Menu $menu,
         Request $request,
         EntityManagerInterface $entityManager,
-        MongoStatsService $mongoStatsService,
         OrderQuoteCalculator $quoteCalculator,
         MailService $mailService,
         LoggerInterface $logger,
@@ -50,7 +49,7 @@ final class OrderController extends AbstractController
         ]);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
+ if ($form->isSubmitted() && $form->isValid()) {
             try {
                 // Le navigateur ne fournit jamais les montants de confiance.
                 $prices = $quoteCalculator->calculate($menu, $order);
@@ -59,44 +58,90 @@ final class OrderController extends AbstractController
                 $form->addError(new FormError('Le prix de livraison ne peut pas être calculé pour le moment. Vérifiez l’adresse ou réessayez plus tard. Aucune commande n’a été créée.'));
             }
 
+            // CORRECTION : $if (isset($prices)) est bien dans le bloc isValid()
             if (isset($prices)) {
+                $now = new \DateTimeImmutable();
+
                 $order->setUser($user);
                 $order->setMenu($menu);
                 $order->setStatus('en_attente');
-                $order->setCreatedAt(new \DateTimeImmutable());
+                $order->setCreatedAt($now);
                 $order->setMenuPrice($prices['menuPrice']);
                 $order->setDeliveryPrice($prices['deliveryPrice']);
                 $order->setDiscountAmount($prices['discountAmount']);
                 $order->setTotalPrice($prices['totalPrice']);
-                $entityManager->persist($order);
 
                 $history = new OrderStatusHistory();
-                $history->setStatus($order->getStatus());
-                $history->setChangedAt(new \DateTimeImmutable());
-                $history->setCustomerOrder($order);
-                $entityManager->persist($history);
-                $entityManager->flush();
+                $history->setStatus('en_attente');
+                $history->setChangedAt($now);
 
-                // Une panne de statistiques ne doit pas transformer une commande créée en échec apparent.
+                $order->addOrderStatusHistory($history);
+
                 try {
-                    $mongoStatsService->incrementOrderStats($order);
+                    $entityManager->persist($order);
+                    $entityManager->persist($history);
+                    $entityManager->flush();
                 } catch (\Exception $exception) {
-                    $logger->error('Statistiques non mises à jour.', ['exception' => $exception, 'order_id' => $order->getId()]);
+                    $logger->error(
+                        'Échec de l’enregistrement de la commande.',
+                        [
+                            'exception' => $exception,
+                            'user_id' => $user->getId(),
+                            'menu_id' => $menu->getId(),
+                        ]
+                    );
+
+                    $this->addFlash(
+                        'danger',
+                        'L’enregistrement de votre commande n’a pas pu être confirmé. '
+                        . 'Consultez votre espace client avant toute nouvelle tentative '
+                        . 'afin d’éviter un doublon.'
+                    );
+
+                    return $this->redirectToRoute(
+                        'app_user_space',
+                        [],
+                        Response::HTTP_SEE_OTHER
+                    );
                 }
 
+                // Les statistiques MongoDB sont mises à jour au passage à « terminee »
+                // (EmployeeSpaceController::updateStatus()), pas à la création.
                 try {
                     $mailService->sendOrderConfirmation($order);
-                    $this->addFlash('success', 'Votre commande a bien été enregistrée. L’envoi de votre confirmation par e-mail a été pris en charge.');
+
+                    $this->addFlash(
+                        'success',
+                        'Votre commande a bien été enregistrée. '
+                        . 'L’envoi de votre confirmation par e-mail a été pris en charge.'
+                    );
                 } catch (TransportExceptionInterface $exception) {
-                    $logger->error('Envoi de confirmation impossible.', ['exception' => $exception, 'order_id' => $order->getId()]);
-                    $this->addFlash('warning', 'Votre commande est bien enregistrée, mais la confirmation par e-mail n’a pas pu être envoyée. Ne recommandez pas : retrouvez votre commande dans votre espace client.');
+                    $logger->error(
+                        'Envoi de confirmation impossible.',
+                        [
+                            'exception' => $exception,
+                            'order_id' => $order->getId(),
+                        ]
+                    );
+
+                    $this->addFlash(
+                        'warning',
+                        'Votre commande est bien enregistrée, '
+                        . 'mais la confirmation par e-mail n’a pas pou être envoyée. '
+                        . 'Ne recommandez pas : retrouvez votre commande '
+                        . 'dans votre espace client.'
+                    );
                 }
 
-                return $this->redirectToRoute('app_user_space');
+                return $this->redirectToRoute(
+                    'app_user_space',
+                    [],
+                    Response::HTTP_SEE_OTHER
+                );
             }
-        }
+        } // Fin de if ($form->isSubmitted() && $form->isValid())
 
-        // Le GET partiel sert uniquement à charger la modale. Les erreurs POST restent sur la page complète.
+        // Rendu du formulaire en GET ou en cas d'erreur
         $template = $request->isMethod('GET') && $request->query->get('fragment') === '1'
             ? 'order/_form.html.twig'
             : 'order/new.html.twig';
@@ -104,7 +149,7 @@ final class OrderController extends AbstractController
         $response->setPrivate();
         $response->headers->set('Cache-Control', 'private, no-store');
         return $response;
-    }
+    } 
 
     #[Route('/simulation/{id}', name: 'quote', requirements: ['id' => '\d+'], methods: ['POST'])]
     public function quote(

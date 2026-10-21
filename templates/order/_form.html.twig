@@ -3,7 +3,6 @@
     <p>Tous les champs sont obligatoires. Les coordonnées préremplies peuvent être modifiées pour cette commande, sans modifier votre compte.</p>
     {{ form_start(orderForm, {
     attr: {
-        novalidate: 'novalidate',
         'data-turbo': 'false',
         'data-order-form': '',
         'data-quote-url': path('app_order_quote', {id: menu.id})

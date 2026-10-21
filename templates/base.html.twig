@@ -21,12 +21,31 @@
     <body>
 
         <nav class="navbar navbar-expand-lg shadow-sm">
-            <div class="container">
-                <a class="navbar-brand" href="{{ path('app_home') }}">Vite & Gourmand</a>
+                <div class="container">
+                    <a class="navbar-brand vg-brand" href="{{ path('app_home') }}">
+                        <span class="vg-brand__mark" aria-hidden="true">
+                            <img
+                                src="{{ asset('images/logo-vg.png') }}"
+                                alt=""
+                                width="48"
+                                height="48"
+                            >
+                        </span>
 
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" aria-controls="mainNavbar" aria-expanded="false" aria-label="Afficher la navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
+                        <span class="vg-brand__name">Vite &amp; Gourmand</span>
+                    </a>
+
+                    <button
+                        class="navbar-toggler"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#mainNavbar"
+                        aria-controls="mainNavbar"
+                        aria-expanded="false"
+                        aria-label="Afficher la navigation"
+                    >
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
 
                 <div class="collapse navbar-collapse" id="mainNavbar">
                     <ul class="navbar-nav ms-auto">

@@ -95,7 +95,7 @@
 
         const data = [
             {% for stat in chartStats %}
-                {{ stat.totalOrders ?? 0 }},
+                {{ stat.completedOrders ?? 0 }},
             {% endfor %}
         ];
 
