@@ -1,0 +1,214 @@
+/* =========================================================
+   VITE & GOURMAND — DÉTAIL MENU & PRÉCOMMANDE
+   Fichier chargé uniquement par :
+   - templates/menu/show.html.twig
+   - templates/order/new.html.twig
+   ========================================================= */
+
+.vg-back {
+  display: inline-block;
+  margin-bottom: 1.5rem;
+  color: var(--vg-text);
+  font-weight: 600;
+}
+
+.vg-back:hover,
+.vg-back:focus {
+  color: var(--vg-accent);
+}
+
+/* ---------------------------------------------------------
+   Détail du menu
+--------------------------------------------------------- */
+
+.vg-menu-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+}
+
+.vg-menu-image {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: var(--vg-radius-lg);
+}
+
+.vg-dishes {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 1rem;
+}
+
+.vg-dish,
+.vg-preorder,
+.vg-order-page {
+  padding: 1.25rem;
+  background-color: var(--vg-surface-price);
+  border: 1px solid var(--vg-border);
+  border-radius: var(--vg-radius-lg);
+}
+
+.vg-dish p {
+  font-size: 0.9rem;
+  color: var(--vg-text);
+}
+
+.vg-preorder {
+  margin-top: 1.5rem;
+  box-shadow: var(--vg-shadow);
+}
+
+.vg-unit-price {
+  margin-bottom: 0.3rem;
+  color: var(--vg-accent);
+  font-family: var(--vg-font-heading);
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+/* ---------------------------------------------------------
+   Bouton de commande
+--------------------------------------------------------- */
+
+.vg-order-button {
+  width: 100%;
+}
+
+/* ---------------------------------------------------------
+   Modale de précommande
+--------------------------------------------------------- */
+
+.vg-modal-content {
+  border: 0;
+  border-radius: var(--vg-radius-lg);
+  background-color: var(--vg-surface-page);
+}
+
+.vg-modal-content .modal-header,
+.vg-modal-content .modal-body {
+  padding: 1rem;
+}
+
+/* ---------------------------------------------------------
+   Formulaire de commande
+--------------------------------------------------------- */
+
+.vg-order-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+.vg-order fieldset {
+  min-width: 0;
+}
+
+.vg-order legend {
+  margin-bottom: 1rem;
+  font-size: 1.2rem;
+}
+
+.vg-order .form-text {
+  color: var(--vg-text-muted);
+  font-size: 0.85rem;
+}
+
+.vg-order .form-label {
+  font-weight: 500;
+}
+
+.vg-order-menu {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--vg-border);
+}
+
+/* ---------------------------------------------------------
+   Récapitulatif tarifaire
+--------------------------------------------------------- */
+
+.vg-price {
+  margin-bottom: 1rem;
+  padding: 1rem;
+  background-color: var(--vg-surface-card);
+  border-radius: var(--vg-radius-md);
+}
+
+.vg-price dl {
+  margin-bottom: 1rem;
+}
+
+.vg-price dl > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.35rem 0;
+}
+
+.vg-price dt {
+  font-weight: 400;
+}
+
+.vg-price dd {
+  margin: 0;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.vg-price-total {
+  margin-top: 0.5rem;
+  padding-top: 0.75rem !important;
+  border-top: 1px solid var(--vg-accent);
+  font-size: 1.15rem;
+}
+
+.vg-price-total dt,
+.vg-price-total dd {
+  font-weight: 600;
+}
+
+.vg-quote-error {
+  color: #A12530;
+  font-size: 0.875rem;
+}
+
+/* ---------------------------------------------------------
+   Accessibilité
+--------------------------------------------------------- */
+
+.vg-order :focus-visible,
+.vg-back:focus-visible,
+.vg-order-button:focus-visible {
+  outline: 3px solid var(--vg-sage);
+  outline-offset: 3px;
+}
+
+/* ---------------------------------------------------------
+   Tablette et desktop — mobile first
+--------------------------------------------------------- */
+
+@media (min-width: 768px) {
+  .vg-menu-layout {
+    grid-template-columns: minmax(0, 1.3fr) minmax(0, 0.9fr);
+    align-items: start;
+  }
+
+  .vg-order-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .vg-modal-content .modal-header,
+  .vg-modal-content .modal-body {
+    padding: 1.5rem;
+  }
+
+  .vg-price {
+    padding: 1.25rem;
+  }
+
+  .vg-order-button {
+    width: auto;
+  }
+}

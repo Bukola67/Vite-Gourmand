@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head><meta charset="UTF-8"><title>Confirmation de commande</title></head>
+<body style="font-family:Arial,sans-serif;color:#302a25;line-height:1.6">
+    <h1>Votre commande n°{{ order.id }} est enregistrée</h1>
+    <p>Bonjour {{ order.customerFirstName }} {{ order.customerLastName }},</p>
+    <p>Nous avons bien reçu votre commande. Son statut actuel est « en attente » : ce message confirme son enregistrement, pas un paiement ni son acceptation définitive.</p>
+    <h2>Votre prestation</h2>
+    <ul>
+        <li>Menu : {{ order.menu.title }}</li>
+        <li>Nombre de personnes : {{ order.personCount }}</li>
+        <li>Date : {{ order.deliveryDate|date('d/m/Y') }} à {{ order.deliveryTime|date('H:i') }}</li>
+        <li>Adresse : {{ order.deliveryAddress }}, {{ order.deliveryPostalCode }} {{ order.deliveryCity }}</li>
+        <li>Lieu / précisions : {{ order.deliveryPlace }}</li>
+        <li>Téléphone de contact : {{ order.customerPhone }}</li>
+    </ul>
+    <h2>Détail du prix</h2>
+    <table cellpadding="8" style="border-collapse:collapse">
+        <tr><th scope="row" align="left">Sous-total menus</th><td>{{ order.menuPrice|number_format(2, ',', ' ') }} €</td></tr>
+        <tr><th scope="row" align="left">Remise</th><td>− {{ order.discountAmount|number_format(2, ',', ' ') }} €</td></tr>
+        <tr><th scope="row" align="left">Livraison</th><td>{{ order.deliveryPrice|number_format(2, ',', ' ') }} €</td></tr>
+        <tr><th scope="row" align="left">Total</th><td>{{ order.totalPrice|number_format(2, ',', ' ') }} €</td></tr>
+    </table>
+    <p>Vous pouvez retrouver votre commande dans votre espace client.</p>
+    <p>Merci de votre confiance,<br>L’équipe Vite &amp; Gourmand</p>
+</body>
+</html>

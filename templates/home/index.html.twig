@@ -1,20 +1,22 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}Accueil - Vite & Gourmand{% endblock %}
-
+{% block main_class %}home-main{% endblock %}
 {% block body %}
 
-    <section class="hero-home">
+    <section class="hero-home" aria-labelledby="hero-title">
         <div class="container">
             <div class="hero-content">
-                <h1>Bienvenue chez Vite & Gourmand</h1>
+                <h1 id="hero-title">
+                    Bienvenue chez Vite &amp; Gourmand
+                </h1>
 
                 <p>
-                    Une entreprise de traiteur bordelaise qui propose des menus
-                    pour tous vos événements.
+                    Une entreprise de traiteur bordelaise qui propose
+                    des menus pour tous vos événements.
                 </p>
 
-                <a href="{{ path('app_menu') }}" class="btn btn-primary">
+                <a href="{{ path('app_menu') }}" class="btn btn-primary hero-cta">
                     Voir les menus
                 </a>
             </div>
@@ -25,9 +27,12 @@
     {% if menus is not empty %}
     <section class="menu-carousel-section">
         <div class="container">
-            <h2>Découvrez nos menus</h2>
+            <header class="home-section-heading">
+                <p class="home-kicker">Découvrez notre sélection</p>
+                <h2>Quelques idées de menus</h2>
+            </header>
 
-            <div id="menusCarousel" class="carousel slide" data-bs-ride="carousel">
+            <div id="menusCarousel" class="carousel slide">
                 <div class="carousel-inner">
 
                     {% for menu in menus %}
@@ -61,17 +66,16 @@
                                     </p>
 
                                     <div class="menu-slide-details">
-                                        <span>
+                                        <p class="menu-slide-price">
                                             À partir de
                                             <strong>
                                                 {{ menu.basePrice|number_format(2, ',', ' ') }} €
                                             </strong>
-                                        </span>
+                                        </p>
 
-                                        <span>
-                                            Minimum :
-                                            {{ menu.minimumPersons }} personnes
-                                        </span>
+                                        <p class="menu-slide-minimum">
+                                            Minimum : {{ menu.minimumPersons }} personnes
+                                        </p>
                                     </div>
 
                                     <a
@@ -88,53 +92,92 @@
                 </div>
 
                 {% if menus|length > 1 %}
-                    <button
-                        class="carousel-control-prev"
-                        type="button"
-                        data-bs-target="#menusCarousel"
-                        data-bs-slide="prev"
-                        aria-label="Menu précédent"
-                    >
-                        <span class="carousel-control-prev-icon"></span>
-                    </button>
+                    <div class="home-carousel-navigation">
+                        <button
+                            class="carousel-control-prev"
+                            type="button"
+                            data-bs-target="#menusCarousel"
+                            data-bs-slide="prev"
+                            aria-label="Menu précédent"
+                        >
+                            <span aria-hidden="true">←</span>
+                        </button>
 
-                    <button
-                        class="carousel-control-next"
-                        type="button"
-                        data-bs-target="#menusCarousel"
-                        data-bs-slide="next"
-                        aria-label="Menu suivant"
-                    >
-                        <span class="carousel-control-next-icon"></span>
-                    </button>
+                        <div class="carousel-indicators">
+                            {% for menu in menus %}
+                                <button
+                                    type="button"
+                                    data-bs-target="#menusCarousel"
+                                    data-bs-slide-to="{{ loop.index0 }}"
+                                    class="{{ loop.first ? 'active' : '' }}"
+                                    {% if loop.first %}aria-current="true"{% endif %}
+                                    aria-label="Afficher le menu {{ loop.index }}"
+                                ></button>
+                            {% endfor %}
+                        </div>
+
+                        <button
+                            class="carousel-control-next"
+                            type="button"
+                            data-bs-target="#menusCarousel"
+                            data-bs-slide="next"
+                            aria-label="Menu suivant"
+                        >
+                            <span aria-hidden="true">→</span>
+                        </button>
+                    </div>
                 {% endif %}
             </div>
         </div>
     </section>
-{% endif %}
+    {% endif %}
 
-    <section class="home-section">
+    <section class="home-presentation" aria-labelledby="company-title">
         <div class="container">
-            <h2>Notre entreprise</h2>
+            <div class="home-presentation-row">
+                <img
+                    src="{{ asset('images/presentation/presentation_jj.jpg') }}"
+                    alt="Présentation de l’entreprise Vite & Gourmand"
+                    class="home-presentation-image"
+                    loading="lazy"
+                    width="900"
+                    height="600"
+                >
 
-            <p>
-                Nous proposons des prestations traiteur pour différents événements
-                avec des menus évolutifs, adaptés aux besoins de nos clients.
-            </p>
+                <div class="home-presentation-content">
+                    <h2 id="company-title">Notre entreprise</h2>
+
+                    <p>
+                        Nous proposons des prestations traiteur pour différents
+                        événements avec des menus évolutifs, adaptés aux besoins
+                        de nos clients.
+                    </p>
+                </div>
+            </div>
+
+            <div class="home-presentation-row home-presentation-row--reverse">
+                <img
+                    src="{{ asset('images/presentation/presentation_vg.jpg') }}"
+                    alt="L’équipe de Vite & Gourmand"
+                    class="home-presentation-image"
+                    loading="lazy"
+                    width="900"
+                    height="600"
+                >
+
+                <div class="home-presentation-content">
+                    <h2>Notre équipe</h2>
+
+                    <p>
+                        Une équipe professionnelle au service de vos repas
+                        et événements.
+                    </p>
+                </div>
+            </div>
         </div>
     </section>
 
-    <section class="home-section">
-        <div class="container">
-            <h2>Notre équipe</h2>
-
-            <p>
-                Une équipe professionnelle au service de vos repas et événements.
-            </p>
-        </div>
-    </section>
-
-    <section class="home-section" aria-labelledby="reviews-title">
+    <section class="home-section home-reviews" aria-labelledby="reviews-title">
         <div class="container">
             <h2 id="reviews-title">Avis clients</h2>
 
@@ -144,22 +187,35 @@
                         <div class="col-12 col-md-6 col-lg-4">
                             <article class="card review-card h-100">
                                 <div class="card-body">
-                                    <h3 class="h5 card-title">
-                                        {{ review.user.firstName }}
-                                        {{ review.user.lastName|slice(0, 1) }}.
-                                    </h3>
-
                                     <p class="review-rating">
-                                        {{ review.rating }}/5
+                                        <span class="visually-hidden">
+                                            Note : {{ review.rating }} sur 5.
+                                        </span>
+
+                                        <span aria-hidden="true">
+                                            {% for star in 1..5 %}
+                                                <span class="{{ star <= review.rating ? 'review-star--filled' : 'review-star--empty' }}">
+                                                    {{ star <= review.rating ? '★' : '☆' }}
+                                                </span>
+                                            {% endfor %}
+                                        </span>
                                     </p>
 
-                                    <p class="review-comment">
-                                        « {{ review.comment }} »
-                                    </p>
+                                    <blockquote class="review-comment">
+                                        {{ review.comment }}
+                                    </blockquote>
 
-                                    <small>
-                                        Publié le {{ review.createdAt|date('d/m/Y') }}
-                                    </small>
+                                    <div class="review-author">
+                                        <h3>
+                                            {{ review.user.firstName }}
+                                            {{ review.user.lastName|slice(0, 1) }}.
+                                        </h3>
+
+                                        <p>
+                                            Publié le
+                                            {{ review.createdAt|date('d/m/Y') }}
+                                        </p>
+                                    </div>
                                 </div>
                             </article>
                         </div>

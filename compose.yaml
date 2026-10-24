@@ -1,14 +1,24 @@
 services:
   php:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+
     container_name: symfony_php
+
     ports:
-      - "8000:80"
+      - "127.0.0.1:8000:80"
+
     volumes:
       - ./:/var/www/html
+
     working_dir: /var/www/html
+
     environment:
+      APP_ENV: dev
+      APP_DEBUG: "1"
       MONGODB_URI: mongodb://mongo:27017
+
     depends_on:
       - database
       - mongo
@@ -43,6 +53,14 @@ services:
     environment:
       PMA_HOST: database
       MYSQL_ROOT_PASSWORD: root
+
+  mailer:
+    image: axllent/mailpit
+    ports:
+      - "8025:8025"     # interface web : http://localhost:8025
+    environment:
+      MP_SMTP_AUTH_ACCEPT_ANY: 1
+      MP_SMTP_AUTH_ALLOW_INSECURE: 1
 
 volumes:
   db_data:

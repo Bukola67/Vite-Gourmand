@@ -54,7 +54,7 @@
                 <p><strong>Motif :</strong> {{ order.cancelReason }}</p>
             {% endif %}
 
-            {% if order.status != 'acceptee' %}
+            {% if order.status == 'en_attente' %}
                 <form method="post" action="{{ path('app_user_order_cancel', {id: order.id}) }}" onsubmit="return confirm('Voulez-vous vraiment annuler cette commande ?');">
                     <input type="hidden" name="_token" value="{{ csrf_token('cancel_order_' ~ order.id) }}">
                     <button type="submit" class="btn btn-danger mt-3">

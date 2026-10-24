@@ -11,22 +11,47 @@
                 rel="stylesheet"
             >
 
-            <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600;1,700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+            <link
+                 href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Poppins:wght@400;500;600;700&display=swap"
+                 rel="stylesheet"
+            >
+
+            <link rel="stylesheet" href="{{ asset('css/customer-space.css') }}">
 
             {% block importmap %}
                 {{ importmap('app') }}
             {% endblock %}
+            <link rel="stylesheet" href="{{ asset('css/home-design.css') }}">
         {% endblock %}
     </head>
     <body>
 
         <nav class="navbar navbar-expand-lg shadow-sm">
-            <div class="container">
-                <a class="navbar-brand" href="{{ path('app_home') }}">Vite & Gourmand</a>
+                <div class="container">
+                    <a class="navbar-brand vg-brand" href="{{ path('app_home') }}">
+                        <span class="vg-brand__mark" aria-hidden="true">
+                            <img
+                                src="{{ asset('images/logo-vg.png') }}"
+                                alt=""
+                                width="48"
+                                height="48"
+                            >
+                        </span>
 
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" aria-controls="mainNavbar" aria-expanded="false" aria-label="Afficher la navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
+                        <span class="vg-brand__name">Vite &amp; Gourmand</span>
+                    </a>
+
+                    <button
+                        class="navbar-toggler"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#mainNavbar"
+                        aria-controls="mainNavbar"
+                        aria-expanded="false"
+                        aria-label="Afficher la navigation"
+                    >
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
 
                 <div class="collapse navbar-collapse" id="mainNavbar">
                     <ul class="navbar-nav ms-auto">
@@ -52,6 +77,16 @@
                         </li>
 
                         {% if app.user %}
+                        
+                            <li class="nav-item">
+                                <a
+                                    class="nav-link"
+                                    href="{{ path('app_user_space') }}#orders-title"
+                                >
+                                    Mes commandes
+                                </a>
+                            </li>
+
                             <li class="nav-item">
                                 <a class="nav-link {{ app.request.attributes.get('_route') == 'app_user_space' ? 'active' : '' }}"
                                    href="{{ path('app_user_space') }}">
@@ -84,9 +119,20 @@
                             </li>
                         {% else %}
                             <li class="nav-item">
-                                <a class="nav-link {{ app.request.attributes.get('_route') == 'app_login' ? 'active' : '' }}"
-                                   href="{{ path('app_login') }}">
+                                <a
+                                    class="nav-link {{ app.request.attributes.get('_route') == 'app_login' ? 'active' : '' }}"
+                                    href="{{ path('app_login') }}"
+                                >
                                     Connexion
+                                </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a
+                                    class="btn btn-primary vg-register"
+                                    href="{{ path('app_register') }}"
+                                >
+                                    Inscription
                                 </a>
                             </li>
                         {% endif %}
@@ -95,22 +141,50 @@
             </div>
         </nav>
 
-        <main class="container py-5">
+        <main class="{% block main_class %}container py-5{% endblock %}">
             {% block body %}{% endblock %}
         </main>
 
-        <footer class="py-4 mt-5">
+        <footer class="vg-footer">
             <div class="container">
-                <div class="row">
-                    <div class="col-md-6">
-                        <h5>Vite & Gourmand</h5>
-                        <p class="mb-1">Service traiteur à Bordeaux</p>
-                        <p class="mb-0">Horaires : lundi au dimanche 11h-14h / 18h30-22h</p>
+                <div class="vg-footer__top">
+                    <div class="vg-footer__identity">
+                        <a
+                            class="vg-footer__brand"
+                            href="{{ path('app_home') }}"
+                        >
+                            <img
+                                src="{{ asset('images/logo-vg.png') }}"
+                                alt=""
+                                width="48"
+                                height="48"
+                                class="vg-footer__logo"
+                            >
+
+                            <span>Vite &amp; Gourmand</span>
+                        </a>
+
+                        <p class="vg-footer__description">
+                            Service traiteur à Bordeaux
+                        </p>
                     </div>
-                    <div class="col-md-6 text-md-end">
-                        <a href="{{ path('app_legal_mentions') }}" class="me-3">Mentions légales</a>
-                        <a href="{{ path('app_legal_cgv') }}">CGV</a>
-                    </div>
+
+                    <p class="vg-footer__hours">
+                        Horaires : lundi au dimanche,
+                        11h–14h et 18h30–22h
+                    </p>
+                </div>
+
+                <div class="vg-footer__bottom">
+                    <nav aria-label="Informations légales">
+                        <a href="{{ path('app_legal_mentions') }}">
+                            Mentions légales
+                        </a>
+
+                        <a href="{{ path('app_legal_cgv') }}">
+                            CGV
+                        </a>
+                    </nav>
                 </div>
             </div>
         </footer>

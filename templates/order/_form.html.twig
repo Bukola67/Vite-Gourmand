@@ -1,0 +1,62 @@
+{% form_theme orderForm 'bootstrap_5_layout.html.twig' %}
+<div class="vg-order">
+    <p>Tous les champs sont obligatoires. Les coordonnées préremplies peuvent être modifiées pour cette commande, sans modifier votre compte.</p>
+    {{ form_start(orderForm, {
+    attr: {
+        'data-turbo': 'false',
+        'data-order-form': '',
+        'data-quote-url': path('app_order_quote', {id: menu.id})
+    }
+}) }}
+
+
+        {% if orderForm.vars.submitted and not orderForm.vars.valid %}
+            <div class="alert alert-danger" role="alert" tabindex="-1" data-error-summary>
+                La commande n’a pas été créée. Corrigez les champs signalés ci-dessous.
+            </div>
+        {% endif %}
+        {{ form_errors(orderForm) }}
+        <div class="vg-order-grid">
+            <fieldset>
+                <legend>Vos coordonnées</legend>
+                {{ form_row(orderForm.customerFirstName) }}
+                {{ form_row(orderForm.customerLastName) }}
+                {{ form_row(orderForm.customerEmail) }}
+                {{ form_row(orderForm.customerPhone) }}
+            </fieldset>
+            <fieldset>
+                <legend>Livraison et prestation</legend>
+                {% for field in [orderForm.deliveryAddress, orderForm.deliveryPostalCode, orderForm.deliveryCity] %}
+                    {{ form_row(field) }}
+                    <p class="vg-quote-error" id="{{ field.vars.id }}_quote_error" data-quote-error="{{ field.vars.name }}" hidden></p>
+                {% endfor %}
+                {{ form_row(orderForm.deliveryPlace) }}
+                {{ form_row(orderForm.deliveryDate) }}
+                {{ form_row(orderForm.deliveryTime) }}
+            </fieldset>
+        </div>
+        <fieldset class="vg-order-menu">
+            <legend>Votre menu</legend>
+            <p>{{ menu.title }} — {{ menu.basePrice|number_format(2, ',', ' ') }} € / personne</p>
+            <p>Menu présélectionné depuis sa fiche. Pour un autre menu, revenez à la liste des menus.</p>
+            {{ form_row(orderForm.personCount) }}
+            <p class="vg-quote-error" id="{{ orderForm.personCount.vars.id }}_quote_error" data-quote-error="personCount" hidden></p>
+        </fieldset>
+        <section class="vg-price" aria-labelledby="price-title-{{ menu.id }}" data-price-section aria-busy="false">
+            <h2 id="price-title-{{ menu.id }}" class="h4">Détail de votre commande</h2>
+            <dl>
+                <div><dt>Prix par personne</dt><dd>{{ menu.basePrice|number_format(2, ',', ' ') }} €</dd></div>
+                <div><dt>Nombre de personnes</dt><dd data-price="personCount">—</dd></div>
+                <div><dt>Sous-total menus</dt><dd data-price="menuPrice">—</dd></div>
+                <div><dt>Remise sur les menus</dt><dd data-price="discountAmount">—</dd></div>
+                <div><dt>Livraison</dt><dd data-price="deliveryPrice">À calculer</dd></div>
+                <div class="vg-price-total"><dt>Total de la commande</dt><dd data-price="totalPrice">À calculer</dd></div>
+            </dl>
+            <p data-price-status role="status" aria-live="polite">Complétez l’adresse et le nombre de personnes pour afficher le prix.</p>
+            <button type="button" class="btn btn-outline-secondary btn-sm" data-price-retry>Recalculer le prix</button>
+            <noscript><p>JavaScript est désactivé : le récapitulatif dynamique est indisponible. Activez-le avant de confirmer votre commande.</p></noscript>
+        </section>
+        {{ form_row(orderForm._token) }}
+        <button type="submit" class="btn btn-primary vg-order-button" data-order-submit disabled>Confirmer ma commande</button>
+    {{ form_end(orderForm, {render_rest: false}) }}
+</div>

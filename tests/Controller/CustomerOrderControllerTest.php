@@ -175,7 +175,10 @@ final class CustomerOrderControllerTest extends WebTestCase
 
         self::assertResponseIsSuccessful();self::assertResponseIsSuccessful();
         self::assertSame($ordersBefore, $orderRepository->count([]));
-        self::assertSelectorTextContains('form', 'L’adresse de livraison est obligatoire.');
+        self::assertSelectorTextContains(
+    'form',
+    'Ce champ est obligatoire.'
+);
     }
 
     public function testClientCannotCreateOrderWithPersonCountBelowOne(): void
@@ -215,7 +218,13 @@ final class CustomerOrderControllerTest extends WebTestCase
 
         self::assertResponseIsSuccessful();self::assertResponseIsSuccessful();
         self::assertSame($ordersBefore, $orderRepository->count([]));
-        self::assertSelectorTextContains('form', 'Le nombre de personnes doit être supérieur ou égal à 1.');
+        self::assertSelectorTextContains(
+    'form',
+    sprintf(
+        'Ce menu nécessite au minimum %d personnes.',
+        $menu->getMinimumPersons()
+    )
+);
     }
 
 }

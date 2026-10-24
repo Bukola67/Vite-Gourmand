@@ -4,8 +4,10 @@ namespace App\Controller;
 
 use App\Entity\CustomerOrder;
 use App\Entity\User;
+use App\Entity\OrderStatusHistory;
 use App\Entity\Review;
 use App\Form\ReviewType;
+use App\Form\ProfileType; 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -15,16 +17,52 @@ use Symfony\Component\HttpFoundation\Request;
 
 class UserSpaceController extends AbstractController
 {
-    #[Route('/compte', name: 'app_user_space')]
+    #[Route(
+    '/compte',
+    name: 'app_user_space',
+    methods: ['GET', 'POST']
+    )]
     #[IsGranted('ROLE_USER')]
-    public function index(): Response
-    {
-        /** @var User $user */
+    public function index(
+        Request $request,
+        EntityManagerInterface $entityManager
+    ): Response {
         $user = $this->getUser();
 
-        return $this->render('user_space/index.html.twig', [
-            'orders' => $user->getCustomerOrders(),
+        if (!$user instanceof User) {
+            throw $this->createAccessDeniedException();
+        }
+
+        $form = $this->createForm(ProfileType::class, $user, [
+            'action' => $this->generateUrl('app_user_space'),
         ]);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $entityManager->flush();
+
+            $this->addFlash(
+                'success',
+                'Vos informations personnelles ont bien été mises à jour.'
+            );
+
+            return $this->redirectToRoute(
+                'app_user_space',
+                [],
+                Response::HTTP_SEE_OTHER
+            );
+        }
+
+        $response = $this->render('user_space/index.html.twig', [
+            'orders' => $user->getCustomerOrders(),
+            'profileForm' => $form->createView(),
+        ]);
+
+        $response->headers->set('Cache-Control', 'private, no-store');
+
+        return $response;
+
     }
 
     #[Route('/compte/commande/{id}', name: 'app_user_order_show')]
@@ -43,28 +81,68 @@ class UserSpaceController extends AbstractController
         ]);
     }
 
-    #[Route('/compte/commande/{id}/annuler', name: 'app_user_order_cancel', methods: ['POST'])]
+    #[Route(
+        '/compte/commande/{id}/annuler',
+        name: 'app_user_order_cancel',
+        methods: ['POST']
+    )]
     #[IsGranted('ROLE_USER')]
-    public function cancel(Request $request, CustomerOrder $order, EntityManagerInterface $entityManager): Response
-    {
-        /** @var User $user */
+    public function cancel(
+        Request $request,
+        CustomerOrder $order,
+        EntityManagerInterface $entityManager
+    ): Response {
         $user = $this->getUser();
 
+        if (!$user instanceof User) {
+            throw $this->createAccessDeniedException();
+        }
+
         if ($order->getUser() !== $user) {
-            throw $this->createAccessDeniedException('Accès refusé à cette commande.');
+            throw $this->createAccessDeniedException(
+                'Accès refusé à cette commande.'
+            );
         }
 
-        if ($order->getStatus() === 'acceptee') {
-            $this->addFlash('danger', 'Cette commande ne peut plus être annulée.');
-            return $this->redirectToRoute('app_user_order_show', ['id' => $order->getId()]);
+        if (!$this->isCsrfTokenValid(
+            'cancel_order_' . $order->getId(),
+            $request->request->get('_token')
+        )) {
+            throw $this->createAccessDeniedException(
+                'Jeton CSRF invalide.'
+            );
         }
 
-        if ($this->isCsrfTokenValid('cancel_order_'.$order->getId(), $request->request->get('_token'))) {
-            $order->setStatus('annulee');
-            $entityManager->flush();
+        if ($order->getStatus() !== 'en_attente') {
+            $this->addFlash(
+                'danger',
+                'Cette commande ne peut plus être annulée.'
+            );
 
-            $this->addFlash('success', 'La commande a bien été annulée.');
+            return $this->redirectToRoute(
+                'app_user_order_show',
+                ['id' => $order->getId()]
+            );
         }
+
+        $now = new \DateTimeImmutable();
+
+        $order->setStatus('annulee');
+        $order->setUpdatedAt($now);
+
+        $history = new OrderStatusHistory();
+        $history->setStatus('annulee');
+        $history->setChangedAt($now);
+
+        $order->addOrderStatusHistory($history);
+
+        $entityManager->persist($history);
+        $entityManager->flush();
+
+        $this->addFlash(
+            'success',
+            'La commande a bien été annulée.'
+        );
 
         return $this->redirectToRoute('app_user_space');
     }

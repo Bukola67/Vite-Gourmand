@@ -1,162 +1,384 @@
-CREATE DATABASE IF NOT EXISTS vite_gourmand CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
-USE vite_gourmand;
 
-DROP TABLE IF EXISTS dish_allergen;
-DROP TABLE IF EXISTS menu_dish;
-DROP TABLE IF EXISTS order_status_history;
-DROP TABLE IF EXISTS reset_password_request;
-DROP TABLE IF EXISTS review;
-DROP TABLE IF EXISTS customer_order;
-DROP TABLE IF EXISTS messenger_messages;
-DROP TABLE IF EXISTS allergen;
-DROP TABLE IF EXISTS dish;
-DROP TABLE IF EXISTS menu;
-DROP TABLE IF EXISTS user;
-DROP TABLE IF EXISTS doctrine_migration_versions;
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+START TRANSACTION;
+SET time_zone = "+00:00";
 
-CREATE TABLE allergen (
-  id INT NOT NULL AUTO_INCREMENT,
-  name VARCHAR(255) NOT NULL,
-  PRIMARY KEY (id)
-) ENGINE=InnoDB;
 
-CREATE TABLE menu (
-  id INT NOT NULL AUTO_INCREMENT,
-  title VARCHAR(255) NOT NULL,
-  description LONGTEXT,
-  theme VARCHAR(100) DEFAULT NULL,
-  diet VARCHAR(100) DEFAULT NULL,
-  minimum_persons INT NOT NULL,
-  base_price DECIMAL(10,2) NOT NULL,
-  condition_text LONGTEXT,
-  stock_available INT DEFAULT NULL,
-  created_at DATETIME NOT NULL,
-  updated_at DATETIME DEFAULT NULL,
-  PRIMARY KEY (id)
-) ENGINE=InnoDB;
+--
+-- Structure de la table `allergen`
+--
 
-CREATE TABLE dish (
-  id INT NOT NULL AUTO_INCREMENT,
-  name VARCHAR(255) NOT NULL,
-  description LONGTEXT,
-  type VARCHAR(50) NOT NULL,
-  created_at DATETIME NOT NULL,
-  PRIMARY KEY (id)
-) ENGINE=InnoDB;
+CREATE TABLE `allergen` (
+  `id` int NOT NULL,
+  `name` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-CREATE TABLE user (
-  id INT NOT NULL AUTO_INCREMENT,
-  email VARCHAR(180) NOT NULL,
-  roles JSON NOT NULL,
-  password VARCHAR(255) NOT NULL,
-  first_name VARCHAR(100) NOT NULL,
-  last_name VARCHAR(100) NOT NULL,
-  phone VARCHAR(100) DEFAULT NULL,
-  address VARCHAR(100) DEFAULT NULL,
-  postal_code VARCHAR(20) DEFAULT NULL,
-  city VARCHAR(100) DEFAULT NULL,
-  is_active TINYINT NOT NULL,
-  created_at DATETIME NOT NULL,
-  PRIMARY KEY (id),
-  UNIQUE KEY UNIQ_IDENTIFIER_EMAIL (email)
-) ENGINE=InnoDB;
+-- --------------------------------------------------------
 
-CREATE TABLE menu_dish (
-  menu_id INT NOT NULL,
-  dish_id INT NOT NULL,
-  PRIMARY KEY (menu_id, dish_id),
-  CONSTRAINT FK_MENU_DISH_MENU FOREIGN KEY (menu_id) REFERENCES menu (id) ON DELETE CASCADE,
-  CONSTRAINT FK_MENU_DISH_DISH FOREIGN KEY (dish_id) REFERENCES dish (id) ON DELETE CASCADE
-) ENGINE=InnoDB;
+--
+-- Structure de la table `customer_order`
+--
 
-CREATE TABLE dish_allergen (
-  dish_id INT NOT NULL,
-  allergen_id INT NOT NULL,
-  PRIMARY KEY (dish_id, allergen_id),
-  CONSTRAINT FK_DISH_ALLERGEN_DISH FOREIGN KEY (dish_id) REFERENCES dish (id) ON DELETE CASCADE,
-  CONSTRAINT FK_DISH_ALLERGEN_ALLERGEN FOREIGN KEY (allergen_id) REFERENCES allergen (id) ON DELETE CASCADE
-) ENGINE=InnoDB;
+CREATE TABLE `customer_order` (
+  `id` int NOT NULL,
+  `customer_first_name` varchar(100) NOT NULL,
+  `customer_last_name` varchar(100) NOT NULL,
+  `customer_email` varchar(180) NOT NULL,
+  `customer_phone` varchar(20) NOT NULL,
+  `delivery_address` varchar(255) NOT NULL,
+  `delivery_postal_code` varchar(20) NOT NULL,
+  `delivery_city` varchar(100) NOT NULL,
+  `delivery_time` time NOT NULL,
+  `delivery_date` date NOT NULL,
+  `delivery_place` varchar(255) NOT NULL,
+  `person_count` int NOT NULL,
+  `menu_price` decimal(10,2) DEFAULT NULL,
+  `delivery_price` decimal(10,2) DEFAULT NULL,
+  `discount_amount` decimal(10,2) DEFAULT NULL,
+  `total_price` decimal(10,2) NOT NULL,
+  `status` varchar(50) NOT NULL,
+  `cancel_reason` longtext,
+  `contact_mode` varchar(50) DEFAULT NULL,
+  `created_at` datetime NOT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  `user_id` int NOT NULL,
+  `menu_id` int NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-CREATE TABLE customer_order (
-  id INT NOT NULL AUTO_INCREMENT,
-  customer_first_name VARCHAR(100) NOT NULL,
-  customer_last_name VARCHAR(100) NOT NULL,
-  customer_email VARCHAR(180) NOT NULL,
-  customer_phone VARCHAR(20) NOT NULL,
-  delivery_address VARCHAR(255) NOT NULL,
-  delivery_postal_code VARCHAR(20) NOT NULL,
-  delivery_city VARCHAR(100) NOT NULL,
-  delivery_time TIME NOT NULL,
-  delivery_date DATE NOT NULL,
-  delivery_place VARCHAR(255) NOT NULL,
-  person_count INT NOT NULL,
-  menu_price DECIMAL(10,2) DEFAULT NULL,
-  delivery_price DECIMAL(10,2) DEFAULT NULL,
-  discount_amount DECIMAL(10,2) DEFAULT NULL,
-  total_price DECIMAL(10,2) NOT NULL,
-  status VARCHAR(50) NOT NULL,
-  cancel_reason LONGTEXT,
-  contact_mode VARCHAR(50) DEFAULT NULL,
-  created_at DATETIME NOT NULL,
-  updated_at DATETIME DEFAULT NULL,
-  user_id INT DEFAULT NULL,
-  menu_id INT NOT NULL,
-  PRIMARY KEY (id),
-  KEY idx_customer_order_user (user_id),
-  KEY idx_customer_order_menu (menu_id),
-  CONSTRAINT FK_CUSTOMER_ORDER_USER FOREIGN KEY (user_id) REFERENCES user (id),
-  CONSTRAINT FK_CUSTOMER_ORDER_MENU FOREIGN KEY (menu_id) REFERENCES menu (id)
-) ENGINE=InnoDB;
+-- --------------------------------------------------------
 
-CREATE TABLE order_status_history (
-  id INT NOT NULL AUTO_INCREMENT,
-  status VARCHAR(50) NOT NULL,
-  changed_at DATETIME NOT NULL,
-  customer_order_id INT NOT NULL,
-  PRIMARY KEY (id),
-  KEY idx_order_status_history_order (customer_order_id),
-  CONSTRAINT FK_ORDER_STATUS_HISTORY_ORDER FOREIGN KEY (customer_order_id) REFERENCES customer_order (id)
-) ENGINE=InnoDB;
+--
+-- Structure de la table `dish`
+--
 
-CREATE TABLE review (
-  id INT NOT NULL AUTO_INCREMENT,
-  rating INT NOT NULL,
-  comment LONGTEXT,
-  is_validated TINYINT NOT NULL,
-  created_at DATETIME NOT NULL,
-  user_id INT NOT NULL,
-  PRIMARY KEY (id),
-  KEY idx_review_user (user_id),
-  CONSTRAINT FK_REVIEW_USER FOREIGN KEY (user_id) REFERENCES user (id)
-) ENGINE=InnoDB;
+CREATE TABLE `dish` (
+  `id` int NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `description` longtext,
+  `type` varchar(50) NOT NULL,
+  `created_at` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-CREATE TABLE reset_password_request (
-  id INT NOT NULL AUTO_INCREMENT,
-  selector VARCHAR(20) NOT NULL,
-  hashed_token VARCHAR(100) NOT NULL,
-  requested_at DATETIME NOT NULL,
-  expires_at DATETIME NOT NULL,
-  user_id INT NOT NULL,
-  PRIMARY KEY (id),
-  KEY idx_reset_password_user (user_id),
-  CONSTRAINT FK_RESET_PASSWORD_USER FOREIGN KEY (user_id) REFERENCES user (id)
-) ENGINE=InnoDB;
+-- --------------------------------------------------------
 
-CREATE TABLE messenger_messages (
-  id BIGINT NOT NULL AUTO_INCREMENT,
-  body LONGTEXT NOT NULL,
-  headers LONGTEXT NOT NULL,
-  queue_name VARCHAR(190) NOT NULL,
-  created_at DATETIME NOT NULL,
-  available_at DATETIME NOT NULL,
-  delivered_at DATETIME DEFAULT NULL,
-  PRIMARY KEY (id),
-  KEY idx_messenger_queue (queue_name, available_at, delivered_at, id)
-) ENGINE=InnoDB;
+--
+-- Structure de la table `dish_allergen`
+--
 
-CREATE TABLE doctrine_migration_versions (
-  version VARCHAR(191) NOT NULL,
-  executed_at DATETIME DEFAULT NULL,
-  execution_time INT DEFAULT NULL,
-  PRIMARY KEY (version)
-) ENGINE=InnoDB;
+CREATE TABLE `dish_allergen` (
+  `dish_id` int NOT NULL,
+  `allergen_id` int NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `doctrine_migration_versions`
+--
+
+CREATE TABLE `doctrine_migration_versions` (
+  `version` varchar(191) NOT NULL,
+  `executed_at` datetime DEFAULT NULL,
+  `execution_time` int DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `menu`
+--
+
+CREATE TABLE `menu` (
+  `id` int NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `description` longtext,
+  `theme` varchar(100) DEFAULT NULL,
+  `diet` varchar(100) DEFAULT NULL,
+  `minimum_persons` int NOT NULL,
+  `base_price` decimal(10,2) NOT NULL,
+  `condition_text` longtext,
+  `stock_available` int DEFAULT NULL,
+  `created_at` datetime NOT NULL,
+  `updated_at` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `menu_dish`
+--
+
+CREATE TABLE `menu_dish` (
+  `menu_id` int NOT NULL,
+  `dish_id` int NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `messenger_messages`
+--
+
+CREATE TABLE `messenger_messages` (
+  `id` bigint NOT NULL,
+  `body` longtext NOT NULL,
+  `headers` longtext NOT NULL,
+  `queue_name` varchar(190) NOT NULL,
+  `created_at` datetime NOT NULL,
+  `available_at` datetime NOT NULL,
+  `delivered_at` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `order_status_history`
+--
+
+CREATE TABLE `order_status_history` (
+  `id` int NOT NULL,
+  `status` varchar(50) NOT NULL,
+  `changed_at` datetime NOT NULL,
+  `customer_order_id` int NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `reset_password_request`
+--
+
+CREATE TABLE `reset_password_request` (
+  `id` int NOT NULL,
+  `selector` varchar(20) NOT NULL,
+  `hashed_token` varchar(100) NOT NULL,
+  `requested_at` datetime NOT NULL,
+  `expires_at` datetime NOT NULL,
+  `user_id` int NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `review`
+--
+
+CREATE TABLE `review` (
+  `id` int NOT NULL,
+  `rating` int NOT NULL,
+  `comment` longtext,
+  `is_validated` tinyint NOT NULL,
+  `created_at` datetime NOT NULL,
+  `user_id` int NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `user`
+--
+
+CREATE TABLE `user` (
+  `id` int NOT NULL,
+  `email` varchar(180) NOT NULL,
+  `roles` json NOT NULL,
+  `password` varchar(255) NOT NULL,
+  `first_name` varchar(100) NOT NULL,
+  `last_name` varchar(100) NOT NULL,
+  `phone` varchar(100) DEFAULT NULL,
+  `address` varchar(100) DEFAULT NULL,
+  `postal_code` varchar(20) DEFAULT NULL,
+  `city` varchar(100) DEFAULT NULL,
+  `is_active` tinyint NOT NULL,
+  `created_at` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Index pour les tables déchargées
+--
+
+--
+-- Index pour la table `allergen`
+--
+ALTER TABLE `allergen`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Index pour la table `customer_order`
+--
+ALTER TABLE `customer_order`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `IDX_3B1CE6A3A76ED395` (`user_id`),
+  ADD KEY `IDX_3B1CE6A3CCD7E912` (`menu_id`);
+
+--
+-- Index pour la table `dish`
+--
+ALTER TABLE `dish`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Index pour la table `dish_allergen`
+--
+ALTER TABLE `dish_allergen`
+  ADD PRIMARY KEY (`dish_id`,`allergen_id`),
+  ADD KEY `IDX_3C4389A5148EB0CB` (`dish_id`),
+  ADD KEY `IDX_3C4389A56E775A4A` (`allergen_id`);
+
+--
+-- Index pour la table `doctrine_migration_versions`
+--
+ALTER TABLE `doctrine_migration_versions`
+  ADD PRIMARY KEY (`version`);
+
+--
+-- Index pour la table `menu`
+--
+ALTER TABLE `menu`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Index pour la table `menu_dish`
+--
+ALTER TABLE `menu_dish`
+  ADD PRIMARY KEY (`menu_id`,`dish_id`),
+  ADD KEY `IDX_5D327CF6CCD7E912` (`menu_id`),
+  ADD KEY `IDX_5D327CF6148EB0CB` (`dish_id`);
+
+--
+-- Index pour la table `messenger_messages`
+--
+ALTER TABLE `messenger_messages`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `IDX_75EA56E0FB7336F0E3BD61CE16BA31DBBF396750` (`queue_name`,`available_at`,`delivered_at`,`id`);
+
+--
+-- Index pour la table `order_status_history`
+--
+ALTER TABLE `order_status_history`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `IDX_471AD77EA15A2E17` (`customer_order_id`);
+
+--
+-- Index pour la table `reset_password_request`
+--
+ALTER TABLE `reset_password_request`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `IDX_7CE748AA76ED395` (`user_id`);
+
+--
+-- Index pour la table `review`
+--
+ALTER TABLE `review`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `IDX_794381C6A76ED395` (`user_id`);
+
+--
+-- Index pour la table `user`
+--
+ALTER TABLE `user`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `UNIQ_IDENTIFIER_EMAIL` (`email`);
+
+--
+-- AUTO_INCREMENT pour les tables déchargées
+--
+
+--
+-- AUTO_INCREMENT pour la table `allergen`
+--
+ALTER TABLE `allergen`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT pour la table `customer_order`
+--
+ALTER TABLE `customer_order`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT pour la table `dish`
+--
+ALTER TABLE `dish`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT pour la table `menu`
+--
+ALTER TABLE `menu`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT pour la table `messenger_messages`
+--
+ALTER TABLE `messenger_messages`
+  MODIFY `id` bigint NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT pour la table `order_status_history`
+--
+ALTER TABLE `order_status_history`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT pour la table `reset_password_request`
+--
+ALTER TABLE `reset_password_request`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT pour la table `review`
+--
+ALTER TABLE `review`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT pour la table `user`
+--
+ALTER TABLE `user`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
+
+--
+-- Contraintes pour les tables déchargées
+--
+
+--
+-- Contraintes pour la table `customer_order`
+--
+ALTER TABLE `customer_order`
+  ADD CONSTRAINT `FK_3B1CE6A3A76ED395` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`),
+  ADD CONSTRAINT `FK_3B1CE6A3CCD7E912` FOREIGN KEY (`menu_id`) REFERENCES `menu` (`id`);
+
+--
+-- Contraintes pour la table `dish_allergen`
+--
+ALTER TABLE `dish_allergen`
+  ADD CONSTRAINT `FK_3C4389A5148EB0CB` FOREIGN KEY (`dish_id`) REFERENCES `dish` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `FK_3C4389A56E775A4A` FOREIGN KEY (`allergen_id`) REFERENCES `allergen` (`id`) ON DELETE CASCADE;
+
+--
+-- Contraintes pour la table `menu_dish`
+--
+ALTER TABLE `menu_dish`
+  ADD CONSTRAINT `FK_5D327CF6148EB0CB` FOREIGN KEY (`dish_id`) REFERENCES `dish` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `FK_5D327CF6CCD7E912` FOREIGN KEY (`menu_id`) REFERENCES `menu` (`id`) ON DELETE CASCADE;
+
+--
+-- Contraintes pour la table `order_status_history`
+--
+ALTER TABLE `order_status_history`
+  ADD CONSTRAINT `FK_471AD77EA15A2E17` FOREIGN KEY (`customer_order_id`) REFERENCES `customer_order` (`id`);
+
+--
+-- Contraintes pour la table `reset_password_request`
+--
+ALTER TABLE `reset_password_request`
+  ADD CONSTRAINT `FK_7CE748AA76ED395` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`);
+
+--
+-- Contraintes pour la table `review`
+--
+ALTER TABLE `review`
+  ADD CONSTRAINT `FK_794381C6A76ED395` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`);
+COMMIT;
+

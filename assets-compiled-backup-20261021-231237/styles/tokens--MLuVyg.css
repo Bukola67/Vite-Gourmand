@@ -1,0 +1,216 @@
+:root {
+  /* =========================================
+     VITE & GOURMAND — DESIGN TOKENS
+     Source : charte Figma simplifiée
+     ========================================= */
+
+  /* Fondations : couleurs */
+  --vg-sage: #5E7A65;
+  --vg-cream: #F8F4EC;
+  --vg-beige: #E8DCCB;
+  --vg-terracotta: #C97C5D;
+  --vg-brown: #3E3128;
+  --vg-white: #FFFFFF;
+
+  /* Fondations : rayons */
+  --vg-radius-sm: 12px;
+  --vg-radius-md: 14px;
+  --vg-radius-lg: 20px;
+  --vg-radius-pill: 999px;
+
+  /* Fondations : ombre et focus */
+  --vg-shadow: 0 8px 30px rgba(62, 49, 40, 0.08);
+  --vg-focus-ring: rgba(94, 122, 101, 0.35);
+
+  /* Typographie */
+  --vg-font-body: "Poppins", Arial, sans-serif;
+  --vg-font-heading: "Playfair Display", Georgia, serif;
+
+  /* Sémantique */
+  --vg-surface-page: var(--vg-cream);
+  --vg-surface-card: var(--vg-beige);
+  --vg-surface-form: var(--vg-cream);
+  --vg-surface-price: var(--vg-white);
+
+  --vg-text: var(--vg-brown);
+  --vg-text-muted: rgba(62, 49, 40, 0.72);
+  --vg-text-on-dark: var(--vg-cream);
+  --vg-text-on-primary: var(--vg-white);
+  --vg-text-price: var(--vg-terracotta);
+
+  --vg-accent: var(--vg-sage);
+  --vg-accent-alt: var(--vg-terracotta);
+  --vg-border: rgba(62, 49, 40, 0.18);
+  --vg-border-strong: var(--vg-brown);
+
+  /* =========================================
+     SURCHARGES BOOTSTRAP
+     ========================================= */
+
+  --bs-body-bg: var(--vg-surface-page);
+  --bs-body-color: var(--vg-text);
+  --bs-body-font-family: var(--vg-font-body);
+
+  --bs-primary: var(--vg-sage);
+  --bs-primary-rgb: 94, 122, 101;
+  --bs-secondary: var(--vg-terracotta);
+  --bs-secondary-rgb: 201, 124, 93;
+
+  --bs-link-color: var(--vg-text);
+  --bs-link-hover-color: var(--vg-accent);
+  --bs-border-color: var(--vg-border);
+
+  --bs-border-radius: var(--vg-radius-sm);
+  --bs-border-radius-sm: 8px;
+  --bs-border-radius-lg: var(--vg-radius-lg);
+  --bs-border-radius-pill: var(--vg-radius-pill);
+
+  --bs-focus-ring-color: var(--vg-focus-ring);
+}
+
+/* Boutons */
+.btn {
+  --bs-btn-border-radius: var(--vg-radius-md);
+  --bs-btn-font-weight: 600;
+  --bs-btn-padding-y: 0.75rem;
+  --bs-btn-padding-x: 1.35rem;
+  min-height: 48px;
+}
+
+.btn-primary {
+  --bs-btn-bg: var(--vg-sage);
+  --bs-btn-border-color: var(--vg-sage);
+  --bs-btn-color: var(--vg-white);
+
+  --bs-btn-hover-bg: var(--vg-brown);
+  --bs-btn-hover-border-color: var(--vg-brown);
+  --bs-btn-hover-color: var(--vg-white);
+
+  --bs-btn-active-bg: var(--vg-brown);
+  --bs-btn-active-border-color: var(--vg-brown);
+  --bs-btn-active-color: var(--vg-white);
+
+  --bs-btn-disabled-bg: var(--vg-beige);
+  --bs-btn-disabled-border-color: var(--vg-brown);
+  --bs-btn-disabled-color: var(--vg-brown);
+}
+
+.btn-secondary {
+  --bs-btn-bg: transparent;
+  --bs-btn-border-color: var(--vg-terracotta);
+  --bs-btn-color: var(--vg-terracotta);
+
+  --bs-btn-hover-bg: var(--vg-terracotta);
+  --bs-btn-hover-border-color: var(--vg-terracotta);
+  --bs-btn-hover-color: var(--vg-white);
+
+  --bs-btn-active-bg: var(--vg-terracotta);
+  --bs-btn-active-border-color: var(--vg-terracotta);
+  --bs-btn-active-color: var(--vg-white);
+
+  --bs-btn-disabled-bg: var(--vg-beige);
+  --bs-btn-disabled-border-color: var(--vg-brown);
+  --bs-btn-disabled-color: var(--vg-brown);
+}
+
+.btn-outline-primary {
+  --bs-btn-color: var(--vg-sage);
+  --bs-btn-border-color: var(--vg-sage);
+
+  --bs-btn-hover-bg: var(--vg-sage);
+  --bs-btn-hover-border-color: var(--vg-sage);
+  --bs-btn-hover-color: var(--vg-white);
+
+  --bs-btn-active-bg: var(--vg-sage);
+  --bs-btn-active-border-color: var(--vg-sage);
+  --bs-btn-active-color: var(--vg-white);
+}
+
+/* Formulaires */
+.form-control,
+.form-select {
+  --bs-body-bg: var(--vg-surface-form);
+  --bs-border-color: var(--vg-border);
+  --bs-border-radius: var(--vg-radius-sm);
+  min-height: 48px;
+  color: var(--vg-text);
+}
+
+.form-control:focus,
+.form-select:focus {
+  background-color: var(--vg-surface-form);
+  border-color: var(--vg-sage);
+  color: var(--vg-text);
+  box-shadow: 0 0 0 0.25rem var(--vg-focus-ring);
+}
+
+.form-label {
+  color: var(--vg-text);
+  font-weight: 600;
+}
+
+/* Cartes */
+.card {
+  --bs-card-bg: var(--vg-surface-card);
+  --bs-card-border-color: var(--vg-border);
+  --bs-card-border-radius: var(--vg-radius-lg);
+  box-shadow: var(--vg-shadow);
+}
+
+.card-title {
+  color: var(--vg-text);
+  font-family: var(--vg-font-heading);
+  font-weight: 600;
+}
+
+/* Alertes */
+.alert-success {
+  --bs-alert-bg: var(--vg-beige);
+  --bs-alert-border-color: var(--vg-sage);
+  --bs-alert-color: var(--vg-brown);
+}
+
+.alert-danger {
+  --bs-alert-bg: var(--vg-beige);
+  --bs-alert-border-color: var(--vg-terracotta);
+  --bs-alert-color: var(--vg-brown);
+}
+
+.alert-warning {
+  --bs-alert-bg: var(--vg-beige);
+  --bs-alert-border-color: var(--vg-terracotta);
+  --bs-alert-color: var(--vg-brown);
+}
+
+.alert-info {
+  --bs-alert-bg: var(--vg-beige);
+  --bs-alert-border-color: var(--vg-sage);
+  --bs-alert-color: var(--vg-brown);
+}
+
+/* Navigation */
+.navbar {
+  --bs-navbar-bg: var(--vg-cream);
+  --bs-navbar-color: var(--vg-brown);
+  --bs-navbar-brand-color: var(--vg-brown);
+  --bs-navbar-brand-hover-color: var(--vg-sage);
+  --bs-navbar-active-color: var(--vg-sage);
+  --bs-navbar-link-color: var(--vg-brown);
+  --bs-navbar-link-hover-color: var(--vg-sage);
+  background-color: var(--vg-cream);
+  border-bottom: 1px solid var(--vg-border);
+}
+
+/* Footer */
+footer {
+  background-color: var(--vg-brown);
+  color: var(--vg-text-on-dark);
+}
+
+footer a {
+  color: var(--vg-beige);
+}
+
+footer a:hover {
+  color: var(--vg-terracotta);
+}

@@ -1,0 +1,67 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    Merci pour votre commande — Vite & Gourmand
+{% endblock %}
+
+{% block body %}
+    <section
+        class="vg-confirmation"
+        aria-labelledby="confirmation-title"
+    >
+        <div class="vg-confirmation__icon" aria-hidden="true">
+            ✓
+        </div>
+
+        <h1 id="confirmation-title">
+            Merci pour votre commande
+        </h1>
+
+        <p>
+            Un grand merci pour votre commande passée sur notre site !
+            Nous sommes ravis de la confiance que vous nous témoignez.
+        </p>
+
+        <p>
+            Votre commande n° {{ order.id }} a bien été enregistrée.
+            Vous pouvez retrouver son détail et suivre son statut
+            dans votre espace personnel.
+        </p>
+
+        {% if emailStatus == 'handled' %}
+            <p>
+                L’envoi de votre confirmation par e-mail à
+                {{ order.customerEmail }} a été pris en charge.
+            </p>
+        {% elseif emailStatus == 'failed' %}
+            <p class="text-danger">
+                Votre commande est bien enregistrée, mais la confirmation
+                par e-mail n’a pas pu être envoyée.
+                Ne passez pas une nouvelle commande :
+                retrouvez celle-ci dans votre espace personnel.
+            </p>
+        {% else %}
+            <p>
+                Consultez votre espace personnel pour retrouver
+                les informations de votre commande.
+            </p>
+        {% endif %}
+
+        <p class="vg-confirmation__farewell">
+            À bientôt
+        </p>
+
+        <p class="vg-confirmation__signature">
+            Julie et José pour Vite &amp; Gourmand
+        </p>
+
+        <div class="vg-confirmation__actions">
+            <a
+                href="{{ path('app_user_space') }}"
+                class="btn btn-primary"
+            >
+                Mes commandes
+            </a>
+        </div>
+    </section>
+{% endblock %}

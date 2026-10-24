@@ -282,6 +282,7 @@ document.addEventListener('DOMContentLoaded', () => {
         menusCount.textContent = menus.length;
 
         if (menus.length === 0) {
+            noResults.textContent = 'Aucun menu ne correspond aux filtres sélectionnés.';
             noResults.classList.remove('d-none');
             return;
         }
@@ -326,6 +327,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const menus = await response.json();
             renderMenus(menus);
         } catch (error) {
+            menusList.innerHTML = '';
+            menusCount.textContent = '0';
             noResults.textContent =
                 'Une erreur est survenue lors du chargement des menus.';
             noResults.classList.remove('d-none');

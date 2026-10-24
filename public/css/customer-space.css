@@ -1,0 +1,185 @@
+/* Confirmation post-commande */
+
+.vg-confirmation {
+  max-width: 760px;
+  margin: 1rem auto;
+  padding: 1.5rem;
+  background: var(--vg-white, #FFFFFF);
+  border: 1px solid var(--vg-border, #E6E1D7);
+  border-radius: 20px;
+  box-shadow: var(--vg-shadow, 0 8px 30px rgba(62, 49, 40, 0.08));
+}
+
+.vg-confirmation__icon {
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  margin: 0 auto 1.5rem;
+  background: var(--vg-cream, #F8F4EC);
+  border-radius: 50%;
+  color: var(--vg-sage, #5E7A65);
+  font-size: 2rem;
+}
+
+.vg-confirmation h1 {
+  margin-bottom: 1.5rem;
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 2rem;
+  font-weight: 400;
+  line-height: 1.2;
+  text-align: center;
+}
+
+.vg-confirmation p {
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+}
+
+.vg-confirmation__farewell {
+  margin: 2rem 0 0.25rem;
+}
+
+.vg-confirmation__signature {
+  color: var(--vg-sage, #5E7A65);
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 1.375rem;
+  font-style: italic;
+}
+
+.vg-confirmation__actions {
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--vg-border, #E6E1D7);
+  text-align: center;
+}
+
+@media (min-width: 768px) {
+  .vg-confirmation {
+    padding: 3rem;
+  }
+
+  .vg-confirmation h1 {
+    font-size: 2.5rem;
+  }
+}
+/* Espace client */
+
+.vg-account-heading {
+  margin-bottom: 2rem;
+}
+
+.vg-account-heading h1 {
+  font-family: "Playfair Display", Georgia, serif;
+  font-weight: 400;
+}
+
+.vg-account-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.vg-account-panel {
+  min-width: 0;
+  padding: 1.25rem;
+  background: var(--vg-white, #FFFFFF);
+  border: 1px solid var(--vg-border, #E6E1D7);
+  border-radius: 20px;
+  box-shadow: var(--vg-shadow, 0 8px 30px rgba(62, 49, 40, 0.08));
+}
+
+.vg-account-panel h2 {
+  margin-bottom: 1.5rem;
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 1.75rem;
+  font-weight: 400;
+}
+
+/* Surcharges locales du tableau beige existant */
+.vg-account-panel .table {
+  --bs-table-bg: #FFFFFF;
+  --bs-table-color: var(--vg-brown, #3E3128);
+  --bs-table-striped-bg: #FFFFFF;
+  --bs-table-border-color: var(--vg-border, #E6E1D7);
+
+  box-shadow: none;
+}
+
+.vg-account-panel .table thead {
+  --bs-table-bg: var(--vg-cream, #F8F4EC);
+}
+
+.vg-account-panel .table th,
+.vg-account-panel .table td {
+  padding: 1rem 0.75rem;
+  vertical-align: middle;
+}
+
+.vg-account-panel .form-control {
+  background: #FFFFFF;
+}
+
+.vg-account-panel button[type="submit"] {
+  width: 100%;
+}
+
+@media (min-width: 992px) {
+  .vg-account-layout {
+    grid-template-columns: minmax(0, 2fr) minmax(280px, 1fr);
+  }
+}
+
+/* Détails de la liste des commandes */
+
+.vg-account-table {
+  font-size: 0.8125rem;
+}
+
+.vg-account-table thead th {
+  font-weight: 500;
+}
+
+.vg-account-table tbody th {
+  font-weight: 400;
+}
+
+.vg-account-menu {
+  display: block;
+  min-width: 7rem;
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 1.0625rem;
+  line-height: 1.3;
+}
+
+.vg-account-reference {
+  display: block;
+  margin-top: 0.25rem;
+  color: var(--vg-text-muted, #6B625B);
+  font-size: 0.75rem;
+}
+
+.vg-order-status {
+  display: inline-block;
+  padding: 0.35rem 0.6rem;
+  border-radius: 6px;
+  background: var(--vg-cream, #F8F4EC);
+  color: var(--vg-brown, #3E3128);
+  font-size: 0.75rem;
+}
+
+.vg-account-panel .vg-account-detail {
+  --bs-btn-color: var(--vg-brown, #3E3128);
+  --bs-btn-bg: #FFFFFF;
+  --bs-btn-border-color: var(--vg-border, #E6E1D7);
+
+  --bs-btn-hover-color: var(--vg-brown, #3E3128);
+  --bs-btn-hover-bg: var(--vg-cream, #F8F4EC);
+  --bs-btn-hover-border-color: var(--vg-sage, #5E7A65);
+
+  min-height: 40px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  white-space: nowrap;
+}

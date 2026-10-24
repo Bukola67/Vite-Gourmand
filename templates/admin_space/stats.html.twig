@@ -8,7 +8,7 @@
 
     <div class="card mb-4">
         <div class="card-body">
-            <h2 class="h4 mb-3">Comparaison du nombre de commandes par menu</h2>
+            <h2 class="h4 mb-3">Comparaison du nombre de commandes enregistrées par menu</h2>
 
             <canvas id="ordersChart" height="120"></canvas>
         </div>
@@ -16,7 +16,7 @@
 
     <div class="card mb-4">
         <div class="card-body">
-            <h2 class="h4 mb-3">Filtrer le chiffre d'affaires</h2>
+            <h2 class="h4 mb-3">Filtrer le chiffre d’affaires encaissé</h2>
 
             <form method="get" class="row g-3">
                 <div class="col-md-4">
@@ -45,20 +45,24 @@
                     <button type="submit" class="btn btn-primary">Filtrer</button>
                 </div>
             </form>
+
+            <p class="text-muted small mt-3 mb-0">
+                Le chiffre d’affaires encaissé correspond au montant total des prestations terminées, frais de livraison inclus.
+            </p>
         </div>
     </div>
 
     <div class="card">
         <div class="card-body">
-            <h2 class="h4 mb-3">Chiffre d'affaires par menu</h2>
+            <h2 class="h4 mb-3">Chiffre d’affaires encaissé par menu</h2>
 
             {% if revenueStats|length > 0 %}
                 <table class="table table-striped">
                     <thead>
                         <tr>
                             <th>Menu</th>
-                            <th>Commandes</th>
-                            <th>Chiffre d'affaires</th>
+                            <th>Prestations terminées</th>
+                            <th>Chiffre d’affaires encaissé</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -91,7 +95,7 @@
 
         const data = [
             {% for stat in chartStats %}
-                {{ stat.totalOrders ?? 0 }},
+                {{ stat.completedOrders ?? 0 }},
             {% endfor %}
         ];
 
@@ -100,7 +104,7 @@
             data: {
                 labels: labels,
                 datasets: [{
-                    label: 'Nombre de commandes',
+                    label: 'Commandes enregistrées',
                     data: data,
                     backgroundColor: '#0d6efd'
                 }]
