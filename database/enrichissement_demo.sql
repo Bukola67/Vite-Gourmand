@@ -1,9 +1,3 @@
--- Enrichissement LOCAL de Vite & Gourmand, version 1.
--- Faire une sauvegarde avant import. Executer UNE SEULE FOIS.
--- Ne remplace pas data.sql : necessite les menus 1,2,3 et le client 1.
--- Aucun compte, mot de passe ou enregistrement existant n'est modifie.
--- En cas d'erreur : arreter l'import et effectuer ROLLBACK dans la meme session.
--- Ne pas utiliser un import qui poursuit les instructions apres une erreur.
 USE vite_gourmand;
 SET NAMES utf8mb4;
 START TRANSACTION;
