@@ -18,6 +18,10 @@
   --vg-radius-lg: 20px;
   --vg-radius-pill: 999px;
 
+  /* Actions principales */
+--vg-action-primary: #476550;
+--vg-action-primary-hover: #354E3C;
+
   /* Fondations : ombre et focus */
   --vg-shadow: 0 8px 30px rgba(62, 49, 40, 0.08);
   --vg-focus-ring: rgba(94, 122, 101, 0.35);
@@ -28,7 +32,7 @@
 
   /* Sémantique */
   --vg-surface-page: var(--vg-cream);
-  --vg-surface-card: var(--vg-beige);
+  --vg-surface-card: var(--vg-white);
   --vg-surface-form: var(--vg-cream);
   --vg-surface-price: var(--vg-white);
 
@@ -78,21 +82,23 @@
 }
 
 .btn-primary {
-  --bs-btn-bg: var(--vg-sage);
-  --bs-btn-border-color: var(--vg-sage);
   --bs-btn-color: var(--vg-white);
+  --bs-btn-bg: var(--vg-action-primary);
+  --bs-btn-border-color: var(--vg-action-primary);
 
-  --bs-btn-hover-bg: var(--vg-brown);
-  --bs-btn-hover-border-color: var(--vg-brown);
   --bs-btn-hover-color: var(--vg-white);
+  --bs-btn-hover-bg: var(--vg-action-primary-hover);
+  --bs-btn-hover-border-color: var(--vg-action-primary-hover);
 
-  --bs-btn-active-bg: var(--vg-brown);
-  --bs-btn-active-border-color: var(--vg-brown);
   --bs-btn-active-color: var(--vg-white);
+  --bs-btn-active-bg: var(--vg-action-primary-hover);
+  --bs-btn-active-border-color: var(--vg-action-primary-hover);
 
-  --bs-btn-disabled-bg: var(--vg-beige);
-  --bs-btn-disabled-border-color: var(--vg-brown);
   --bs-btn-disabled-color: var(--vg-brown);
+  --bs-btn-disabled-bg: var(--vg-beige);
+  --bs-btn-disabled-border-color: var(--vg-beige);
+
+  --bs-btn-border-radius: 6px;
 }
 
 .btn-secondary {

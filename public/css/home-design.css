@@ -1,0 +1,636 @@
+/* =========================================================
+   VITE & GOURMAND — ALIGNEMENT DE L’ACCUEIL
+   Chargé après tokens.css et app.css.
+   Mobile first.
+   ========================================================= */
+
+
+/* ---------------------------------------------------------
+   Header
+   --------------------------------------------------------- */
+
+.navbar .vg-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  min-width: 0;
+  color: var(--vg-brown, #3E3128);
+}
+
+.navbar .vg-brand__mark {
+  display: grid;
+  place-items: center;
+  flex: 0 0 2rem;
+  width: 2rem;
+  height: 2rem;
+}
+
+.navbar .vg-brand__mark img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.navbar .vg-brand__name {
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 1.125rem;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.navbar .nav-link {
+  position: relative;
+  font-size: 0.875rem;
+}
+
+.navbar .nav-link.active {
+  color: var(--vg-sage, #5E7A65);
+}
+
+.navbar .nav-link.active::after {
+  position: absolute;
+  bottom: 0.15rem;
+  left: var(--bs-navbar-nav-link-padding-x, 0);
+  right: var(--bs-navbar-nav-link-padding-x, 0);
+  height: 1px;
+  background: var(--vg-sage, #5E7A65);
+  content: "";
+}
+
+.navbar .vg-register {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 36px;
+  margin-top: 0.5rem;
+  padding: 0.35rem 1.25rem;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 400;
+}
+
+
+/* ---------------------------------------------------------
+   Cadre et titres de l’accueil
+   --------------------------------------------------------- */
+
+main.home-main {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.home-main h2 {
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 1.75rem;
+  font-weight: 400;
+  line-height: 1.2;
+}
+
+.home-main .home-section-heading {
+  margin-bottom: 1.5rem;
+}
+
+.home-main .home-section-heading h2 {
+  margin-bottom: 0;
+}
+
+.home-main .home-kicker {
+  margin: 0 0 0.75rem;
+  color: var(--vg-sage, #5E7A65);
+  font-size: 0.8125rem;
+}
+
+
+/* ---------------------------------------------------------
+   Hero : conserver la photo choisie
+   --------------------------------------------------------- */
+
+.home-main .hero-home {
+  min-height: 32rem;
+  margin: 0;
+  padding: 4rem 0;
+}
+
+.home-main .hero-home #hero-title {
+  max-width: 11em;
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 2.25rem;
+  font-weight: 400;
+  font-style: normal;
+  line-height: 1.12;
+}
+
+.home-main .hero-home .hero-content p {
+  font-size: 1rem;
+  font-weight: 400;
+}
+
+.home-main .hero-home .hero-cta {
+  border-radius: 6px;
+  font-weight: 400;
+}
+
+
+/* ---------------------------------------------------------
+   Carrousel : carte blanche et badge vert
+   --------------------------------------------------------- */
+
+.home-main .menu-carousel-section {
+  padding: 3rem 0;
+  background: var(--vg-cream, #F8F4EC);
+}
+
+.home-main #menusCarousel .carousel-inner {
+  overflow: hidden;
+  border-radius: 20px;
+  box-shadow: var(
+    --vg-shadow,
+    0 8px 30px rgba(62, 49, 40, 0.08)
+  );
+}
+
+.home-main #menusCarousel .menu-slide {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  background: #FFFFFF;
+}
+
+.home-main #menusCarousel .menu-slide-image {
+  display: block;
+  width: 100%;
+  height: 15rem;
+  min-height: 0;
+  object-fit: cover;
+}
+
+.home-main #menusCarousel .menu-slide-content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  min-width: 0;
+  padding: 1.5rem;
+  background: #FFFFFF;
+}
+
+.home-main #menusCarousel .menu-slide-label {
+  display: inline-block;
+  margin: 0 0 1rem;
+  padding: 0.3rem 0.65rem;
+  border-radius: 999px;
+  background: var(--vg-cream, #F8F4EC);
+  color: var(--vg-sage, #5E7A65);
+  font-size: 0.75rem;
+  font-weight: 400;
+  letter-spacing: normal;
+  text-transform: none;
+}
+
+.home-main #menusCarousel .menu-slide-content h3 {
+  margin: 0 0 1rem;
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 1.75rem;
+  font-weight: 400;
+  line-height: 1.2;
+}
+
+.home-main #menusCarousel .menu-slide-content > p:not(.menu-slide-label) {
+  margin-bottom: 0;
+  font-size: 0.9375rem;
+  line-height: 1.6;
+}
+
+.home-main #menusCarousel .menu-slide-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin: 1.25rem 0;
+}
+
+.home-main #menusCarousel .menu-slide-price {
+  margin: 0;
+  color: var(--vg-sage, #5E7A65);
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 1.5rem;
+  line-height: 1.3;
+}
+
+.home-main #menusCarousel .menu-slide-price strong {
+  color: inherit;
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: 400;
+}
+
+.home-main #menusCarousel .menu-slide-minimum {
+  margin: 0;
+  font-size: 0.8125rem;
+}
+
+.home-main #menusCarousel .menu-slide-content .btn {
+  min-height: 44px;
+  padding: 0.65rem 1.25rem;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 400;
+}
+
+
+/* ---------------------------------------------------------
+   Commandes sous le carrousel
+   --------------------------------------------------------- */
+
+.home-main .home-carousel-navigation {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 1.25rem;
+}
+
+.home-main #menusCarousel .home-carousel-navigation
+:is(.carousel-control-prev, .carousel-control-next) {
+  position: static;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 44px;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--vg-border, #DED8CF);
+  border-radius: 50%;
+  background: transparent;
+  color: var(--vg-sage, #5E7A65);
+  opacity: 1;
+}
+
+.home-main #menusCarousel .carousel-indicators {
+  position: static;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.25rem;
+  margin: 0;
+}
+
+.home-main #menusCarousel .carousel-indicators button {
+  box-sizing: border-box;
+  width: 24px;
+  height: 24px;
+  margin: 0;
+  border: 8px solid transparent;
+  border-radius: 50%;
+  background-color: var(--vg-beige, #E8DCCB);
+  background-clip: padding-box;
+  opacity: 1;
+}
+
+.home-main #menusCarousel .carousel-indicators button.active {
+  background-color: var(--vg-sage, #5E7A65);
+}
+
+
+/* ---------------------------------------------------------
+   Entreprise et équipe
+   --------------------------------------------------------- */
+
+.home-main .home-presentation {
+  padding: 3rem 0;
+  background: #FFFFFF;
+}
+
+.home-main .home-presentation-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1.5rem;
+  align-items: center;
+}
+
+.home-main .home-presentation-row + .home-presentation-row {
+  margin-top: 3rem;
+}
+
+.home-main .home-presentation-image {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 3 / 2;
+  object-fit: cover;
+  border-radius: 16px;
+}
+
+.home-main .home-presentation-content {
+  min-width: 0;
+}
+
+.home-main .home-presentation-content h2 {
+  margin: 0 0 1.25rem;
+}
+
+.home-main .home-presentation-content h2::after {
+  display: block;
+  width: 40px;
+  height: 2px;
+  margin-top: 1rem;
+  background: var(--vg-terracotta, #C97C5D);
+  content: "";
+}
+
+.home-main .home-presentation-content p {
+  margin: 0;
+  font-size: 0.9375rem;
+  line-height: 1.7;
+}
+
+
+/* ---------------------------------------------------------
+   Avis : surcharge locale, pas toutes les cartes du site
+   --------------------------------------------------------- */
+
+.home-main .home-reviews {
+  padding: 3rem 0;
+  background: var(--vg-cream, #F8F4EC);
+}
+
+.home-main .home-reviews > .container > h2 {
+  margin-bottom: 1.5rem;
+}
+
+.home-main .home-reviews .review-card {
+  --bs-card-bg: #FFFFFF;
+  --bs-card-border-width: 0;
+  --bs-card-border-radius: 16px;
+
+  background: #FFFFFF;
+  border: 0;
+  border-radius: 16px;
+  box-shadow: var(
+    --vg-shadow,
+    0 8px 30px rgba(62, 49, 40, 0.08)
+  );
+}
+
+.home-main .home-reviews .review-card .card-body {
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem;
+}
+
+.home-main .home-reviews .review-rating {
+  margin: 0 0 1rem;
+  color: var(--vg-terracotta, #C97C5D);
+  font-size: 1.125rem;
+}
+
+.home-main .home-reviews .review-star--empty {
+  color: var(--vg-sage, #5E7A65);
+}
+
+.home-main .home-reviews .review-comment {
+  margin: 0 0 1.25rem;
+  color: var(--vg-brown, #3E3128);
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 1.25rem;
+  font-style: italic;
+  font-weight: 400;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+.home-main .home-reviews .review-author {
+  margin-top: auto;
+}
+
+.home-main .home-reviews .review-author h3 {
+  margin: 0 0 0.25rem;
+  font-family: "Poppins", Arial, sans-serif;
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+
+.home-main .home-reviews .review-author p {
+  margin: 0;
+  font-size: 0.75rem;
+}
+
+
+/* ---------------------------------------------------------
+   Tablette et desktop
+   --------------------------------------------------------- */
+
+@media (min-width: 768px) {
+  .navbar .vg-brand__mark {
+    flex-basis: 3rem;
+    width: 3rem;
+    height: 3rem;
+  }
+
+  .navbar .vg-brand__name {
+    font-size: 1.5rem;
+  }
+
+  .home-main h2 {
+    font-size: 2.5rem;
+  }
+
+  .home-main .hero-home {
+    min-height: 36rem;
+  }
+
+  .home-main .hero-home #hero-title {
+    font-size: 3.25rem;
+  }
+
+  .home-main .menu-carousel-section,
+  .home-main .home-presentation,
+  .home-main .home-reviews {
+    padding: 4rem 0;
+  }
+
+  .home-main #menusCarousel .menu-slide {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    min-height: 25rem;
+  }
+
+  .home-main #menusCarousel .menu-slide-image {
+    height: 100%;
+    min-height: 25rem;
+  }
+
+  .home-main #menusCarousel .menu-slide-content {
+    padding: 2rem;
+  }
+
+  .home-main #menusCarousel .menu-slide-content h3 {
+    font-size: 2rem;
+  }
+
+  .home-main .home-presentation-row {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 3rem;
+  }
+
+  .home-main .home-presentation-row--reverse
+  .home-presentation-image {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .home-main .home-presentation-row--reverse
+  .home-presentation-content {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .home-main .home-presentation-row + .home-presentation-row {
+    margin-top: 4rem;
+  }
+}
+
+@media (min-width: 992px) {
+  .navbar .navbar-nav {
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .navbar .vg-register {
+    margin-top: 0;
+    margin-left: 0.5rem;
+  }
+
+  .home-main .hero-home {
+    min-height: 40rem;
+  }
+
+  .home-main .hero-home #hero-title {
+    font-size: 4rem;
+  }
+
+  .home-main #menusCarousel .menu-slide-content {
+    padding: 3rem;
+  }
+}
+/* =========================================================
+   FOOTER — MOBILE FIRST
+   ========================================================= */
+
+.vg-footer {
+    margin-top: 0;
+    padding: 2rem 0;
+    background-color: var(--vg-brown, #3E3128);
+    color: var(--vg-cream, #F8F4EC);
+}
+
+.vg-footer__top {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.5rem;
+    padding-bottom: 2rem;
+}
+
+.vg-footer__brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    max-width: 100%;
+
+    color: var(--vg-cream, #F8F4EC);
+    text-decoration: none;
+}
+
+.vg-footer__brand:hover {
+    color: var(--vg-beige, #E8DCCB);
+}
+
+.vg-footer__brand span {
+    font-family: "Playfair Display", Georgia, serif;
+    font-size: 1.375rem;
+    font-weight: 600;
+    line-height: 1.2;
+}
+
+.vg-footer__logo {
+    display: block;
+    flex: 0 0 40px;
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+}
+
+.vg-footer .vg-footer__description {
+    margin: 0.75rem 0 0;
+    color: var(--vg-cream, #F8F4EC);
+    font-size: 0.8125rem;
+}
+
+.vg-footer .vg-footer__hours {
+    margin: 0;
+    color: var(--vg-cream, #F8F4EC);
+    font-size: 0.8125rem;
+    line-height: 1.7;
+}
+
+.vg-footer__bottom {
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(248, 244, 236, 0.2);
+}
+
+.vg-footer__bottom nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem 1.5rem;
+}
+
+.vg-footer__bottom a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    color: var(--vg-cream, #F8F4EC);
+    font-size: 0.75rem;
+    text-decoration: none;
+}
+
+.vg-footer__bottom a:hover {
+    color: var(--vg-beige, #E8DCCB);
+    text-decoration: underline;
+}
+
+.vg-footer a:focus-visible {
+    outline: 2px solid var(--vg-cream, #F8F4EC);
+    outline-offset: 4px;
+}
+
+/* Tablette et desktop */
+@media (min-width: 768px) {
+    .vg-footer {
+        padding: 2.5rem 0;
+    }
+
+    .vg-footer__top {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 3rem;
+    }
+
+    .vg-footer__logo {
+        flex-basis: 48px;
+        width: 48px;
+        height: 48px;
+    }
+
+    .vg-footer__brand span {
+        font-size: 1.5rem;
+    }
+
+    .vg-footer .vg-footer__hours {
+        max-width: 25rem;
+        padding-top: 0.75rem;
+        text-align: right;
+    }
+}

@@ -74,23 +74,6 @@
 
 .vg-order-button {
   width: 100%;
-  background-color: var(--vg-sage);
-  border-color: var(--vg-sage);
-  color: var(--vg-text-on-primary);
-}
-
-.vg-order-button:hover,
-.vg-order-button:focus {
-  background-color: var(--vg-brown);
-  border-color: var(--vg-brown);
-  color: var(--vg-text-on-primary);
-}
-
-.vg-order-button:disabled {
-  background-color: var(--vg-beige);
-  border-color: var(--vg-brown);
-  color: var(--vg-brown);
-  opacity: 1;
 }
 
 /* ---------------------------------------------------------
