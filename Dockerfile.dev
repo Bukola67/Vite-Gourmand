@@ -1,0 +1,56 @@
+FROM php:8.4-apache
+
+# Outils et extensions nécessaires au projet
+RUN apt-get update && apt-get install -y \
+        git \
+        unzip \
+        libicu-dev \
+        libzip-dev \
+        zip \
+        curl \
+        libonig-dev \
+        libxml2-dev \
+        pkg-config \
+        libssl-dev \
+    && docker-php-ext-install pdo pdo_mysql intl zip \
+    && pecl install mongodb \
+    && docker-php-ext-enable mongodb \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+# Composer
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+
+WORKDIR /var/www/html
+
+# Environnement local de développement
+ENV APP_ENV=dev \
+    APP_DEBUG=1
+
+# Configuration PHP de développement
+RUN cp "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini"
+
+# Si OPcache est activé, vérifier les changements à chaque requête
+RUN printf '%s\n' \
+    'opcache.validate_timestamps=1' \
+    'opcache.revalidate_freq=0' \
+    > "$PHP_INI_DIR/conf.d/zz-development.ini"
+
+# Apache doit servir le dossier public/ de Symfony
+ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
+
+RUN sed -ri \
+        's!/var/www/html!/var/www/html/public!g' \
+        /etc/apache2/sites-available/*.conf \
+    && printf '%s\n' \
+        '<Directory /var/www/html/public>' \
+        '    AllowOverride All' \
+        '    Require all granted' \
+        '</Directory>' \
+        > /etc/apache2/conf-available/symfony-dev.conf \
+    && a2enmod rewrite headers \
+    && a2enconf symfony-dev
+
+EXPOSE 80
+
+CMD ["apache2-foreground"]
