@@ -1,50 +1,185 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Mon compte{% endblock %}
+{% form_theme profileForm 'bootstrap_5_layout.html.twig' %}
+
+{% block title %}Mon compte — Vite & Gourmand{% endblock %}
 
 {% block body %}
-<div class="container mt-4">
-    <h1>Mes commandes</h1>
+    <header class="vg-account-heading">
+        <h1>Mon compte</h1>
+        <p>
+            Retrouvez vos commandes et mettez à jour
+            vos informations personnelles.
+        </p>
+    </header>
 
-    {% if orders|length > 0 %}
-        <div class="table-responsive mt-4">
-            <table class="table table-striped align-middle">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Menu</th>
-                        <th>Date prestation</th>
-                        <th>Heure</th>
-                        <th>Personnes</th>
-                        <th>Statut</th>
-                        <th>Total</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for order in orders %}
-                        <tr>
-                            <td>#{{ order.id }}</td>
-                            <td>{{ order.menu.title }}</td>
-                            <td>{{ order.deliveryDate ? order.deliveryDate|date('d/m/Y') : '' }}</td>
-                            <td>{{ order.deliveryTime ? order.deliveryTime|date('H:i') : '' }}</td>
-                            <td>{{ order.personCount }}</td>
-                            <td>{{ order.status }}</td>
-                            <td>{{ order.totalPrice }} €</td>
-                            <td>
-                                <a href="{{ path('app_user_order_show', {id: order.id}) }}" class="btn btn-sm btn-outline-primary">
-                                    Détail
-                                </a>
-                            </td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-             </table>
-        </div>
-    {% else %}
-        <div class="alert alert-info mt-4">
-            Vous n’avez encore passé aucune commande.
-        </div>
-    {% endif %}
-</div>
+    {% for type, messages in app.flashes %}
+        {% for message in messages %}
+            <div
+                class="alert alert-{{ type }}"
+                role="status"
+            >
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endfor %}
+
+    {% set statusLabels = {
+        'en_attente': 'En attente',
+        'acceptee': 'Acceptée',
+        'en_preparation': 'En préparation',
+        'en_livraison': 'En cours de livraison',
+        'livree': 'Livrée',
+        'terminee': 'Terminée',
+        'annulee': 'Annulée'
+    } %}
+
+    <div class="vg-account-layout">
+        <section
+            class="vg-account-panel"
+            aria-labelledby="orders-title"
+        >
+            <h2 id="orders-title">Mes commandes</h2>
+
+            {% if orders is not empty %}
+                <div class="table-responsive">
+                    <table class="table align-middle vg-account-table">
+                        <caption class="visually-hidden">
+                            Historique et suivi de vos commandes
+                        </caption>
+
+                        <thead>
+                            <tr>
+                                <th scope="col">Commande</th>
+                                <th scope="col">Date</th>
+                                <th scope="col">Heure</th>
+                                <th scope="col">Personnes</th>
+                                <th scope="col">Statut</th>
+                                <th scope="col">Total</th>
+                                <th scope="col">Action</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            {% for order in orders %}
+                                <tr>
+                                    <th scope="row">
+                                        <span class="vg-account-menu">
+                                            {{ order.menu.title }}
+                                        </span>
+
+                                        <small class="vg-account-reference">
+                                            #{{ order.id }}
+                                        </small>
+                                    </th>
+
+                                    <td>
+                                        {{ order.deliveryDate
+                                            ? order.deliveryDate|date('d/m/Y')
+                                            : '—'
+                                        }}
+                                    </td>
+
+                                    <td>
+                                        {{ order.deliveryTime
+                                            ? order.deliveryTime|date('H:i')
+                                            : '—'
+                                        }}
+                                    </td>
+
+                                    <td>{{ order.personCount }}</td>
+
+                                    <td>
+                                        <span class="vg-order-status">
+                                            {{ statusLabels[order.status]
+                                                ?? order.status|replace({'_': ' '})|capitalize
+                                            }}
+                                        </span>
+                                    </td>
+
+                                    <td class="text-nowrap">
+                                        {{ order.totalPrice|number_format(2, ',', ' ') }} €
+                                    </td>
+
+                                    <td>
+                                        <a
+                                            href="{{ path('app_user_order_show', {
+                                                id: order.id
+                                            }) }}"
+                                            class="btn btn-sm vg-account-detail"
+                                        >
+                                            Voir le détail
+                                            <span class="visually-hidden">
+                                                de la commande n° {{ order.id }}
+                                            </span>
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <p>Vous n’avez encore passé aucune commande.</p>
+
+                <a href="{{ path('app_menu') }}" class="btn btn-primary">
+                    Découvrir les menus
+                </a>
+            {% endif %}
+        </section>
+
+        <section
+            class="vg-account-panel"
+            aria-labelledby="profile-title"
+        >
+            <h2 id="profile-title">
+                Mes informations personnelles
+            </h2>
+
+            {{ form_start(profileForm, {
+                attr: {'data-turbo': 'false'}
+            }) }}
+
+                {% if profileForm.vars.submitted
+                    and not profileForm.vars.valid %}
+                    <div class="alert alert-danger" role="alert">
+                        Vos modifications n’ont pas été enregistrées.
+                        Corrigez les champs signalés.
+                    </div>
+                {% endif %}
+
+                {{ form_errors(profileForm) }}
+
+                <div class="row g-3">
+                    <div class="col-12 col-sm-6">
+                        {{ form_row(profileForm.lastName) }}
+                    </div>
+
+                    <div class="col-12 col-sm-6">
+                        {{ form_row(profileForm.firstName) }}
+                    </div>
+                </div>
+
+                {{ form_row(profileForm.email) }}
+                {{ form_row(profileForm.address) }}
+
+                <div class="row g-3">
+                    <div class="col-12 col-sm-5">
+                        {{ form_row(profileForm.postalCode) }}
+                    </div>
+
+                    <div class="col-12 col-sm-7">
+                        {{ form_row(profileForm.city) }}
+                    </div>
+                </div>
+
+                {{ form_row(profileForm.phone) }}
+
+                <button type="submit" class="btn btn-primary mt-3">
+                    Enregistrer les modifications
+                </button>
+
+            {{ form_end(profileForm) }}
+        </section>
+    </div>
 {% endblock %}

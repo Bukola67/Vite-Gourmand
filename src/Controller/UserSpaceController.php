@@ -7,6 +7,7 @@ use App\Entity\User;
 use App\Entity\OrderStatusHistory;
 use App\Entity\Review;
 use App\Form\ReviewType;
+use App\Form\ProfileType; 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -16,16 +17,52 @@ use Symfony\Component\HttpFoundation\Request;
 
 class UserSpaceController extends AbstractController
 {
-    #[Route('/compte', name: 'app_user_space')]
+    #[Route(
+    '/compte',
+    name: 'app_user_space',
+    methods: ['GET', 'POST']
+    )]
     #[IsGranted('ROLE_USER')]
-    public function index(): Response
-    {
-        /** @var User $user */
+    public function index(
+        Request $request,
+        EntityManagerInterface $entityManager
+    ): Response {
         $user = $this->getUser();
 
-        return $this->render('user_space/index.html.twig', [
-            'orders' => $user->getCustomerOrders(),
+        if (!$user instanceof User) {
+            throw $this->createAccessDeniedException();
+        }
+
+        $form = $this->createForm(ProfileType::class, $user, [
+            'action' => $this->generateUrl('app_user_space'),
         ]);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $entityManager->flush();
+
+            $this->addFlash(
+                'success',
+                'Vos informations personnelles ont bien été mises à jour.'
+            );
+
+            return $this->redirectToRoute(
+                'app_user_space',
+                [],
+                Response::HTTP_SEE_OTHER
+            );
+        }
+
+        $response = $this->render('user_space/index.html.twig', [
+            'orders' => $user->getCustomerOrders(),
+            'profileForm' => $form->createView(),
+        ]);
+
+        $response->headers->set('Cache-Control', 'private, no-store');
+
+        return $response;
+
     }
 
     #[Route('/compte/commande/{id}', name: 'app_user_order_show')]
