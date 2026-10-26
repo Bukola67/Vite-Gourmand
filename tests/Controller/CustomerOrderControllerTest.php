@@ -98,19 +98,33 @@ final class CustomerOrderControllerTest extends WebTestCase
 
         $client->submit($form);
 
-        self::assertResponseRedirects('/compte');
+        // Vérifie d’abord qu’il s’agit d’une redirection HTTP 303.
+        self::assertResponseRedirects(null, 303);
+
+        // Récupère le repository depuis le conteneur courant.
+        $orderRepository = static::getContainer()->get(
+            CustomerOrderRepository::class
+        );
 
         self::assertSame(
             $numberOfOrdersBefore + 1,
             $orderRepository->count([])
         );
 
+        // Recherche la dernière commande de ce client.
         $order = $orderRepository->findOneBy(
-            ['user' => $user],
+            ['user' => $user->getId()],
             ['id' => 'DESC']
         );
 
         self::assertNotNull($order);
+
+        // Vérifie que la redirection mène à cette commande.
+        self::assertResponseRedirects(
+            sprintf('/commande/confirmation/%d', $order->getId()),
+            303
+        );
+
 
         self::assertSame('en_attente', $order->getStatus());
         self::assertSame('Bordeaux', $order->getDeliveryCity());
@@ -173,12 +187,12 @@ final class CustomerOrderControllerTest extends WebTestCase
 
         $client->submit($form);
 
-        self::assertResponseIsSuccessful();self::assertResponseIsSuccessful();
+        self::assertResponseIsSuccessful();
         self::assertSame($ordersBefore, $orderRepository->count([]));
         self::assertSelectorTextContains(
-    'form',
-    'Ce champ est obligatoire.'
-);
+            'form',
+            'Ce champ est obligatoire.'
+        );
     }
 
     public function testClientCannotCreateOrderWithPersonCountBelowOne(): void
@@ -219,12 +233,12 @@ final class CustomerOrderControllerTest extends WebTestCase
         self::assertResponseIsSuccessful();self::assertResponseIsSuccessful();
         self::assertSame($ordersBefore, $orderRepository->count([]));
         self::assertSelectorTextContains(
-    'form',
-    sprintf(
-        'Ce menu nécessite au minimum %d personnes.',
-        $menu->getMinimumPersons()
-    )
-);
+            'form',
+            sprintf(
+                'Ce menu nécessite au minimum %d personnes.',
+                $menu->getMinimumPersons()
+            )
+        );
     }
 
 }
