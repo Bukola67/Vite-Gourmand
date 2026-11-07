@@ -4,7 +4,7 @@
 
 {% block body %}
 <div class="container mt-4">
-    <h1>Créer un menu</h1>
+    <h1>Modifier un menu</h1>
 
     {{ form_start(form) }}
         {{ form_row(form.title) }}
@@ -15,8 +15,9 @@
         {{ form_row(form.basePrice) }}
         {{ form_row(form.conditionText) }}
         {{ form_row(form.stockAvailable) }}
+        {{ form_row(form.dishes) }}
         <div class="menu-dishes-field">
-         {{ form_row(form.dishes) }}
+        
         </div>
 
         <button class="btn btn-primary mt-3">Enregistrer</button>
