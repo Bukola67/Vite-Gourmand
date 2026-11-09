@@ -1,122 +1,110 @@
 {% extends 'base.html.twig' %}
 
+{% block stylesheets %}
+    {{ parent() }}
+  
+    <meta name="turbo-visit-control" content="reload">
+    <meta name="turbo-cache-control" content="no-cache">
+{% endblock %}
+
 {% block title %}Statistiques administrateur{% endblock %}
 
 {% block body %}
-<div class="container mt-4">
-    <h1>Statistiques des commandes</h1>
+<div class="container mt-4" data-turbo="false">
+    <h1>Statistiques des commandes créées</h1>
+    <p>
+        Le chiffre d’affaires des commandes créées
+    </p>
 
-    <div class="card mb-4">
+    <section class="card mb-4" aria-labelledby="stats-filters-title">
         <div class="card-body">
-            <h2 class="h4 mb-3">Comparaison du nombre de commandes enregistrées par menu</h2>
-
-            <canvas id="ordersChart" height="120"></canvas>
-        </div>
-    </div>
-
-    <div class="card mb-4">
-        <div class="card-body">
-            <h2 class="h4 mb-3">Filtrer le chiffre d’affaires encaissé</h2>
-
-            <form method="get" class="row g-3">
+            <h2 id="stats-filters-title" class="h4 mb-3">Filtrer les statistiques</h2>
+           
+            <form method="get" action="{{ path('app_admin_stats') }}" class="row g-3">
                 <div class="col-md-4">
                     <label for="menuId" class="form-label">Menu</label>
-                    <select name="menuId" id="menuId" class="form-select">
+                    <select name="menuId" id="menuId" class="form-select"
+                        {% if filterErrors.menuId is defined %}aria-invalid="true" aria-describedby="menuId-error"{% endif %}>
                         <option value="">Tous les menus</option>
                         {% for menu in menus %}
-                            <option value="{{ menu.id }}" {{ selectedMenuId == menu.id ? 'selected' : '' }}>
-                                {{ menu.title }}
-                            </option>
+                            <option value="{{ menu.id }}" {{ selectedMenuId == menu.id ? 'selected' : '' }}>{{ menu.title }}</option>
                         {% endfor %}
                     </select>
+                    {% if filterErrors.menuId is defined %}<p class="text-danger" id="menuId-error">{{ filterErrors.menuId }}</p>{% endif %}
                 </div>
-
                 <div class="col-md-3">
-                    <label for="startMonth" class="form-label">Début</label>
-                    <input type="month" name="startMonth" id="startMonth" class="form-control" value="{{ startMonth }}">
+                    <label for="startMonth" class="form-label">Mois de création : début</label>
+                    <input type="month" name="startMonth" id="startMonth" class="form-control" value="{{ startMonth }}" min="1000-01" max="9999-12"
+                        {% if filterErrors.startMonth is defined %}aria-invalid="true" aria-describedby="startMonth-error"{% endif %}>
+                    {% if filterErrors.startMonth is defined %}<p class="text-danger" id="startMonth-error">{{ filterErrors.startMonth }}</p>{% endif %}
                 </div>
-
                 <div class="col-md-3">
-                    <label for="endMonth" class="form-label">Fin</label>
-                    <input type="month" name="endMonth" id="endMonth" class="form-control" value="{{ endMonth }}">
+                    <label for="endMonth" class="form-label">Mois de création : fin</label>
+                    <input type="month" name="endMonth" id="endMonth" class="form-control" value="{{ endMonth }}" min="1000-01" max="9999-12"
+                        {% if filterErrors.endMonth is defined %}aria-invalid="true" aria-describedby="endMonth-error"{% endif %}>
+                    {% if filterErrors.endMonth is defined %}<p class="text-danger" id="endMonth-error">{{ filterErrors.endMonth }}</p>{% endif %}
                 </div>
-
-                <div class="col-md-2 d-flex align-items-end">
+                <div class="col-md-2 d-flex align-items-end gap-2">
                     <button type="submit" class="btn btn-primary">Filtrer</button>
                 </div>
+                <div class="col-12"><a href="{{ path('app_admin_stats') }}">Réinitialiser les filtres</a></div>
             </form>
-
-            <p class="text-muted small mt-3 mb-0">
-                Le chiffre d’affaires encaissé correspond au montant total des prestations terminées, frais de livraison inclus.
-            </p>
         </div>
-    </div>
+    </section>
 
-    <div class="card">
-        <div class="card-body">
-            <h2 class="h4 mb-3">Chiffre d’affaires encaissé par menu</h2>
+    {% if filterErrors|length > 0 %}
+        <p class="alert alert-danger" role="alert">Corrigez les filtres signalés pour afficher les statistiques.</p>
+    {% elseif statsUnavailable %}
+        <p class="alert alert-danger" role="alert">Les statistiques sont temporairement indisponibles. Réessayez plus tard.</p>
+    {% elseif stats|length == 0 %}
+        <p class="alert alert-info" role="status">Aucune commande ne correspond à ces filtres.</p>
+    {% else %}
 
-            {% if revenueStats|length > 0 %}
-                <table class="table table-striped">
-                    <thead>
-                        <tr>
-                            <th>Menu</th>
-                            <th>Prestations terminées</th>
-                            <th>Chiffre d’affaires encaissé</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for stat in revenueStats %}
+        <section class="card mb-4" aria-labelledby="orders-chart-title">
+            <div class="card-body">
+                <h2 id="orders-chart-title" class="h4">Nombre de commandes créées par menu</h2>
+                <p id="orders-chart-description">Les mêmes filtres s’appliquent au graphique et au tableau. Les valeurs exactes figurent dans le tableau ci-dessous.</p>
+                <canvas id="ordersChart" height="120" role="img"
+                    aria-label="Nombre de commandes créées par menu"
+                    aria-describedby="orders-chart-description">
+                    Consultez le tableau des statistiques pour lire les valeurs.
+                </canvas>
+    
+            </div>
+        </section>
+
+        <section class="card" aria-labelledby="stats-table-title">
+            <div class="card-body">
+                <h2 id="stats-table-title" class="h4">Détail par menu</h2>
+                <div class="table-responsive">
+                    <table id="orders-stats-table" class="table table-striped">
+                    
+                        <thead>
                             <tr>
-                                <td>{{ stat.menuTitle }}</td>
-                                <td>{{ stat.totalOrders }}</td>
-                                <td>{{ stat.revenue|number_format(2, ',', ' ') }} €</td>
+                                <th scope="col">Menu</th>
+                                <th scope="col">Commandes créées</th>
+                                <th scope="col">Chiffre d’affaires des commandes créées</th>
                             </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            {% else %}
-                <p>Aucune donnée disponible.</p>
-            {% endif %}
-        </div>
-    </div>
+                        </thead>
+                        <tbody>
+                            {% for stat in stats %}
+                                <tr>
+                                    <th scope="row" data-stat-title>{{ stat.menuTitle }}</th>
+                                    <td data-stat-orders>{{ stat.totalOrders }}</td>
+                                    <td>{{ stat.revenue|number_format(2, ',', ' ') }} €</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    {% endif %}
 </div>
 {% endblock %}
 
 {% block javascripts %}
     {{ parent() }}
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script>
-        const labels = [
-            {% for stat in chartStats %}
-                "{{ stat.menuTitle|e('js') }}",
-            {% endfor %}
-        ];
-
-        const data = [
-            {% for stat in chartStats %}
-                {{ stat.completedOrders ?? 0 }},
-            {% endfor %}
-        ];
-
-        new Chart(document.getElementById('ordersChart'), {
-            type: 'bar',
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: 'Commandes enregistrées',
-                    data: data,
-                    backgroundColor: '#0d6efd'
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: {
-                        display: false
-                    }
-                }
-            }
-        });
-    </script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js" defer></script>
+    <script src="{{ asset('js/admin-stats.js') }}" defer></script>
 {% endblock %}

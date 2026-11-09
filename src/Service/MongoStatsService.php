@@ -3,33 +3,21 @@
 namespace App\Service;
 
 use App\Entity\CustomerOrder;
+use MongoDB\BSON\UTCDateTime;
 use MongoDB\Client;
-use MongoDB\Driver\Exception\BulkWriteException;
-
+use MongoDB\Collection;
 
 class MongoStatsService
 {
-    private \MongoDB\Collection $menuStats;
-    private \MongoDB\Collection $monthlyStats;
-    private \MongoDB\Collection $completedOrders;
-
+    private Collection $createdOrders;
     private bool $indexesInitialized = false;
 
     public function __construct(Client $client, string $mongoDbName)
     {
-        $database = $client->selectDatabase($mongoDbName);
-
-        $this->menuStats = $database->selectCollection(
-            'menu_stats'
-        );
-
-        $this->monthlyStats = $database->selectCollection(
-            'menu_monthly_stats'
-        );
-
-        $this->completedOrders = $database->selectCollection(
-            'completed_order_stats'
-        );
+        // Nouvelle collection : les anciens compteurs de commandes terminées
+        // sont conservés mais ne sont plus utilisés par ce service.
+        $this->createdOrders = $client->selectDatabase($mongoDbName)
+            ->selectCollection('created_order_stats');
     }
 
     private function ensureIndexes(): void
@@ -37,156 +25,105 @@ class MongoStatsService
         if ($this->indexesInitialized) {
             return;
         }
-
-        $this->completedOrders->createIndex(
-            ['orderId' => 1],
-            ['unique' => true]
-        );
-
-        $this->monthlyStats->createIndex(
-            ['menuId' => 1, 'month' => 1],
-            ['unique' => true]
-        );
-
+        // L'index unique sur _id est déjà fourni par MongoDB.
+        $this->createdOrders->createIndex(['month' => 1, 'menuId' => 1]);
         $this->indexesInitialized = true;
     }
 
     /**
-     * Comptabilise le chiffre d'affaires encaissé lorsqu'une prestation est terminée.
-     * Cette méthode est idempotente : une commande déjà terminée n'est jamais recomptée.
+     * Une commande MySQL = un document MongoDB identifié par son ID.
+     * Répéter l'appel remplace les valeurs ; aucun compteur n'est incrémenté.
+     * Tous les statuts sont actuellement inclus (annulations : évolution différée).
      */
-    public function markOrderCompleted(CustomerOrder $order): void
+    public function recordOrderCreated(CustomerOrder $order): void
     {
-        $this->ensureIndexes();
-
-        $orderId = (int) $order->getId();
-
-        try {
-            $this->completedOrders->insertOne([
-                'orderId' => $orderId,
-                'completedAt' => new \DateTimeImmutable(),
-            ]);
-        } catch (BulkWriteException $exception) {
-            // Index unique violé : le chiffre d'affaires a déjà été comptabilisé.
-            return;
-        }
-
         $menu = $order->getMenu();
-        $month = $order->getCreatedAt()->format('Y-m');
-        $totalPrice = (float) $order->getTotalPrice();
+        $createdAt = $order->getCreatedAt();
+        $totalPrice = $order->getTotalPrice();
 
-        $this->menuStats->updateOne(
-            ['menuId' => $menu->getId()],
-            [
-                '$setOnInsert' => [
-                    'menuId' => $menu->getId(),
-                    'menuTitle' => $menu->getTitle(),
-                ],
-                '$inc' => [
-                    'completedOrders' => 1,
-                    'completedRevenue' => $totalPrice,
-                ],
-            ],
-            ['upsert' => true]
-        );
+        if ($order->getId() === null || $menu?->getId() === null || $createdAt === null
+            || $totalPrice === null) {
+            throw new \InvalidArgumentException('La commande doit être enregistrée et complète avant sa projection.');
+        }
+        if (!preg_match('/^([0-9]{1,8})(?:\.([0-9]{1,2}))?$/D', $totalPrice, $parts)) {
+            throw new \InvalidArgumentException('Le montant de la commande est invalide.');
+        }
+        // Additionner des entiers évite les imprécisions de calcul des flottants.
+        $totalPriceCents = (int) $parts[1] * 100
+            + (int) str_pad($parts[2] ?? '', 2, '0');
+        $month = $createdAt->setTimezone(new \DateTimeZone('Europe/Paris'))->format('Y-m');
 
-        $this->monthlyStats->updateOne(
-            [
-                'menuId' => $menu->getId(),
+        $this->ensureIndexes();
+        $this->createdOrders->updateOne(
+            ['_id' => (int) $order->getId()],
+            ['$set' => [
+                'menuId' => (int) $menu->getId(),
+                'menuTitle' => (string) $menu->getTitle(),
+                'createdAt' => new UTCDateTime($createdAt),
                 'month' => $month,
-            ],
-            [
-                '$setOnInsert' => [
-                    'menuId' => $menu->getId(),
-                    'month' => $month,
-                ],
-                '$inc' => [
-                    'completedOrders' => 1,
-                    'completedRevenue' => $totalPrice,
-                ],
-            ],
+                'totalPriceCents' => $totalPriceCents,
+            ]],
             ['upsert' => true]
         );
     }
 
-    public function getMenuStats(): array
-    {
-        return $this->menuStats
-            ->find([], ['sort' => ['completedOrders' => -1]])
-            ->toArray();
-    }
-
+    /**
+     * Même ensemble de données pour le graphique ET le tableau.
+     * Les bornes mensuelles de création sont inclusives.
+     * @return list<array{menuId: int, menuTitle: string, revenue: string, totalOrders: int}>
+     */
     public function getRevenueByMenuAndPeriod(
         ?int $menuId,
         ?string $startMonth,
         ?string $endMonth
     ): array {
         $filter = [];
-
         if ($menuId !== null) {
             $filter['menuId'] = $menuId;
         }
-
-        if ($startMonth !== null || $endMonth !== null) {
-            $filter['month'] = [];
-
-            if ($startMonth !== null) {
-                $filter['month']['$gte'] = $startMonth;
-            }
-
-            if ($endMonth !== null) {
-                $filter['month']['$lte'] = $endMonth;
-            }
+        if ($startMonth !== null) {
+            $filter['month']['$gte'] = $startMonth;
+        }
+        if ($endMonth !== null) {
+            $filter['month']['$lte'] = $endMonth;
         }
 
-        $monthlyStats = $this->monthlyStats->find($filter)->toArray();
+        $rows = $this->createdOrders->aggregate([
+            ['$match' => (object) $filter],
+            ['$sort' => ['createdAt' => 1, '_id' => 1]],
+            ['$group' => [
+                '_id' => '$menuId',
+                'menuTitle' => ['$last' => '$menuTitle'],
+                'revenueCents' => ['$sum' => '$totalPriceCents'],
+                'totalOrders' => ['$sum' => 1],
+            ]],
+            ['$sort' => ['totalOrders' => -1, '_id' => 1]],
+        ]);
 
         $results = [];
-
-        foreach ($monthlyStats as $stat) {
-            $menuId = (int) $stat['menuId'];
-
-            if (!isset($results[$menuId])) {
-                $results[$menuId] = [
-                    'menuId' => $menuId,
-                    'menuTitle' => $this->getMenuTitle($menuId),
-                    'revenue' => 0.0,
-                    'totalOrders' => 0,
-                ];
-            }
-
-            $results[$menuId]['revenue'] += (float) ($stat['completedRevenue'] ?? 0);
-            $results[$menuId]['totalOrders'] += (int) ($stat['completedOrders'] ?? 0);
+        foreach ($rows as $row) {
+            $cents = (int) $row['revenueCents'];
+            $results[] = [
+                'menuId' => (int) $row['_id'],
+                'menuTitle' => (string) $row['menuTitle'],
+                'revenue' => sprintf('%d.%02d', intdiv($cents, 100), $cents % 100),
+                'totalOrders' => (int) $row['totalOrders'],
+            ];
         }
-
-        return array_values($results);
-    }
-
-    private function getMenuTitle(int $menuId): string
-    {
-        $menuStat = $this->menuStats->findOne(['menuId' => $menuId]);
-
-        return (string) ($menuStat['menuTitle'] ?? 'Menu #' . $menuId);
+        return $results;
     }
 
     /**
-     * Reconstruit toutes les statistiques MongoDB à partir des commandes MySQL.
-     * À utiliser uniquement manuellement, en cas d'écart ou après une panne MongoDB.
+     * Reconstruction manuelle depuis MySQL : tous les statuts sont inclus.
+     * À exécuter en maintenance : la reconstruction globale n'est pas atomique.
      */
     public function rebuildStats(iterable $orders): void
     {
         $this->ensureIndexes();
-        $this->menuStats->deleteMany([]);
-        $this->monthlyStats->deleteMany([]);
-        $this->completedOrders->deleteMany([]);
-
+        $this->createdOrders->deleteMany([]);
         foreach ($orders as $order) {
-            if (!$order instanceof CustomerOrder) {
-                continue;
-            }
-
-            if ($order->getStatus() === 'terminee') {
-                $this->markOrderCompleted($order);
+            if ($order instanceof CustomerOrder) {
+                $this->recordOrderCreated($order);
             }
         }
     }

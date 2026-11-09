@@ -4,11 +4,14 @@ namespace App\Controller;
 
 use App\Entity\{CustomerOrder, Menu, OrderStatusHistory, User};
 use App\Form\CustomerOrderType;
-use App\Service\{MailService, OrderQuoteCalculator};
+use App\Service\{MailService, MongoStatsService, OrderQuoteCalculator};
+use App\Exception\InsufficientMenuStockException;
+use Doctrine\DBAL\LockMode;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormError;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\{JsonResponse, Request, Response};
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Routing\Attribute\Route;
@@ -30,6 +33,9 @@ final class OrderController extends AbstractController
         EntityManagerInterface $entityManager,
         OrderQuoteCalculator $quoteCalculator,
         MailService $mailService,
+        InsufficientMenuStockException $insufficientMenuStockException,
+        #[Autowire(lazy: true)]
+        MongoStatsService $mongoStatsService,
         LoggerInterface $logger,
     ): Response {
         $this->denyAccessUnlessGranted('ROLE_USER');
@@ -103,12 +109,69 @@ final class OrderController extends AbstractController
                 $order->addOrderStatusHistory($history);
 
                 try {
-                    $entityManager->persist($order);
-                    $entityManager->persist($history);
-                    $entityManager->flush();
-                } catch (\Exception $exception) {
+                    $entityManager->wrapInTransaction(
+                        function (EntityManagerInterface $em) use (
+                            $menu,
+                            $order,
+                            $history
+                        ): void {
+                            $lockedMenu = $em->find(
+                                Menu::class,
+                                $menu->getId(),
+                                LockMode::PESSIMISTIC_WRITE
+                            );
+
+                            if (!$lockedMenu instanceof Menu) {
+                                throw new InsufficientMenuStockException(
+                                    'Ce menu n’est plus disponible. '
+                                    . 'Aucune commande n’a été créée.'
+                                );
+                            }
+
+                            // Hypothèse : une unité de stock = une portion.
+                            // Si une unité = une commande, utiliser : $quantity = 1;
+                            $quantity = (int) $order->getPersonCount();
+
+                            if ($quantity < 1) {
+                                throw new \LogicException(
+                                    'La quantité à réserver doit être strictement positive.'
+                                );
+                            }
+
+                            $stock = $lockedMenu->getStockAvailable();
+
+                            if ($stock === null) {
+                                throw new InsufficientMenuStockException(
+                                    'La disponibilité de ce menu n’est pas renseignée. '
+                                    . 'Aucune commande n’a été créée.'
+                                );
+                            }
+
+                            if ($stock < $quantity) {
+                                throw new InsufficientMenuStockException(
+                                    'Le stock disponible ne permet plus cette commande. '
+                                    . 'Aucune commande n’a été créée.'
+                                );
+                            }
+
+                            $lockedMenu->setStockAvailable($stock - $quantity);
+
+                            $em->persist($order);
+                            $em->persist($history);
+                            // wrapInTransaction() exécute flush() avant le commit.
+                        }
+                    );
+                } catch (InsufficientMenuStockException $exception) {
+                    $this->addFlash('warning', $exception->getMessage());
+
+                    return $this->redirectToRoute(
+                        'app_order_new',
+                        ['id' => $menu->getId()],
+                        Response::HTTP_SEE_OTHER
+                    );
+                } catch (\Throwable $exception) {
                     $logger->error(
-                        'Échec de l’enregistrement de la commande.',
+                        'Échec de l’enregistrement de la commande et de son stock.',
                         [
                             'exception' => $exception,
                             'user_id' => $user->getId(),
@@ -124,8 +187,6 @@ final class OrderController extends AbstractController
                         . 'un doublon.'
                     );
 
-                    // Pas de page de confirmation si l’enregistrement
-                    // n’a pas pu être confirmé.
                     return $this->redirectToRoute(
                         'app_user_space',
                         [],
@@ -133,8 +194,16 @@ final class OrderController extends AbstractController
                     );
                 }
 
-                // Les statistiques MongoDB sont mises à jour au passage
-                // à « terminee », pas à la création de la commande.
+                // MySQL reste la source de vérité : un échec MongoDB
+                // ne doit pas annuler une commande déjà enregistrée.
+                try {
+                    $mongoStatsService->recordOrderCreated($order);
+                } catch (\Exception $exception) {
+                    $logger->error('Projection statistique de commande impossible.', [
+                        'exception' => $exception,
+                        'order_id' => $order->getId(),
+                    ]);
+                }
 
                 $emailStatus = 'handled';
 
