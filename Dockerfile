@@ -76,7 +76,9 @@ RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' \
 RUN sed -ri 's/^Listen 80$/Listen 80/' /etc/apache2/ports.conf
 
 COPY docker/apache/start.sh /usr/local/bin/start.sh
-RUN chmod +x /usr/local/bin/start.sh
+RUN chmod +x /usr/local/bin/start.sh \
+    && command -v runuser >/dev/null \
+    && sh -n /usr/local/bin/start.sh
 
 EXPOSE 8080
 
