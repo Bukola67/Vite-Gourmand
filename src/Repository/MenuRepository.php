@@ -32,14 +32,14 @@ class MenuRepository extends ServiceEntityRepository
         if ($maxPrice !== null) {
             $qb->andWhere('m.basePrice <= :maxPrice')->setParameter('maxPrice', $maxPrice);
         }
-        if ($theme) {
+        if ($theme !== null && $theme !== '') {
             $qb->andWhere('m.theme = :theme')->setParameter('theme', $theme);
         }
-        if ($diet) {
+        if ($diet !== null && $diet !== '') {
             $qb->andWhere('m.diet = :diet')->setParameter('diet', $diet);
         }
         if ($minPersons !== null) {
-            $qb->andWhere('m.minimumPersons >= :minPersons')->setParameter('minPersons', $minPersons);
+            $qb->andWhere('m.minimumPersons <= :minPersons')->setParameter('minPersons', $minPersons);
         }
 
         return $qb->orderBy('m.id', 'ASC')->getQuery()->getResult();

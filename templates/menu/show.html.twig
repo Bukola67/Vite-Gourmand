@@ -53,7 +53,7 @@
                 <p>À partir de {{ (menu.basePrice * menu.minimumPersons)|number_format(2, ',', ' ') }} € pour {{ menu.minimumPersons }} personnes, hors livraison.</p>
                 <p>10 % de remise sur les menus dès {{ menu.minimumPersons + 5 }} personnes.</p>
                 <p>Livraison gratuite à Bordeaux. Ailleurs : 5 € + 0,59 €/km selon le calcul de distance actuel.</p>
-                <a href="{{ path('app_order_new', {id: menu.id}) }}" class="btn vg-order-button" {% if is_granted('ROLE_USER') %}data-order-open aria-haspopup="dialog" aria-controls="order-modal"{% endif %}>Commander ce menu</a>
+                <a href="{{ path('app_order_new', {id: menu.id}) }}" class="btn btn-primary vg-order-button" {% if is_granted('ROLE_USER') %}data-order-open aria-haspopup="dialog" aria-controls="order-modal"{% endif %}>Commander ce menu</a>
             </section>
         </div>
     </article>
