@@ -1,26 +1,127 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Créer un menu{% endblock %}
+{% form_theme form 'bootstrap_5_layout.html.twig' %}
+
+{% set isEdit = form.vars.data.id is not null %}
+
+{% block title %}
+    {{ isEdit ? 'Modifier un menu' : 'Créer un menu' }}
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('css/menu-form.css') }}">
+{% endblock %}
 
 {% block body %}
-<div class="container mt-4">
-    <h1>Modifier un menu</h1>
+<div class="container menu-editor">
+    <header class="menu-editor__header">
+        <h1>{{ isEdit ? 'Modifier un menu' : 'Créer un menu' }}</h1>
+        <p>
+            Renseignez les informations du menu, puis sélectionnez
+            les plats qui le composent.
+        </p>
+    </header>
 
     {{ form_start(form) }}
-        {{ form_row(form.title) }}
-        {{ form_row(form.description) }}
-        {{ form_row(form.theme) }}
-        {{ form_row(form.diet) }}
-        {{ form_row(form.minimumPersons) }}
-        {{ form_row(form.basePrice) }}
-        {{ form_row(form.conditionText) }}
-        {{ form_row(form.stockAvailable) }}
-        {{ form_row(form.dishes) }}
-        <div class="menu-dishes-field">
-        
-        </div>
+        {{ form_errors(form) }}
 
-        <button class="btn btn-primary mt-3">Enregistrer</button>
-    {{ form_end(form, { render_rest: false }) }}
+        <section class="menu-editor__section"
+                 aria-labelledby="menu-information-title">
+
+            <h2 id="menu-information-title">Informations du menu</h2>
+
+            <div class="menu-editor__grid">
+                {{ form_row(form.title, {
+                    row_attr: {class: 'menu-editor__full'}
+                }) }}
+
+                {{ form_row(form.description, {
+                    row_attr: {class: 'menu-editor__full'},
+                    attr: {rows: 4}
+                }) }}
+
+                {{ form_row(form.theme) }}
+                {{ form_row(form.diet) }}
+
+                {{ form_row(form.minimumPersons) }}
+                {{ form_row(form.basePrice) }}
+
+                {{ form_row(form.conditionText, {
+                    row_attr: {class: 'menu-editor__full'},
+                    attr: {rows: 3}
+                }) }}
+
+                {{ form_row(form.stockAvailable) }}
+            </div>
+        </section>
+
+        <section class="menu-editor__section"
+                 aria-labelledby="menu-dishes-title">
+
+            <h2 id="menu-dishes-title">Composition du menu</h2>
+            <p>Cochez les plats à associer à ce menu.</p>
+
+            {{ form_errors(form.dishes) }}
+
+            {# Préparer les groupes dans l'ordre souhaité. #}
+            {% set groups = {
+                'Entrées': [],
+                'Plats': [],
+                'Desserts': [],
+                'Autres': []
+            } %}
+
+            {# Répartir les cases Symfony selon leur catégorie. #}
+            {% for choice in form.dishes %}
+                {% set group = choice.vars.attr['data-dish-group']
+                    |default('Autres') %}
+
+                {% set groups = groups|merge({
+                    (group): groups[group]|merge([choice])
+                }) %}
+            {% endfor %}
+
+            <div class="menu-editor__dish-groups">
+                {% for group, choices in groups %}
+                    {% if choices|length > 0 %}
+                        <fieldset class="menu-editor__dish-group">
+                            egend>{{ group }}</legend>
+
+                            {% for choice in choices %}
+                                <div class="menu-editor__dish-option">
+                                    {{ form_row(choice) }}
+                                </div>
+                            {% endfor %}
+                        </fieldset>
+                    {% endif %}
+                {% endfor %}
+            </div>
+
+            {% if form.dishes|length == 0 %}
+                <p>
+                    Aucun plat disponible.
+                    Créez des plats avant de composer ce menu.
+                </p>
+            {% endif %}
+
+            {# Le champ a été entièrement rendu manuellement. #}
+            {% do form.dishes.setRendered() %}
+        </section>
+
+        {# Inclure les champs restants, notamment le jeton CSRF. #}
+        {{ form_rest(form) }}
+
+        <div class="menu-editor__actions">
+            <a href="{{ path('app_employee_menu_index') }}"
+               class="menu-editor__back">
+                Retour aux menus
+            </a>
+
+            <button type="submit" class="btn btn-primary">
+                {{ isEdit ? 'Enregistrer les modifications' : 'Créer le menu' }}
+            </button>
+        </div>
+    {{ form_end(form) }}
 </div>
 {% endblock %}

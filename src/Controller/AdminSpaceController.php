@@ -4,9 +4,10 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Form\EmployeeType;
+use Psr\Log\LoggerInterface;
 use App\Repository\UserRepository;
 use App\Repository\MenuRepository;
-use App\Service\MongoStatsService ;
+use App\Service\MongoStatsService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -101,31 +102,74 @@ class AdminSpaceController extends AbstractController
         return $this->redirectToRoute('app_admin_index');
     }
 
-    #[Route('/stats', name: 'stats')]
+    #[Route('/stats', name: 'stats', methods: ['GET'])]
     public function stats(
         Request $request,
         MongoStatsService $mongoStatsService,
-        MenuRepository $menuRepository
+        MenuRepository $menuRepository,
+        LoggerInterface $logger,
     ): Response {
-        $menuId = $request->query->get('menuId');
-        $startMonth = $request->query->get('startMonth');
-        $endMonth = $request->query->get('endMonth');
+        $query = $request->query->all();
+        $errors = [];
+        $values = [];
+        foreach (['menuId', 'startMonth', 'endMonth'] as $name) {
+            $raw = $query[$name] ?? '';
+            if (!is_string($raw)) {
+                $errors[$name] = 'Une valeur simple est attendue.';
+                $values[$name] = '';
+                continue;
+            }
+            $values[$name] = trim($raw);
+        }
 
-        $chartStats = $mongoStatsService->getMenuStats();
-        $revenueStats = $mongoStatsService->getRevenueByMenuAndPeriod(
-            $menuId ? (int) $menuId : null,
-            $startMonth ?: null,
-            $endMonth ?: null
-        );
+        $menuId = null;
+        if ($values['menuId'] !== '' && !isset($errors['menuId'])) {
+            $menuId = filter_var($values['menuId'], FILTER_VALIDATE_INT, [
+                'options' => ['min_range' => 1, 'max_range' => 2147483647],
+            ]);
+            if ($menuId === false) {
+                $errors['menuId'] = 'Le menu doit être identifié par un entier positif.';
+                $menuId = null;
+            } elseif ($menuRepository->find($menuId) === null) {
+                $errors['menuId'] = 'Ce menu n’existe pas.';
+            }
+        }
+
+        foreach (['startMonth', 'endMonth'] as $name) {
+            if ($values[$name] !== '' && !isset($errors[$name])
+                && !preg_match('/^[1-9][0-9]{3}-(0[1-9]|1[0-2])$/D', $values[$name])) {
+                $errors[$name] = 'Un mois au format AAAA-MM est attendu (année de 1000 à 9999).';
+            }
+        }
+        if ($errors === [] && $values['startMonth'] !== '' && $values['endMonth'] !== ''
+            && $values['startMonth'] > $values['endMonth']) {
+            $errors['endMonth'] = 'La fin doit être postérieure ou égale au début.';
+        }
+
+        $stats = [];
+        $unavailable = false;
+        if ($errors === []) {
+            try {
+                $stats = $mongoStatsService->getRevenueByMenuAndPeriod(
+                    $menuId,
+                    $values['startMonth'] !== '' ? $values['startMonth'] : null,
+                    $values['endMonth'] !== '' ? $values['endMonth'] : null,
+                );
+            } catch (\Exception $exception) {
+                $unavailable = true;
+                $logger->error('Lecture des statistiques impossible.', ['exception' => $exception]);
+            }
+        }
 
         return $this->render('admin_space/stats.html.twig', [
-            'chartStats' => $chartStats,
-            'revenueStats' => $revenueStats,
-            'menus' => $menuRepository->findAll(),
-            'selectedMenuId' => $menuId,
-            'startMonth' => $startMonth,
-            'endMonth' => $endMonth,
-        ]);
-     }
-
+            'stats' => $stats,
+            'menus' => $menuRepository->findBy([], ['title' => 'ASC']),
+            'selectedMenuId' => $values['menuId'],
+            'startMonth' => $values['startMonth'],
+            'endMonth' => $values['endMonth'],
+            'filterErrors' => $errors,
+            'statsUnavailable' => $unavailable,
+        ], new Response(status: $errors !== [] ? Response::HTTP_BAD_REQUEST
+            : ($unavailable ? Response::HTTP_SERVICE_UNAVAILABLE : Response::HTTP_OK)));
     }
+}

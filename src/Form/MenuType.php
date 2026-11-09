@@ -54,6 +54,20 @@ class MenuType extends AbstractType
                 'expanded' => true,
                 'label' => 'Plats du menu',
                 'required' => false,
+                'choice_attr' => static function (Dish $dish): array {
+                    $type = mb_strtolower(trim($dish->getType() ?? ''));
+
+                    $group = match ($type) {
+                        'entree', 'entrée', 'entrees', 'entrées' => 'Entrées',
+                        'plat', 'plats' => 'Plats',
+                        'dessert', 'desserts' => 'Desserts',
+                        default => 'Autres',
+                    };
+
+                    return [
+                        'data-dish-group' => $group,
+                    ];
+                },
             ])
         ;
     }

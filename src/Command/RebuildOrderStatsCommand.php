@@ -12,7 +12,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCommand(
     name: 'app:stats:rebuild',
-    description: 'Reconstruit les statistiques MongoDB à partir des commandes MySQL.'
+    description: 'Reconstruit les statistiques des commandes créées à partir de MySQL.'
 )]
 final class RebuildOrderStatsCommand extends Command
 {
@@ -27,7 +27,7 @@ final class RebuildOrderStatsCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
 
-        $io->warning('Cette commande efface les statistiques MongoDB puis les reconstruit depuis MySQL.');
+        $io->warning('Maintenance requise : suspendre les créations de commandes. La collection created_order_stats est vidée puis reconstruite depuis MySQL (tous statuts, annulations incluses pour le moment).');
 
         if (!$io->confirm('Confirmer la reconstruction des statistiques ?', false)) {
             $io->note('Reconstruction annulée.');

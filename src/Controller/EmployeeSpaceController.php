@@ -9,10 +9,8 @@ use App\Entity\OrderStatusHistory;
 use App\Repository\CustomerOrderRepository;
 use App\Repository\ReviewRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use App\Service\MongoStatsService;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -63,8 +61,6 @@ class EmployeeSpaceController extends AbstractController
         CustomerOrder $order,
         EntityManagerInterface $entityManager,
         MailService $mailService,
-        #[Autowire(lazy: true)]
-        MongoStatsService $mongoStatsService,
         LoggerInterface $logger
     ): Response {
         if (!$this->isCsrfTokenValid(
@@ -147,19 +143,8 @@ class EmployeeSpaceController extends AbstractController
             }
         }
 
-        if ($newStatus === 'terminee') {
-            try {
-                $mongoStatsService->markOrderCompleted($order);
-            } catch (\Exception $exception) {
-                $logger->error(
-                    'Statistiques de commande terminée non mises à jour.',
-                    [
-                        'exception' => $exception,
-                        'order_id' => $order->getId(),
-                    ]
-                );
-            }
-        }
+        // Les statistiques dépendent de la création, pas du changement de statut.
+        // L'exclusion des annulations reste une évolution à implémenter.
 
         $this->addFlash(
             'success',

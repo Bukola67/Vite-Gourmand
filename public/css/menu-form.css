@@ -1,0 +1,213 @@
+
+.menu-editor {
+    --menu-space-sm: 0.5rem;
+    --menu-space-md: 1rem;
+    --menu-space-lg: 1.5rem;
+    --menu-space-xl: 2rem;
+
+    max-width: 1100px;
+    margin: var(--menu-space-xl) auto;
+    padding-inline: var(--menu-space-md);
+
+    color: var(--vg-text);
+    font-family: var(--vg-font-body);
+}
+
+/* En-tête */
+
+.menu-editor__header {
+    margin-bottom: var(--menu-space-xl);
+}
+
+.menu-editor__header h1 {
+    margin-bottom: var(--menu-space-sm);
+    color: var(--vg-text);
+    font-family: var(--vg-font-heading);
+    font-size: clamp(1.75rem, 1.25rem + 2vw, 2.25rem);
+}
+
+.menu-editor__header p {
+    max-width: 65ch;
+    margin-bottom: 0;
+    color: var(--vg-text-muted);
+}
+
+/* Sections du formulaire */
+
+.menu-editor__section {
+    margin-bottom: var(--menu-space-lg);
+    padding: var(--menu-space-lg);
+
+    background-color: var(--vg-surface-card);
+    border: 1px solid var(--vg-border);
+    border-radius: var(--vg-radius-lg);
+    box-shadow: var(--vg-shadow);
+}
+
+.menu-editor__section h2 {
+    margin-bottom: var(--menu-space-md);
+    color: var(--vg-text);
+    font-family: var(--vg-font-heading);
+    font-size: 1.5rem;
+}
+
+.menu-editor__section > p {
+    margin-bottom: var(--menu-space-lg);
+    color: var(--vg-text-muted);
+}
+
+/* Champs : une colonne sur mobile */
+
+.menu-editor__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--menu-space-lg);
+}
+
+.menu-editor__grid > * {
+    min-width: 0;
+    margin-bottom: 0;
+}
+
+/*
+ * Les couleurs, bordures, arrondis et focus des champs
+ * proviennent déjà de token.css.
+ */
+
+.menu-editor .form-control,
+.menu-editor .form-select {
+    width: 100%;
+    font-family: inherit;
+    font-size: 1rem;
+}
+
+.menu-editor textarea.form-control {
+    min-height: 120px;
+    resize: vertical;
+}
+
+/* Catégories de plats */
+
+.menu-editor__dish-groups {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    align-items: start;
+    gap: var(--menu-space-lg);
+}
+
+.menu-editor__dish-group {
+    min-width: 0;
+    margin: 0;
+    padding: var(--menu-space-md);
+
+    background-color: var(--vg-surface-form);
+    border: 1px solid var(--vg-border);
+    border-radius: var(--vg-radius-sm);
+}
+
+.menu-editor__dish-group legend {
+    float: none;
+    width: auto;
+    margin-bottom: var(--menu-space-sm);
+    padding-inline: var(--menu-space-sm);
+
+    color: var(--vg-text);
+    font-family: var(--vg-font-body);
+    font-size: 1.125rem;
+    font-weight: 600;
+}
+
+/* Une case et son intitulé par ligne */
+
+.menu-editor__dish-option .form-check {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--menu-space-sm);
+
+    min-height: 44px;
+    margin: 0;
+    padding: var(--menu-space-sm) 0;
+}
+
+.menu-editor__dish-option .form-check-input {
+    float: none;
+    flex: 0 0 auto;
+
+    width: 1.125rem;
+    height: 1.125rem;
+    margin: 0.2rem 0 0;
+
+    border-color: var(--vg-border-strong);
+    cursor: pointer;
+}
+
+.menu-editor__dish-option .form-check-input:checked {
+    background-color: var(--vg-action-primary);
+    border-color: var(--vg-action-primary);
+}
+
+.menu-editor__dish-option .form-check-input:focus {
+    border-color: var(--vg-action-primary);
+    box-shadow: 0 0 0 0.25rem var(--vg-focus-ring);
+}
+
+.menu-editor__dish-option .form-check-label {
+    flex: 1;
+    min-width: 0;
+
+    color: var(--vg-text);
+    overflow-wrap: anywhere;
+    cursor: pointer;
+}
+
+/* Actions : le bouton conserve les styles de token.css */
+
+.menu-editor__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--menu-space-md);
+    margin-top: var(--menu-space-lg);
+}
+
+.menu-editor__back {
+    display: inline-flex;
+    align-items: center;
+    min-height: 48px;
+
+    color: var(--vg-action-primary);
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+}
+
+.menu-editor__back:hover {
+    color: var(--vg-action-primary-hover);
+}
+
+.menu-editor__actions :is(a, button):focus-visible {
+    outline: 3px solid var(--vg-action-primary);
+    outline-offset: 3px;
+}
+
+/* Tablettes et ordinateurs */
+
+@media (min-width: 768px) {
+    .menu-editor__grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .menu-editor__full {
+        grid-column: 1 / -1;
+    }
+
+    .menu-editor__dish-groups {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (min-width: 992px) {
+    .menu-editor__dish-groups {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
