@@ -10,8 +10,13 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\ExpressionLanguage\Expression;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/employee/menus')]
+#[IsGranted(new \Symfony\Component\ExpressionLanguage\Expression(
+"is_granted('ROLE_EMPLOYEE') or is_granted('ROLE_ADMIN')"
+))]
 class EmployeeMenuController extends AbstractController
 {
     #[Route('', name: 'app_employee_menu_index')]

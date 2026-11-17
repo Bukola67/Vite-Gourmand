@@ -34,7 +34,7 @@ class CustomerOrderType extends AbstractType
         $email['constraints'][] = new Assert\Email(message: 'Saisissez une adresse e-mail valide, par exemple nom@exemple.fr.');
         $builder->add('customerEmail', EmailType::class, $email);
 
-        $phone = $text('Téléphone portable', 'Indiquez un portable joignable : 7 à 15 chiffres, avec indicatif international si nécessaire. Espaces, parenthèses, points et tirets autorisés (20 caractères au total).', 20, 'tel');
+        $phone = $text('Téléphone portable', 'Indiquez un portable joignable : 7 à 15 chiffres, avec indicatif international si nécessaire. Exemple : 06 12 34 56 78 ou +33 6 12 34 56 78.', 20, 'tel');
         $phone['constraints'][] = new Assert\Regex(
             pattern: '/^\+?(?:[ .()\-]*\d){7,15}[ .()\-]*$/',
             message: 'Saisissez un numéro valide de 7 à 15 chiffres, par exemple 06 12 34 56 78 ou +33 6 12 34 56 78.'
