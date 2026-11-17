@@ -1,39 +1,168 @@
 {% extends 'base.html.twig' %}
 
+{% form_theme registrationForm 'bootstrap_5_layout.html.twig' %}
+
 {% block title %}Créer un compte - Vite & Gourmand{% endblock %}
 
 {% block body %}
-<div class="row justify-content-center">
-    <div class="col-md-8 col-lg-6">
-        <h1 class="mb-4 text-center">Créer un compte</h1>
+<section class="vg-registration" aria-labelledby="registration-title">
+   
+        <h1 id="registration-title">Créer un compte</h1>
 
-        <div class="card shadow-sm">
-            <div class="card-body">
-                {{ form_start(registrationForm) }}
+        <p class="vg-registration__intro">
+            Retrouvez vos commandes et préparez vos prochains moments gourmands.
+        </p>
+    </header>
+
+    <div class="card vg-registration__card">
+        <div class="card-body">
+
+            {{ form_start(registrationForm) }}
+
                 {{ form_errors(registrationForm) }}
 
-                {{ form_row(registrationForm.firstName) }}
-                {{ form_row(registrationForm.lastName) }}
-                {{ form_row(registrationForm.email) }}
-                {{ form_row(registrationForm.phone) }}
-                {{ form_row(registrationForm.address) }}
-                {{ form_row(registrationForm.postalCode) }}
-                {{ form_row(registrationForm.city) }}
-                {{ form_row(registrationForm.plainPassword.first) }}
-                {{ form_row(registrationForm.plainPassword.second) }}
+                <fieldset class="vg-registration__section">
+                    <legend>Vos coordonnées</legend>
 
-                <div class="mt-3">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            {{ form_row(registrationForm.firstName, {
+                                attr: {
+                                    autocomplete: 'given-name'
+                                },
+                                row_attr: {
+                                    class: 'mb-0'
+                                }
+                            }) }}
+                        </div>
+
+                        <div class="col-md-6">
+                            {{ form_row(registrationForm.lastName, {
+                                attr: {
+                                    autocomplete: 'family-name'
+                                },
+                                row_attr: {
+                                    class: 'mb-0'
+                                }
+                            }) }}
+                        </div>
+
+                        <div class="col-md-6">
+                            {{ form_row(registrationForm.email, {
+                                attr: {
+                                    autocomplete: 'email'
+                                },
+                                row_attr: {
+                                    class: 'mb-0'
+                                }
+                            }) }}
+                        </div>
+
+                        <div class="col-md-6">
+                            {{ form_row(registrationForm.phone, {
+                                attr: {
+                                    autocomplete: 'tel'
+                                },
+                                row_attr: {
+                                    class: 'mb-0'
+                                }
+                            }) }}
+                        </div>
+                    </div>
+                </fieldset>
+
+                <fieldset class="vg-registration__section">
+                    <legend>Votre adresse</legend>
+
+                    <div class="row g-3">
+                        <div class="col-12">
+                            {{ form_row(registrationForm.address, {
+                                attr: {
+                                    autocomplete: 'street-address'
+                                },
+                                row_attr: {
+                                    class: 'mb-0'
+                                }
+                            }) }}
+                        </div>
+
+                        <div class="col-md-4">
+                            {{ form_row(registrationForm.postalCode, {
+                                attr: {
+                                    autocomplete: 'postal-code'
+                                },
+                                row_attr: {
+                                    class: 'mb-0'
+                                }
+                            }) }}
+                        </div>
+
+                        <div class="col-md-8">
+                            {{ form_row(registrationForm.city, {
+                                attr: {
+                                    autocomplete: 'address-level2'
+                                },
+                                row_attr: {
+                                    class: 'mb-0'
+                                }
+                            }) }}
+                        </div>
+                    </div>
+                </fieldset>
+
+                <fieldset class="vg-registration__section">
+                    <legend>Votre mot de passe</legend>
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            {{ form_row(registrationForm.plainPassword.first, {
+                                attr: {
+                                    autocomplete: 'new-password'
+                                },
+                                help: 'Au moins 10 caractères, avec une majuscule, une minuscule, un chiffre et un caractère spécial.',
+                                row_attr: {
+                                    class: 'mb-0'
+                                }
+                            }) }}
+                        </div>
+
+                        <div class="col-md-6">
+                            {{ form_row(registrationForm.plainPassword.second, {
+                                attr: {
+                                    autocomplete: 'new-password'
+                                },
+                                row_attr: {
+                                    class: 'mb-0'
+                                }
+                            }) }}
+                        </div>
+                    </div>
+                </fieldset>
+
+                <div class="vg-registration__terms">
                     {{ form_row(registrationForm.agreeTerms) }}
+
+                    <a href="{{ path('app_legal_cgv') }}">
+                        Consulter les conditions générales de vente
+                    </a>
                 </div>
 
-                <div class="d-grid mt-4">
-                    <button type="submit" class="btn btn-primary">Créer mon compte</button>
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-primary">
+                        Créer mon compte
+                    </button>
                 </div>
 
                 {{ form_rest(registrationForm) }}
-                {{ form_end(registrationForm, {'render_rest': false}) }}
-            </div>
+
+            {{ form_end(registrationForm, {render_rest: false}) }}
+
+            <p class="vg-registration__login">
+                Vous avez déjà un compte ?
+                <a href="{{ path('app_login') }}">Se connecter</a>
+            </p>
+
         </div>
     </div>
-</div>
+</section>
 {% endblock %}

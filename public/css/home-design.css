@@ -1,6 +1,6 @@
 /* =========================================================
    VITE & GOURMAND — ALIGNEMENT DE L’ACCUEIL
-   Chargé après tokens.css et app.css.
+   À charger après tokens.css et app.css.
    Mobile first.
    ========================================================= */
 
@@ -14,7 +14,7 @@
   align-items: center;
   gap: 0.65rem;
   min-width: 0;
-  color: var(--vg-brown, #3E3128);
+  color: var(--vg-text);
 }
 
 .navbar .vg-brand__mark {
@@ -33,7 +33,7 @@
 }
 
 .navbar .vg-brand__name {
-  font-family: "Playfair Display", Georgia, serif;
+  font-family: var(--vg-font-heading);
   font-size: 1.125rem;
   font-weight: 600;
   line-height: 1.2;
@@ -45,7 +45,7 @@
 }
 
 .navbar .nav-link.active {
-  color: var(--vg-sage, #5E7A65);
+  color: var(--vg-accent);
 }
 
 .navbar .nav-link.active::after {
@@ -54,7 +54,7 @@
   left: var(--bs-navbar-nav-link-padding-x, 0);
   right: var(--bs-navbar-nav-link-padding-x, 0);
   height: 1px;
-  background: var(--vg-sage, #5E7A65);
+  background: var(--vg-accent);
   content: "";
 }
 
@@ -82,7 +82,7 @@ main.home-main {
 }
 
 .home-main h2 {
-  font-family: "Playfair Display", Georgia, serif;
+  font-family: var(--vg-font-heading);
   font-size: 1.75rem;
   font-weight: 400;
   line-height: 1.2;
@@ -98,7 +98,7 @@ main.home-main {
 
 .home-main .home-kicker {
   margin: 0 0 0.75rem;
-  color: var(--vg-sage, #5E7A65);
+  color: var(--vg-accent);
   font-size: 0.8125rem;
 }
 
@@ -115,7 +115,7 @@ main.home-main {
 
 .home-main .hero-home #hero-title {
   max-width: 11em;
-  font-family: "Playfair Display", Georgia, serif;
+  font-family: var(--vg-font-heading);
   font-size: 2.25rem;
   font-weight: 400;
   font-style: normal;
@@ -134,28 +134,25 @@ main.home-main {
 
 
 /* ---------------------------------------------------------
-   Carrousel : carte blanche et badge vert
+   Carrousel : surface de carte et accent
    --------------------------------------------------------- */
 
 .home-main .menu-carousel-section {
   padding: 3rem 0;
-  background: var(--vg-cream, #F8F4EC);
+  background: var(--vg-surface-page);
 }
 
 .home-main #menusCarousel .carousel-inner {
   overflow: hidden;
-  border-radius: 20px;
-  box-shadow: var(
-    --vg-shadow,
-    0 8px 30px rgba(62, 49, 40, 0.08)
-  );
+  border-radius: var(--vg-radius-lg);
+  box-shadow: var(--vg-shadow);
 }
 
 .home-main #menusCarousel .menu-slide {
   display: flex;
   flex-direction: column;
   min-height: 0;
-  background: #FFFFFF;
+  background: var(--vg-surface-card);
 }
 
 .home-main #menusCarousel .menu-slide-image {
@@ -173,16 +170,16 @@ main.home-main {
   justify-content: center;
   min-width: 0;
   padding: 1.5rem;
-  background: #FFFFFF;
+  background: var(--vg-surface-card);
 }
 
 .home-main #menusCarousel .menu-slide-label {
   display: inline-block;
   margin: 0 0 1rem;
   padding: 0.3rem 0.65rem;
-  border-radius: 999px;
-  background: var(--vg-cream, #F8F4EC);
-  color: var(--vg-sage, #5E7A65);
+  border-radius: var(--vg-radius-pill);
+  background: var(--vg-surface-page);
+  color: var(--vg-accent);
   font-size: 0.75rem;
   font-weight: 400;
   letter-spacing: normal;
@@ -191,7 +188,7 @@ main.home-main {
 
 .home-main #menusCarousel .menu-slide-content h3 {
   margin: 0 0 1rem;
-  font-family: "Playfair Display", Georgia, serif;
+  font-family: var(--vg-font-heading);
   font-size: 1.75rem;
   font-weight: 400;
   line-height: 1.2;
@@ -212,8 +209,8 @@ main.home-main {
 
 .home-main #menusCarousel .menu-slide-price {
   margin: 0;
-  color: var(--vg-sage, #5E7A65);
-  font-family: "Playfair Display", Georgia, serif;
+  color: var(--vg-accent);
+  font-family: var(--vg-font-heading);
   font-size: 1.5rem;
   line-height: 1.3;
 }
@@ -260,10 +257,10 @@ main.home-main {
   flex: 0 0 44px;
   width: 44px;
   height: 44px;
-  border: 1px solid var(--vg-border, #DED8CF);
+  border: 1px solid var(--vg-border);
   border-radius: 50%;
   background: transparent;
-  color: var(--vg-sage, #5E7A65);
+  color: var(--vg-accent);
   opacity: 1;
 }
 
@@ -283,13 +280,13 @@ main.home-main {
   margin: 0;
   border: 8px solid transparent;
   border-radius: 50%;
-  background-color: var(--vg-beige, #E8DCCB);
+  background-color: var(--vg-beige);
   background-clip: padding-box;
   opacity: 1;
 }
 
 .home-main #menusCarousel .carousel-indicators button.active {
-  background-color: var(--vg-sage, #5E7A65);
+  background-color: var(--vg-accent);
 }
 
 
@@ -299,7 +296,7 @@ main.home-main {
 
 .home-main .home-presentation {
   padding: 3rem 0;
-  background: #FFFFFF;
+  background: var(--vg-surface-card);
 }
 
 .home-main .home-presentation-row {
@@ -335,7 +332,7 @@ main.home-main {
   width: 40px;
   height: 2px;
   margin-top: 1rem;
-  background: var(--vg-terracotta, #C97C5D);
+  background: var(--vg-accent-alt);
   content: "";
 }
 
@@ -352,7 +349,7 @@ main.home-main {
 
 .home-main .home-reviews {
   padding: 3rem 0;
-  background: var(--vg-cream, #F8F4EC);
+  background: var(--vg-surface-page);
 }
 
 .home-main .home-reviews > .container > h2 {
@@ -360,17 +357,14 @@ main.home-main {
 }
 
 .home-main .home-reviews .review-card {
-  --bs-card-bg: #FFFFFF;
+  --bs-card-bg: var(--vg-surface-card);
   --bs-card-border-width: 0;
   --bs-card-border-radius: 16px;
 
-  background: #FFFFFF;
+  background: var(--bs-card-bg);
   border: 0;
-  border-radius: 16px;
-  box-shadow: var(
-    --vg-shadow,
-    0 8px 30px rgba(62, 49, 40, 0.08)
-  );
+  border-radius: var(--bs-card-border-radius);
+  box-shadow: var(--vg-shadow);
 }
 
 .home-main .home-reviews .review-card .card-body {
@@ -381,18 +375,18 @@ main.home-main {
 
 .home-main .home-reviews .review-rating {
   margin: 0 0 1rem;
-  color: var(--vg-terracotta, #C97C5D);
+  color: var(--vg-accent-alt);
   font-size: 1.125rem;
 }
 
 .home-main .home-reviews .review-star--empty {
-  color: var(--vg-sage, #5E7A65);
+  color: var(--vg-accent);
 }
 
 .home-main .home-reviews .review-comment {
   margin: 0 0 1.25rem;
-  color: var(--vg-brown, #3E3128);
-  font-family: "Playfair Display", Georgia, serif;
+  color: var(--vg-text);
+  font-family: var(--vg-font-heading);
   font-size: 1.25rem;
   font-style: italic;
   font-weight: 400;
@@ -406,7 +400,7 @@ main.home-main {
 
 .home-main .home-reviews .review-author h3 {
   margin: 0 0 0.25rem;
-  font-family: "Poppins", Arial, sans-serif;
+  font-family: var(--vg-font-body);
   font-size: 0.8125rem;
   font-weight: 600;
 }
@@ -514,123 +508,127 @@ main.home-main {
     padding: 3rem;
   }
 }
+
+
 /* =========================================================
    FOOTER — MOBILE FIRST
    ========================================================= */
 
 .vg-footer {
-    margin-top: 0;
-    padding: 2rem 0;
-    background-color: var(--vg-brown, #3E3128);
-    color: var(--vg-cream, #F8F4EC);
+  margin-top: 0;
+  padding: 2rem 0;
+  background-color: var(--vg-brown);
+  color: var(--vg-text-on-dark);
 }
 
 .vg-footer__top {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 1.5rem;
-    padding-bottom: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1.5rem;
+  padding-bottom: 2rem;
 }
 
 .vg-footer__brand {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.75rem;
-    max-width: 100%;
-
-    color: var(--vg-cream, #F8F4EC);
-    text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  max-width: 100%;
+  color: var(--vg-text-on-dark);
+  text-decoration: none;
 }
 
 .vg-footer__brand:hover {
-    color: var(--vg-beige, #E8DCCB);
+  color: var(--vg-beige);
 }
 
 .vg-footer__brand span {
-    font-family: "Playfair Display", Georgia, serif;
-    font-size: 1.375rem;
-    font-weight: 600;
-    line-height: 1.2;
+  font-family: var(--vg-font-heading);
+  font-size: 1.375rem;
+  font-weight: 600;
+  line-height: 1.2;
 }
 
 .vg-footer__logo {
-    display: block;
-    flex: 0 0 40px;
-    width: 40px;
-    height: 40px;
-    object-fit: contain;
+  display: block;
+  flex: 0 0 40px;
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
 }
 
 .vg-footer .vg-footer__description {
-    margin: 0.75rem 0 0;
-    color: var(--vg-cream, #F8F4EC);
-    font-size: 0.8125rem;
+  margin: 0.75rem 0 0;
+  color: var(--vg-text-on-dark);
+  font-size: 0.8125rem;
 }
 
 .vg-footer .vg-footer__hours {
-    margin: 0;
-    color: var(--vg-cream, #F8F4EC);
-    font-size: 0.8125rem;
-    line-height: 1.7;
+  margin: 0;
+  color: var(--vg-text-on-dark);
+  font-size: 0.8125rem;
+  line-height: 1.7;
 }
 
 .vg-footer__bottom {
-    padding-top: 1.5rem;
-    border-top: 1px solid rgba(248, 244, 236, 0.2);
+  padding-top: 1.5rem;
+  /* Pas de token équivalent pour cette bordure sur fond sombre. */
+  border-top: 1px solid rgba(248, 244, 236, 0.2);
 }
 
 .vg-footer__bottom nav {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.75rem 1.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.5rem;
 }
 
 .vg-footer__bottom a {
-    display: inline-flex;
-    align-items: center;
-    min-height: 44px;
-    color: var(--vg-cream, #F8F4EC);
-    font-size: 0.75rem;
-    text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--vg-text-on-dark);
+  font-size: 0.75rem;
+  text-decoration: none;
 }
 
 .vg-footer__bottom a:hover {
-    color: var(--vg-beige, #E8DCCB);
-    text-decoration: underline;
+  color: var(--vg-beige);
+  text-decoration: underline;
 }
 
 .vg-footer a:focus-visible {
-    outline: 2px solid var(--vg-cream, #F8F4EC);
-    outline-offset: 4px;
+  outline: 2px solid var(--vg-text-on-dark);
+  outline-offset: 4px;
 }
 
+
 /* Tablette et desktop */
+
 @media (min-width: 768px) {
-    .vg-footer {
-        padding: 2.5rem 0;
-    }
+  .vg-footer {
+    padding: 2.5rem 0;
+  }
 
-    .vg-footer__top {
-        flex-direction: row;
-        justify-content: space-between;
-        align-items: flex-start;
-        gap: 3rem;
-    }
+  .vg-footer__top {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 3rem;
+  }
 
-    .vg-footer__logo {
-        flex-basis: 48px;
-        width: 48px;
-        height: 48px;
-    }
+  .vg-footer__logo {
+    flex-basis: 48px;
+    width: 48px;
+    height: 48px;
+  }
 
-    .vg-footer__brand span {
-        font-size: 1.5rem;
-    }
+  .vg-footer__brand span {
+    font-size: 1.5rem;
+  }
 
-    .vg-footer .vg-footer__hours {
-        max-width: 25rem;
-        padding-top: 0.75rem;
-        text-align: right;
-    }
+  .vg-footer .vg-footer__hours {
+    max-width: 25rem;
+    padding-top: 0.75rem;
+    text-align: right;
+  }
 }

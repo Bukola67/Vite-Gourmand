@@ -4,7 +4,11 @@
 
 {% block body %}
 
-<div class="container">
+<div class="container"
+    id="menu-catalog"
+    data-api-url="{{ app.request.baseUrl ~ '/api/menus' }}"
+    data-image-base="{{ asset('images/menus/') }}"
+>
 
     <header class="page-heading mb-5">
         <h1>Nos menus</h1>
@@ -33,7 +37,7 @@
 
                 <div class="filter-group">
                     <label for="filter-max-price" class="form-label">
-                        Prix maximum
+                        Prix max / pers.
                     </label>
 
                     <input
@@ -48,7 +52,7 @@
 
                 <div class="filter-group">
                     <label for="filter-min-price" class="form-label">
-                        Prix minimum
+                        Prix min / pers.
                     </label>
 
                     <input
@@ -91,7 +95,7 @@
 
                 <div class="filter-group">
                     <label for="filter-persons" class="form-label">
-                        Nombre minimum de personnes
+                        Nombre de personnes de votre groupe
                     </label>
 
                     <input
@@ -99,6 +103,7 @@
                         id="filter-persons"
                         class="form-control"
                         min="1"
+                        step="1"
                         placeholder="Ex : 4"
                     >
                 </div>
@@ -115,7 +120,19 @@
                 </h2>
             </div>
 
-            <div class="row g-4" id="menus-list">
+            <p
+                id="menus-status"
+                class="text-muted"
+                role="status"
+                aria-live="polite"
+                aria-atomic="true"
+            ></p>
+
+            <div 
+                class="row g-4" 
+                id="menus-list" 
+                aria-busy="false"
+            >
 
                 {% for menu in menus %}
                     {% set menuImage = 'images/menus/menu-evenement.jpg' %}
@@ -199,167 +216,68 @@
                 Aucun menu ne correspond aux filtres sélectionnés.
             </div>
         </section>
+
+        {# Modèle utilisé par menu-filters.js pour les résultats de l'API. #}
+        <template id="menu-card-template">
+            <div class="col-12 col-md-6 menu-item">
+                <article class="card menu-card h-100">
+
+                    <img
+                        src="{{ asset('images/menus/menu-evenement.jpg') }}"
+                        class="card-img-top"
+                        alt=""
+                        loading="lazy"
+                        data-field="image"
+                    >
+
+                    <div class="card-body">
+                        <h3 class="card-title" data-field="title"></h3>
+
+                        <p class="card-text" data-field="description"></p>
+
+                        <p class="mb-1">
+                            <strong>Thème :</strong>
+                            <span data-field="theme"></span>
+                        </p>
+
+                        <p class="mb-1">
+                            <strong>Régime :</strong>
+                            <span data-field="diet"></span>
+                        </p>
+
+                        <p class="mb-1">
+                            <strong>Prix minimum :</strong>
+                            <span data-field="price"></span>
+                        </p>
+
+                        <p class="mb-3">
+                            <strong>Nombre minimum :</strong>
+                            <span data-field="persons"></span>
+                        </p>
+
+                        <a
+                            href="#"
+                            class="btn btn-primary mt-auto"
+                            data-field="link"
+                        >
+                            Voir le détail
+                        </a>
+                    </div>
+
+                </article>
+            </div>
+        </template>
+
     </div>
 </div>
-
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-    const maxPriceInput = document.getElementById('filter-max-price');
-    const minPriceInput = document.getElementById('filter-min-price');
-    const themeInput = document.getElementById('filter-theme');
-    const dietInput = document.getElementById('filter-diet');
-    const personsInput = document.getElementById('filter-persons');
-    const resetButton = document.getElementById('reset-filters');
-    const menusList = document.getElementById('menus-list');
-    const noResults = document.getElementById('no-results');
-    const menusCount = document.getElementById('menus-count');
-
-    const imageByTheme = {
-        'Noël': 'menu-noel.jpg',
-        'Pâques': 'menu-paques.jpg',
-        'Événement': 'menu-evenement.jpg',
-        'Classique': 'menu-evenement.jpg'
-    };
-
-    function createMenuCard(menu) {
-        const image = imageByTheme[menu.theme] || 'menu-evenement.jpg';
-
-        const column = document.createElement('div');
-        column.className = 'col-12 col-md-6 menu-item';
-
-        const article = document.createElement('article');
-        article.className = 'card menu-card h-100';
-
-        const imageElement = document.createElement('img');
-        imageElement.src = `/images/menus/${image}`;
-        imageElement.alt = menu.title;
-        imageElement.className = 'card-img-top';
-        imageElement.loading = 'lazy';
-
-        const body = document.createElement('div');
-        body.className = 'card-body';
-
-        const title = document.createElement('h3');
-        title.className = 'card-title';
-        title.textContent = menu.title;
-
-        const description = document.createElement('p');
-        description.className = 'card-text';
-        description.textContent = menu.description || '';
-
-        const theme = document.createElement('p');
-        theme.className = 'mb-1';
-        theme.innerHTML = '<strong>Thème :</strong> ';
-        theme.append(document.createTextNode(menu.theme || 'Non renseigné'));
-
-        const diet = document.createElement('p');
-        diet.className = 'mb-1';
-        diet.innerHTML = '<strong>Régime :</strong> ';
-        diet.append(document.createTextNode(menu.diet || 'Non renseigné'));
-
-        const price = document.createElement('p');
-        price.className = 'mb-1';
-        price.innerHTML = '<strong>Prix minimum :</strong> ';
-        price.append(document.createTextNode(`${menu.basePrice} €`));
-
-        const persons = document.createElement('p');
-        persons.className = 'mb-3';
-        persons.innerHTML = '<strong>Nombre minimum :</strong> ';
-        persons.append(document.createTextNode(`${menu.minimumPersons} personnes`));
-
-        const link = document.createElement('a');
-        link.href = menu.detailUrl;
-        link.className = 'btn btn-primary mt-auto';
-        link.textContent = 'Voir le détail';
-
-        body.append(title, description, theme, diet, price, persons, link);
-        article.append(imageElement, body);
-        column.appendChild(article);
-
-        return column;
-    }
-
-    function renderMenus(menus) {
-        menusList.innerHTML = '';
-        menusCount.textContent = menus.length;
-
-        if (menus.length === 0) {
-            noResults.textContent = 'Aucun menu ne correspond aux filtres sélectionnés.';
-            noResults.classList.remove('d-none');
-            return;
-        }
-
-        noResults.classList.add('d-none');
-
-        menus.forEach(menu => {
-            menusList.appendChild(createMenuCard(menu));
-        });
-    }
-
-    async function filterMenus() {
-        const params = new URLSearchParams();
-
-        if (maxPriceInput.value) {
-            params.append('maxPrice', maxPriceInput.value);
-        }
-
-        if (minPriceInput.value) {
-            params.append('minPrice', minPriceInput.value);
-        }
-
-        if (themeInput.value) {
-            params.append('theme', themeInput.value);
-        }
-
-        if (dietInput.value) {
-            params.append('diet', dietInput.value);
-        }
-
-        if (personsInput.value) {
-            params.append('minPersons', personsInput.value);
-        }
-
-        try {
-            const response = await fetch(`/api/menus?${params.toString()}`);
-
-            if (!response.ok) {
-                throw new Error(`Erreur serveur : ${response.status}`);
-            }
-
-            const menus = await response.json();
-            renderMenus(menus);
-        } catch (error) {
-            menusList.innerHTML = '';
-            menusCount.textContent = '0';
-            noResults.textContent =
-                'Une erreur est survenue lors du chargement des menus.';
-            noResults.classList.remove('d-none');
-
-            console.error(error);
-        }
-    }
-
-    [
-        maxPriceInput,
-        minPriceInput,
-        themeInput,
-        dietInput,
-        personsInput
-    ].forEach(input => {
-        input.addEventListener('input', filterMenus);
-        input.addEventListener('change', filterMenus);
-    });
-
-    resetButton.addEventListener('click', () => {
-        maxPriceInput.value = '';
-        minPriceInput.value = '';
-        themeInput.value = '';
-        dietInput.value = '';
-        personsInput.value = '';
-
-        filterMenus();
-    });
-});
-</script>
-
 {% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script
+        src="{{ asset('js/menu-filters.js') }}"
+        defer
+    ></script>
+{% endblock %}
+
+
