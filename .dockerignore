@@ -10,6 +10,7 @@ node_modules/*
 *.log
 compose.yaml
 compose.override.yaml
+public/assets/
 
 .DS_Store
 **/.DS_Store
