@@ -397,3 +397,167 @@ textarea:focus-visible {
     font-size: 4rem;
   }
 }
+
+/* =========================================================
+   INSCRIPTION
+   ========================================================= */
+
+.vg-registration {
+  width: 100%;
+  max-width: 800px;
+  margin-inline: auto;
+  color: var(--vg-text);
+}
+
+.vg-registration__header {
+  max-width: 600px;
+  margin: 0 auto 2rem;
+  text-align: center;
+}
+
+.vg-registration__eyebrow {
+  margin-bottom: 0.75rem;
+  color: var(--vg-action-primary);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.vg-registration__header h1 {
+  margin-bottom: 1rem;
+  color: var(--vg-text);
+  font-family: var(--vg-font-heading);
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.vg-registration__intro {
+  margin-bottom: 0;
+  color: var(--vg-text-muted);
+  line-height: 1.7;
+}
+
+.vg-registration__card {
+  background-color: var(--vg-surface-card);
+  border: 1px solid var(--vg-border);
+  border-radius: var(--vg-radius-lg);
+  box-shadow: var(--vg-shadow);
+}
+
+.vg-registration__card > .card-body {
+  padding: clamp(1.25rem, 4vw, 3rem);
+}
+
+.vg-registration__section {
+  min-width: 0;
+  margin: 0 0 2rem;
+  padding: 0;
+  border: 0;
+}
+
+.vg-registration__section legend {
+  float: none;
+  width: 100%;
+  margin-bottom: 1.25rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--vg-border);
+  color: var(--vg-text);
+  font-family: var(--vg-font-heading);
+  font-size: 1.4rem;
+  font-weight: 600;
+}
+
+/* Réutilisation des couleurs et rayons de la charte */
+.vg-registration .form-control,
+.vg-registration .form-select {
+  min-height: 48px;
+  background-color: var(--vg-surface-form);
+  border-color: var(--vg-border);
+  border-radius: var(--vg-radius-sm);
+  color: var(--vg-text);
+}
+
+.vg-registration .form-control:focus,
+.vg-registration .form-select:focus {
+  background-color: var(--vg-surface-form);
+  border-color: var(--vg-sage);
+  color: var(--vg-text);
+  box-shadow: 0 0 0 0.25rem var(--vg-focus-ring);
+}
+
+/* Conserver une identification claire des champs invalides */
+.vg-registration .form-control.is-invalid,
+.vg-registration .form-select.is-invalid {
+  border-color: var(--bs-form-invalid-border-color, #dc3545);
+}
+
+.vg-registration .form-control.is-invalid:focus,
+.vg-registration .form-select.is-invalid:focus {
+  box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.2);
+}
+
+.vg-registration .form-label {
+  margin-bottom: 0.5rem;
+  color: var(--vg-text);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.vg-registration .form-text {
+  margin-top: 0.5rem;
+  color: var(--vg-text-muted);
+  font-size: 0.8rem;
+  line-height: 1.6;
+}
+
+.vg-registration__terms {
+  margin-bottom: 1.75rem;
+  padding: 1rem;
+  background-color: var(--vg-surface-form);
+  border: 1px solid var(--vg-border);
+  border-radius: var(--vg-radius-sm);
+}
+
+.vg-registration__terms .form-check {
+  margin-bottom: 0.5rem;
+}
+
+.vg-registration__terms .form-check-label {
+  color: var(--vg-text);
+  font-size: 0.9rem;
+}
+
+.vg-registration .form-check-input:checked {
+  background-color: var(--vg-action-primary);
+  border-color: var(--vg-action-primary);
+}
+
+.vg-registration .form-check-input:focus {
+  border-color: var(--vg-sage);
+  box-shadow: 0 0 0 0.25rem var(--vg-focus-ring);
+}
+
+.vg-registration__terms > a {
+  font-size: 0.85rem;
+}
+
+.vg-registration__terms a,
+.vg-registration__login a {
+  color: var(--vg-action-primary);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.vg-registration__terms a:hover,
+.vg-registration__login a:hover {
+  color: var(--vg-action-primary-hover);
+}
+
+.vg-registration__login {
+  margin: 1.5rem 0 0;
+  color: var(--vg-text-muted);
+  font-size: 0.9rem;
+  text-align: center;
+}

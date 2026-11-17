@@ -11,7 +11,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormError;
-use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\{JsonResponse, Request, Response};
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Routing\Attribute\Route;
@@ -33,8 +32,6 @@ final class OrderController extends AbstractController
         EntityManagerInterface $entityManager,
         OrderQuoteCalculator $quoteCalculator,
         MailService $mailService,
-        InsufficientMenuStockException $insufficientMenuStockException,
-        #[Autowire(lazy: true)]
         MongoStatsService $mongoStatsService,
         LoggerInterface $logger,
     ): Response {

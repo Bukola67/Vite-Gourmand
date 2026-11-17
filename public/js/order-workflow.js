@@ -15,6 +15,7 @@
         const fingerprint = () => JSON.stringify(inputNames.map(name => form.elements.namedItem(`customer_order[${name}]`).value));
 
         function clearErrors() {
+            // Supprimer les messages d’erreur et restaurer l’état des champs invalides.
             form.querySelectorAll('[data-quote-error]').forEach(node => {
                 const input = form.elements.namedItem(`customer_order[${node.dataset.quoteError}]`);
                 if (input && input.dataset.quoteInvalid) {
@@ -163,11 +164,17 @@
     const body = modalElement.querySelector('[data-order-modal-body]');
     let loading = false;
     opener.addEventListener('click', async event => {
-        if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey || event.button !== 0) return;
+         // Si l'utilisateur fait un Ctrl+Clic, Cmd+Clic, clic molette, etc.
+        if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey || event.button !== 0) 
+            // On laisse le navigateur agir normalement (ex: ouvrir un nouvel onglet) 
+        return;
+          // Sinon, c'est un clic gauche simple : on empêche le rechargement de la page
         event.preventDefault();
         if (loading) return;
+        // Si le formulaire est déjà chargé, on l'affiche directement
         if (body.querySelector('[data-order-form]')) {
             modal.show();
+            
             return;
         }
         loading = true;
@@ -179,6 +186,7 @@
             const html = await response.text();
             const documentFragment = new DOMParser().parseFromString(html, 'text/html');
             const content = documentFragment.querySelector('.vg-order');
+            // Si le serveur a renvoyé une redirection ou une erreur, on recharge la page d'origine
             if (!response.ok || response.redirected || !content) {
                 window.location.assign(opener.href);
                 return;
@@ -187,6 +195,7 @@
             initializeForm(body.querySelector('[data-order-form]'));
             modal.show();
         } catch (_) {
+            // En cas d'erreur, on recharge la page d'origine
             window.location.assign(opener.href);
         } finally {
             loading = false;
@@ -194,7 +203,8 @@
         }
     });
     modalElement.addEventListener('shown.bs.modal', () => {
+        // On met le focus sur le premier champ du formulaire ou sur le bouton de soumission
         body.querySelector('input:not([type="hidden"]), button')?.focus();
     });
     modalElement.addEventListener('hidden.bs.modal', () => opener.focus());
-})();
+})();{}
