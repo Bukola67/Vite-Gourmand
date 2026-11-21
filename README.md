@@ -56,7 +56,6 @@ docker compose exec php php bin/console doctrine:migrations:migrate --no-interac
 
 6. Charger les données de démonstration
 ```bash
-docker compose exec -T database mysql -uroot -proot vite_gourmand < database/data.sql
 docker compose exec -T database mysql -uroot -proot vite_gourmand < database/seed-vg.sql
 ```
 
